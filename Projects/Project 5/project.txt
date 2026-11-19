@@ -54,5 +54,5 @@ Link:
 # ---------------- HOME PAGE ----------------
 Size: 55%
 # Size of the picture on the home page, from 20% to 100%.
-# 100% = a quarter of the page width, 20% = a tenth of the page width.
+# 100% = a quarter of the page width on a computer, 20% = a twentieth (very small).
 # (Placeholder size - change it to what you like.)

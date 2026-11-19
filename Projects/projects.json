@@ -59,7 +59,7 @@
     },
     {
       "folder": "estoile",
-      "media": ["estoile1.jpg", "estoile2.jpg"]
+      "media": ["estoile3.jpg", "estoile4.jpg", "estoile5.jpg", "estoile1.jpg", "estoile2.jpg"]
     },
     {
       "folder": "metal-stool",
@@ -92,10 +92,6 @@
     {
       "folder": "folded-vase",
       "media": ["folded-vase1.jpg", "folded-vase2.jpg", "folded-vase3.jpg", "folded-vase4.jpg"]
-    },
-    {
-      "folder": "church-worship-workshop",
-      "media": ["church-worship-workshop1.jpg", "church-worship-workshop2.jpg", "church-worship-workshop3.jpg", "church-worship-workshop4.jpg"]
     },
     {
       "folder": "boj",

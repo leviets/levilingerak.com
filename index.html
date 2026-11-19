@@ -19,16 +19,17 @@
         <span class="blob blob-plastics"></span>
         <span class="blob blob-other"></span>
     </div>
+    <!-- Header + material menu stay at the top while scrolling. -->
+    <div class="top-bar" id="top-bar">
     <header class="site-header">
         <a class="brand" href="#home">
             <img src="Profile/Pictures/logo.png" alt="" width="192" height="192">
-            <span class="brand-text">
-                <span class="brand-name" data-profile="name">Levi Lingerak</span>
-            </span>
         </a>
         <nav class="main-nav" aria-label="Main navigation">
             <button class="nav-link active" type="button" data-page="home">Home</button>
+            <button class="nav-link" type="button" data-page="shop">Shop</button>
             <button class="nav-link" type="button" data-page="info">Info</button>
+            <button class="nav-link" type="button" data-page="contact">Contact</button>
         </nav>
         <!-- Same size as the logo, mirrored on the right. -->
         <a class="instagram-button" href="https://www.instagram.com/levilingerak/" target="_blank" rel="noopener" aria-label="Levi Lingerak on Instagram">
@@ -42,12 +43,13 @@
 
     <!-- One menu item per material. Names and colours are set in CATEGORIES in the script below. -->
     <nav class="category-nav" id="category-nav" aria-label="Work by material"></nav>
+    </div>
 
     <main>
         <section class="page active" id="home" data-page-section="home">
             <div class="home-copy">
-                <p class="eyebrow">Designer &amp; maker · <span data-profile="location">Eindhoven, NL</span></p>
-                <h1>Levi Lingerak</h1>
+                <h1 class="fit-name"><span>Levi Lingerak</span></h1>
+                <p class="home-subtitle">Designer &amp; maker · <span data-profile="location">Eindhoven, NL</span></p>
                 <p class="intro" data-profile="short introduction">Walnut, beech, denim and rope — made by hand, with the joints, seams and stitches left on show.</p>
             </div>
 
@@ -103,6 +105,36 @@
                 </div>
             </div>
         </section>
+
+        <!-- Shop: placeholder until the shop opens. -->
+        <section class="page" id="shop" data-page-section="shop">
+            <div class="contact-page">
+                <p class="eyebrow">Shop</p>
+                <h2>Coming soon</h2>
+                <p class="contact-intro">A small shop with pieces and editions from the workshop is on its way.
+                    Follow along on <a class="profile-instagram-handle" href="https://www.instagram.com/levilingerak/" target="_blank" rel="noopener">@levilingerak ↗</a>
+                    to hear when it opens.</p>
+            </div>
+        </section>
+
+        <!-- Contact: filled in from Profile/profile.txt (Email, Instagram, Location, Available for). -->
+        <section class="page" id="contact" data-page-section="contact">
+            <div class="contact-page">
+                <p class="eyebrow">Get in touch</p>
+                <h2>Contact</h2>
+                <p class="contact-intro">For commissions, collaborations or just a question about a project: send me a message.</p>
+                <dl class="contact-list">
+                    <dt>Email</dt>
+                    <dd><a class="profile-email" href="mailto:hello@levilingerak.nl">hello@levilingerak.nl ↗</a></dd>
+                    <dt>Instagram</dt>
+                    <dd><a class="profile-instagram-handle" href="https://www.instagram.com/levilingerak/" target="_blank" rel="noopener">@levilingerak ↗</a></dd>
+                    <dt>Location</dt>
+                    <dd data-profile="location">Eindhoven, NL</dd>
+                    <dt>Available for</dt>
+                    <dd data-profile="available for">commissions and collaborations</dd>
+                </dl>
+            </div>
+        </section>
     </main>
 
     <footer>
@@ -132,7 +164,7 @@
             { id: 'other',     name: 'Other',     color: '#c0392b', ink: '#a8301f', words: ['others', 'overig', 'anders'] }
         ];
         const categoryById = Object.fromEntries(CATEGORIES.map(c => [c.id, c]));
-        const PAGES = ['home', 'info', ...CATEGORIES.map(c => c.id)];
+        const PAGES = ['home', 'shop', 'info', 'contact', ...CATEGORIES.map(c => c.id)];
 
         // "Textile, Woodwork" -> ['textile', 'woodwork']. Anything unknown counts as Other.
         function parseCategories(value) {
@@ -222,6 +254,8 @@
             document.querySelectorAll('#project-grid .project').forEach(card => {
                 const show = card.dataset.categories.split(' ').includes(id);
                 card.classList.toggle('hidden', !show);
+                // On a material page every project takes that material's colour.
+                if (show) setColor(card, id);
                 if (show) visible++;
             });
             document.getElementById('project-count').textContent = visible;
@@ -454,7 +488,7 @@
             });
         }
 
-        // Home: a map-like trail. The oldest project is at the bottom ("Start"); a stitched path
+        // Size 20 -> a square a twentieth of the page wide, 100 -> a quarter (relatively bigger on phones).
         // swings left and right, up from project to project, to the newest one at the top.
         // Size 20 -> a square a tenth of the page wide, 100 -> a quarter (bigger on phones).
         const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -520,14 +554,17 @@
             const W = container.clientWidth;
             if (!W || !homeItems.length) return;
 
-            const scale = W < 440 ? 3.4 : W < 760 ? 2.4 : 1;
+            // Width of a square in % of the page: [size 20%, size 100%].
+            // Computer: a twentieth up to a quarter. Tablet and phone: relatively bigger.
+            const [minPct, maxPct] = W < 440 ? [16, 80] : W < 760 ? [10, 50] : [5, 25];
+            const small = W < 760;
             const top = 70;                          // room for today's date at the top
             const gapX = Math.max(44, W * 0.035);    // room between neighbours (for the path)
-            const gapY = scale > 1 ? 58 : 66;        // room between rows (for the path)
+            const gapY = small ? 58 : 66;            // room between rows (for the path)
 
             // 1. Measure every square.
             const boxes = homeItems.map(item => {
-                const widthPct = Math.min(80, (10 + (item.size - 20) / 80 * 15) * scale);
+                const widthPct = minPct + (item.size - 20) / 80 * (maxPct - minPct);
                 const w = W * widthPct / 100;
                 item.card.style.width = w + 'px';
                 return { item, w, h: item.card.offsetHeight };
@@ -633,13 +670,38 @@
             path.setAttribute('d', d);
             svg.append(path);
 
+            // Every line ends in a black droplet: a round drop at the end, its tip flowing into the line.
+            // Find which way the line leaves each end by sampling the path around it.
+            const total = path.getTotalLength();
+            const samples = [];
+            for (let s = 0; s <= total; s += 2) samples.push({ s, p: path.getPointAtLength(s) });
+            const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+            // A drop: round at the back, with softly hollow sides that run into a fine point.
+            const droplet = r => {
+                const f = n => n.toFixed(2);
+                const k = r * 3;                         // tip, this far from the centre
+                return `M ${f(k)} 0 ` +
+                    `C ${f(k * 0.62)} ${f(-r * 0.12)} ${f(r * 0.95)} ${f(-r * 1.02)} 0 ${f(-r)} ` +
+                    `A ${r} ${r} 0 0 0 0 ${f(r)} ` +
+                    `C ${f(r * 0.95)} ${f(r * 1.02)} ${f(k * 0.62)} ${f(r * 0.12)} ${f(k)} 0 Z`;
+            };
+
             dots.forEach((p, i) => {
                 const isEnd = i === 0 || i === dots.length - 1;
-                const dot = document.createElementNS(SVG_NS, 'circle');
+                // The sample on the line closest to this end, then a point a little further along the line.
+                let best = samples[0];
+                samples.forEach(sm => { if (dist(sm.p, p) < dist(best.p, p)) best = sm; });
+                const options = [best.s - 8, best.s + 8]
+                    .filter(s => s >= 0 && s <= total)
+                    .map(s => path.getPointAtLength(s))
+                    .filter(q => dist(q, p) > 3 && dist(q, p) < 12);    // stays on this piece of line
+                const q = options[0] || { x: p.x, y: p.y - 1 };
+                const angle = Math.atan2(q.y - p.y, q.x - p.x) * 180 / Math.PI;
+
+                const dot = document.createElementNS(SVG_NS, 'path');
                 dot.setAttribute('class', 'home-path-stop' + (isEnd ? ' is-end' : ''));
-                dot.setAttribute('cx', p.x);
-                dot.setAttribute('cy', p.y);
-                dot.setAttribute('r', isEnd ? 6 : 3.5);
+                dot.setAttribute('d', droplet(isEnd ? 3.2 : 2.4));
+                dot.setAttribute('transform', `translate(${p.x} ${p.y}) rotate(${angle.toFixed(1)})`);
                 svg.append(dot);
             });
 
@@ -661,6 +723,59 @@
             }
         }).observe(document.getElementById('home-projects'));
         if (document.fonts) document.fonts.ready.then(() => layoutHome());
+
+        // ---- The name on the home page always fills the full width of the page ----
+        // Measure the name at 100px and scale it so its letters run exactly from edge to edge.
+        const fitName = () => {
+            const h1 = document.querySelector('.fit-name');
+            const text = h1 && h1.firstElementChild;
+            const width = h1 && h1.clientWidth;
+            if (!text || !width) return;
+            h1.style.fontSize = '100px';
+            const range = document.createRange();
+            range.selectNodeContents(text);
+            const measured = range.getBoundingClientRect().width;
+            if (measured) h1.style.fontSize = (100 * width / measured).toFixed(2) + 'px';
+        };
+        new ResizeObserver(fitName).observe(document.querySelector('.fit-name'));
+        if (document.fonts) document.fonts.ready.then(fitName);
+        fitName();
+
+        // ---- Sticky header: the big name on the home page dissolves softly into it while scrolling ----
+        const topBar = document.getElementById('top-bar');
+        const bigName = document.querySelector('.fit-name');
+        // Height of the soft zone under the header where the name fades out (a bit more for a bigger name).
+        const fadeLength = () => Math.min(80, Math.max(40, parseFloat(getComputedStyle(bigName).fontSize) * 0.28));
+        let headerQueued = false;
+        function updateHeaderName() {
+            headerQueued = false;
+            const onHome = document.getElementById('home').classList.contains('active');
+            if (onHome) {
+                const line = topBar.getBoundingClientRect().bottom;
+                const box = bigName.getBoundingClientRect();
+                // Where the material line is, measured inside the name.
+                const cut = line - box.top;
+                // A fixed soft zone right under the header: the letters fade as they pass through it.
+                // It never changes size, so nothing pops; at the top of the page the name sits below it.
+                const soft = fadeLength();
+                if (cut + soft > 0) {
+                    const mask = `linear-gradient(to bottom, transparent ${cut.toFixed(1)}px, #000 ${(cut + soft).toFixed(1)}px)`;
+                    bigName.style.webkitMaskImage = mask;
+                    bigName.style.maskImage = mask;
+                } else {
+                    bigName.style.webkitMaskImage = '';
+                    bigName.style.maskImage = '';
+                }
+            }
+        }
+        const queueHeaderName = () => {
+            if (!headerQueued) { headerQueued = true; requestAnimationFrame(updateHeaderName); }
+        };
+        window.addEventListener('scroll', queueHeaderName, { passive: true });
+        window.addEventListener('resize', queueHeaderName);
+        window.addEventListener('hashchange', () => setTimeout(updateHeaderName, 0));
+        if (document.fonts) document.fonts.ready.then(updateHeaderName);
+        updateHeaderName();
 
         function renderGrid() {
             const grid = document.getElementById('project-grid');
@@ -787,6 +902,9 @@
                 });
                 document.querySelectorAll('.profile-instagram').forEach(a => {
                     a.textContent = `Instagram @${handle} ↗`;
+                });
+                document.querySelectorAll('.profile-instagram-handle').forEach(a => {
+                    a.textContent = `@${handle} ↗`;
                 });
             }
         }
