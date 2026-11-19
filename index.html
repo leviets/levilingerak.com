@@ -3,11 +3,829 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Levi Design</title>
+    <meta name="description" content="Portfolio of designer Levi Lingerak.">
+    <title>Levi Lingerak — Portfolio</title>
+    <link rel="icon" type="image/png" href="Profile/Pictures/logo.png">
+    <link rel="apple-touch-icon" href="Profile/Pictures/logo.png">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h1>Levi Lingerak</h1>
-<p>Designer based in Eindhoven.</p    
+    <!-- Soft blobs in the material colours behind everything (styled in style.css). -->
+    <div class="bg-blobs" aria-hidden="true">
+        <span class="blob blob-woodwork"></span>
+        <span class="blob blob-textile"></span>
+        <span class="blob blob-metal"></span>
+        <span class="blob blob-stoneware"></span>
+        <span class="blob blob-plastics"></span>
+        <span class="blob blob-other"></span>
+    </div>
+    <header class="site-header">
+        <a class="brand" href="#home">
+            <img src="Profile/Pictures/logo.png" alt="" width="192" height="192">
+            <span class="brand-text">
+                <span class="brand-name" data-profile="name">Levi Lingerak</span>
+            </span>
+        </a>
+        <nav class="main-nav" aria-label="Main navigation">
+            <button class="nav-link active" type="button" data-page="home">Home</button>
+            <button class="nav-link" type="button" data-page="info">Info</button>
+        </nav>
+        <!-- Same size as the logo, mirrored on the right. -->
+        <a class="instagram-button" href="https://www.instagram.com/levilingerak/" target="_blank" rel="noopener" aria-label="Levi Lingerak on Instagram">
+            <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7">
+                <rect x="3" y="3" width="18" height="18" rx="5"/>
+                <circle cx="12" cy="12" r="4.2"/>
+                <circle cx="17.4" cy="6.6" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+        </a>
+    </header>
+
+    <!-- One menu item per material. Names and colours are set in CATEGORIES in the script below. -->
+    <nav class="category-nav" id="category-nav" aria-label="Work by material"></nav>
+
+    <main>
+        <section class="page active" id="home" data-page-section="home">
+            <div class="home-copy">
+                <p class="eyebrow">Designer &amp; maker · <span data-profile="location">Eindhoven, NL</span></p>
+                <h1>Levi Lingerak</h1>
+                <p class="intro" data-profile="short introduction">Walnut, beech, denim and rope — made by hand, with the joints, seams and stitches left on show.</p>
+            </div>
+
+            <div class="home-projects" id="home-projects" aria-label="Projects, newest at the top"></div>
+        </section>
+
+        <section class="page" id="category" data-page-section="category">
+            <div class="portfolio-heading">
+                <div>
+                    <p class="eyebrow">Work in</p>
+                    <h2 id="category-title"></h2>
+                </div>
+                <p class="project-count"><span id="project-count">0</span> <span id="project-count-word">projects</span></p>
+            </div>
+
+            <div class="project-grid" id="project-grid"></div>
+            <p class="category-empty" id="category-empty" hidden>No projects here yet.</p>
+        </section>
+
+        <section class="page" id="project" data-page-section="project">
+            <a class="back-link" id="detail-back" href="#home">← All projects</a>
+            <div class="detail-heading">
+                <p class="eyebrow" id="detail-meta"></p>
+                <h2 id="detail-title"></h2>
+                <p class="detail-intro" id="detail-intro"></p>
+            </div>
+            <div class="detail-body">
+                <div class="detail-text" id="detail-text"></div>
+                <dl class="detail-facts" id="detail-facts"></dl>
+            </div>
+            <div class="detail-gallery" id="detail-gallery"></div>
+            <nav class="detail-nav" aria-label="More projects">
+                <a id="detail-prev" href="#home"></a>
+                <a id="detail-next" href="#home"></a>
+            </nav>
+        </section>
+
+        <section class="page" id="info" data-page-section="info">
+            <div class="info-layout">
+                <p class="eyebrow">About</p>
+                <h2>Making useful things with a point of view.</h2>
+                <div class="info-copy">
+                    <div class="info-bio" data-profile="biography">
+                        <p>I’m Levi Lingerak, an Eindhoven-based designer and maker exploring the relationship between material, function and form.</p>
+                        <p>My work moves across wood, metal, textiles, plastics and stoneware, with an emphasis on clear ideas and hands-on experimentation.</p>
+                    </div>
+                    <p class="info-education" data-profile="education" hidden></p>
+                    <div class="contact">
+                        <span>Available for <span data-profile="available for">commissions and collaborations</span></span>
+                        <a class="profile-email" href="mailto:hello@levilingerak.nl">hello@levilingerak.nl ↗</a>
+                        <a class="profile-instagram" href="https://www.instagram.com/levilingerak/" target="_blank" rel="noopener">Instagram @levilingerak ↗</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <span>© 2026 <span data-profile="name">Levi Lingerak</span></span>
+        <a class="footer-instagram profile-instagram-plain" href="https://www.instagram.com/levilingerak/" target="_blank" rel="noopener">Instagram ↗</a>
+        <span data-profile="location">Eindhoven, NL</span>
+    </footer>
+
+    <script>
+        // ---------------------------------------------------------------
+        // Projects are listed in Projects/projects.json. Each project's
+        // text comes from Projects/<folder>/project.txt and its pictures
+        // from Projects/<folder>/Pictures/.
+        // ---------------------------------------------------------------
+        const VIDEO_EXT = /\.(mp4|webm|mov)$/i;
+        const DEFAULT_TITLE = document.title;
+
+        // The materials in the menu, in this order. "color" is used for the sewn thread and
+        // accents; "ink" is a darker shade of it that stays readable as text.
+        // "words" are other spellings accepted in project.txt.
+        const CATEGORIES = [
+            { id: 'woodwork',  name: 'Woodwork',  color: '#8a5530', ink: '#7a4626', words: ['wood', 'woodworking', 'hout'] },
+            { id: 'textile',   name: 'Textile',   color: '#2f5d93', ink: '#2a5285', words: ['textiles', 'fabric', 'denim', 'textiel'] },
+            { id: 'metal',     name: 'Metal',     color: '#7c8288', ink: '#5d6268', words: ['metals', 'metalwork', 'metaal'] },
+            { id: 'stoneware', name: 'Stoneware', color: '#5c8a52', ink: '#46713d', words: ['stone', 'ceramics', 'ceramic', 'clay', 'keramiek'] },
+            { id: 'plastics',  name: 'Plastics',  color: '#e0b02a', ink: '#946f00', words: ['plastic', 'kunststof'] },
+            { id: 'other',     name: 'Other',     color: '#c0392b', ink: '#a8301f', words: ['others', 'overig', 'anders'] }
+        ];
+        const categoryById = Object.fromEntries(CATEGORIES.map(c => [c.id, c]));
+        const PAGES = ['home', 'info', ...CATEGORIES.map(c => c.id)];
+
+        // "Textile, Woodwork" -> ['textile', 'woodwork']. Anything unknown counts as Other.
+        function parseCategories(value) {
+            const ids = [];
+            (value || '').split(/[,;\/&+]|\band\b|\ben\b/i).forEach(part => {
+                const word = part.trim().toLowerCase();
+                if (!word) return;
+                const match = CATEGORIES.find(c => c.id === word || c.name.toLowerCase() === word || c.words.includes(word));
+                const id = match ? match.id : 'other';
+                if (!ids.includes(id)) ids.push(id);
+            });
+            return ids.length ? ids : ['other'];
+        }
+
+        function setColor(el, categoryId) {
+            const category = categoryById[categoryId] || categoryById.other;
+            el.style.setProperty('--project-color', category.color);
+            el.style.setProperty('--project-ink', category.ink);
+        }
+
+        // Menu: one link per material, each in its own colour.
+        const categoryNav = document.getElementById('category-nav');
+        CATEGORIES.forEach(category => {
+            const link = document.createElement('a');
+            link.className = 'category-link';
+            link.href = '#' + category.id;
+            link.dataset.page = category.id;
+            link.textContent = category.name;
+            setColor(link, category.id);
+            categoryNav.append(link);
+        });
+
+        const navLinks = document.querySelectorAll('.nav-link, .category-link');
+        const pages = document.querySelectorAll('[data-page-section]');
+        let projects = [];
+        let projectsLoaded = false;
+
+        // ---- Routing (#home, #info, #woodwork, #textile, ..., #project/<folder>) ----
+        function route() {
+            const hash = decodeURIComponent(window.location.hash.replace('#', ''));
+            let pageName = PAGES.includes(hash) ? hash : 'home';
+            let navName = pageName;
+            document.title = DEFAULT_TITLE;
+
+            if (categoryById[pageName]) {
+                renderCategory(pageName);
+                pageName = 'category';
+            }
+
+            if (hash.startsWith('project/')) {
+                if (!projectsLoaded) return; // route() runs again once projects are loaded
+                const project = projects.find(p => p.folder === hash.slice(8));
+                if (project) {
+                    renderDetail(project);
+                    pageName = 'project';
+                    navName = project.categories[0];
+                }
+            }
+
+            pages.forEach(page => page.classList.toggle('active', page.dataset.pageSection === pageName));
+            navLinks.forEach(link => {
+                const isActive = link.dataset.page === navName;
+                link.classList.toggle('active', isActive);
+                if (isActive) link.setAttribute('aria-current', 'page');
+                else link.removeAttribute('aria-current');
+            });
+            window.scrollTo({ top: 0 });
+        }
+
+        function go(pageName) {
+            if (window.location.hash === '#' + pageName) route();
+            else window.location.hash = pageName;
+        }
+
+        document.querySelectorAll('.nav-link').forEach(link => link.addEventListener('click', () => go(link.dataset.page)));
+        window.addEventListener('hashchange', route);
+
+        // ---- Category page: every project that lists this material ----
+        function renderCategory(id) {
+            const category = categoryById[id];
+            const section = document.getElementById('category');
+            setColor(section, id);
+            document.getElementById('category-title').textContent = category.name;
+            document.title = `${category.name} — Levi Lingerak`;
+
+            let visible = 0;
+            document.querySelectorAll('#project-grid .project').forEach(card => {
+                const show = card.dataset.categories.split(' ').includes(id);
+                card.classList.toggle('hidden', !show);
+                if (show) visible++;
+            });
+            document.getElementById('project-count').textContent = visible;
+            document.getElementById('project-count-word').textContent = visible === 1 ? 'project' : 'projects';
+            document.getElementById('category-empty').hidden = visible > 0 || !projectsLoaded;
+        }
+
+        // ---- Reading project.txt / profile.txt ----
+        const PROJECT_KEYS = ['project name', 'categories', 'category', 'date', 'year', 'short description', 'detailed description',
+            'materials', 'techniques', 'dimensions', 'location', 'made for', 'collaborators', 'photography', 'link', 'size'];
+        const PROFILE_KEYS = ['name', 'tagline', 'location', 'short introduction', 'biography', 'email',
+            'instagram', 'education', 'available for'];
+
+        // "Key: value" lines for known keys. Lines starting with # are notes.
+        // Other lines continue the previous field; an empty line between them starts a new paragraph.
+        function parseInfoFile(text, keys) {
+            const data = {};
+            let current = null;
+            let paragraphBreak = false;
+            text.split(/\r?\n/).forEach(raw => {
+                const line = raw.trim();
+                if (line.startsWith('#')) return;
+                if (!line) { paragraphBreak = true; return; }
+                const m = line.match(/^([A-Za-z ]+?)\s*:\s*(.*)$/) || line.match(/^(size)\s+(.*)$/i);
+                if (m && keys.includes(m[1].trim().toLowerCase())) {
+                    current = m[1].trim().toLowerCase();
+                    data[current] = m[2].trim();
+                } else if (current) {
+                    const sep = !data[current] ? '' : paragraphBreak ? '\n\n' : ' ';
+                    data[current] += sep + line;
+                }
+                paragraphBreak = false;
+            });
+            return data;
+        }
+
+        function toParagraphs(text) {
+            return text.split(/\n{2,}/).map(part => {
+                const p = document.createElement('p');
+                p.textContent = part;
+                return p;
+            });
+        }
+
+        // Accepts DD-MM-YYYY, YYYY-MM-DD (also with / or .), or just a year.
+        function parseDate(value) {
+            if (!value) return null;
+            let m = value.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);
+            if (m) return new Date(+m[1], m[2] - 1, +m[3]).getTime();
+            m = value.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})$/);
+            if (m) return new Date(+m[3], m[2] - 1, +m[1]).getTime();
+            m = value.match(/^(\d{4})$/);
+            if (m) return new Date(+m[1], 0, 1).getTime();
+            return null;
+        }
+
+        // "12-12-2023" -> "12 Dec 2023"; a year alone stays a year.
+        function formatDate(raw, time) {
+            if (!raw) return '';
+            if (time === null || /^\d{4}$/.test(raw.trim())) return raw.trim();
+            return new Date(time).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        // Size 20-100 (%), as typed in project.txt.
+        function parseSize(value) {
+            const n = parseFloat(value);
+            return isNaN(n) ? 50 : Math.min(100, Math.max(20, n));
+        }
+
+        // Folder "paro_tee" becomes the name "Paro tee" when project.txt has no name.
+        function folderToName(folder) {
+            const name = folder.replace(/_+/g, ' ');
+            return name.charAt(0).toUpperCase() + name.slice(1);
+        }
+
+        function mediaUrl(folder, file) {
+            return encodeURI(`Projects/${folder}/Pictures/${file}`);
+        }
+
+        // Same "random" numbers for a project every visit, so the layout doesn't jump around.
+        function seededRandom(seed) {
+            let h = 2166136261;
+            for (const c of seed) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+            return () => {
+                h = Math.imul(h ^ (h >>> 15), 2246822507);
+                h = Math.imul(h ^ (h >>> 13), 3266489909);
+                return ((h ^= h >>> 16) >>> 0) / 4294967296;
+            };
+        }
+
+        async function loadProject(entry, index) {
+            let data = {};
+            try {
+                const response = await fetch(encodeURI(`Projects/${entry.folder}/project.txt`), { cache: 'no-cache' });
+                if (response.ok) data = parseInfoFile(await response.text(), PROJECT_KEYS);
+            } catch (e) { /* no project.txt: use defaults */ }
+
+            const media = (entry.media || []).map(file => ({
+                url: mediaUrl(entry.folder, file),
+                isVideo: VIDEO_EXT.test(file)
+            }));
+            const cover = media.find(m => !m.isVideo);
+            const rawDate = data['date'] || data['year'] || '';
+            const date = parseDate(rawDate);
+            const categories = parseCategories(data['categories'] || data['category']);
+            const categoryNames = categories.map(id => categoryById[id].name).join(', ');
+
+            return {
+                index,
+                folder: entry.folder,
+                name: data['project name'] || folderToName(entry.folder),
+                categories,          // the first one sets the project's colour
+                categoryNames,
+                dateText: formatDate(rawDate, date),
+                date,
+                short: data['short description'] || '',
+                detail: data['detailed description'] || '',
+                facts: [
+                    [categories.length > 1 ? 'Categories' : 'Category', categoryNames],
+                    ['Date', formatDate(rawDate, date)],
+                    ['Materials', data['materials']],
+                    ['Techniques', data['techniques']],
+                    ['Dimensions', data['dimensions']],
+                    ['Location', data['location']],
+                    ['Made for', data['made for']],
+                    ['Collaborators', data['collaborators']],
+                    ['Photography', data['photography']],
+                    ['Link', data['link']]
+                ].filter(([, value]) => value),
+                size: parseSize(data['size']),
+                cover: cover ? cover.url : null,
+                media
+            };
+        }
+
+        // ---- Rendering ----
+        function createCard(project, className) {
+            const card = document.createElement('a');
+            card.className = className;
+            card.href = '#project/' + encodeURIComponent(project.folder);
+            card.dataset.categories = project.categories.join(' ');
+            setColor(card, project.categories[0]);
+
+            const imageBox = document.createElement('div');
+            imageBox.className = 'project-image';
+            if (project.cover) {
+                const img = document.createElement('img');
+                img.src = project.cover;
+                img.alt = project.name;
+                img.loading = 'lazy';
+                img.decoding = 'async';
+                imageBox.append(img);
+            } else {
+                imageBox.classList.add('is-empty');
+            }
+
+            // Name on the left, date on the right.
+            const meta = document.createElement('div');
+            meta.className = 'project-meta';
+            const title = document.createElement('h3');
+            title.textContent = project.name;
+            const date = document.createElement('span');
+            date.textContent = project.dateText;
+            meta.append(title, date);
+
+            card.append(imageBox, meta);
+            card.addEventListener('mouseenter', () => startStitching(imageBox));
+            card.addEventListener('focus', () => startStitching(imageBox));
+            card.addEventListener('mouseleave', () => stopStitching(imageBox));
+            card.addEventListener('blur', () => stopStitching(imageBox));
+            return card;
+        }
+
+        // ---- Hover: a line in the project's colour is drawn around the picture ----
+        const DRAW_SPEED = 55;   // pixels of line per second
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        let stitchCount = 0;
+
+        function startStitching(imageBox) {
+            stopStitching(imageBox, true);
+            const w = imageBox.clientWidth;
+            const h = imageBox.clientHeight;
+            if (!w || !h) return;
+
+            const inset = 10;
+            const d = `M ${inset} ${inset} H ${w - inset} V ${h - inset} H ${inset} Z`;
+            const length = 2 * (w + h - 4 * inset);
+            const id = 'stitch-' + (++stitchCount);
+
+            const svg = document.createElementNS(SVG_NS, 'svg');
+            svg.setAttribute('class', 'stitch');
+            svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+            svg.setAttribute('aria-hidden', 'true');
+
+            if (reduceMotion) {
+                svg.innerHTML = `<path class="stitch-thread" d="${d}"/>`;
+                imageBox.append(svg);
+                return;
+            }
+
+            // A stroke along the same rectangle uncovers the line bit by bit.
+            svg.innerHTML = `
+                <defs>
+                    <mask id="${id}" maskUnits="userSpaceOnUse" x="-20" y="-20" width="${w + 40}" height="${h + 40}">
+                        <path class="stitch-reveal" d="${d}" fill="none" stroke="#fff" stroke-width="6"
+                              stroke-dasharray="${length} ${length}" stroke-dashoffset="${length}"/>
+                    </mask>
+                </defs>
+                <path class="stitch-thread" d="${d}" mask="url(#${id})"/>`;
+            imageBox.append(svg);
+
+            const reveal = svg.querySelector('.stitch-reveal');
+            let startTime = null;
+
+            const frame = now => {
+                if (startTime === null) startTime = now;   // count from the first frame
+                const drawn = Math.min(length, Math.max(0, (now - startTime) / 1000 * DRAW_SPEED));
+                reveal.setAttribute('stroke-dashoffset', length - drawn);
+                if (drawn < length) imageBox._stitchFrame = requestAnimationFrame(frame);
+            };
+            imageBox._stitchFrame = requestAnimationFrame(frame);
+        }
+
+        function stopStitching(imageBox, immediately = false) {
+            cancelAnimationFrame(imageBox._stitchFrame);
+            imageBox.querySelectorAll('.stitch').forEach(svg => {
+                if (immediately) return svg.remove();
+                svg.classList.add('is-leaving');
+                setTimeout(() => svg.remove(), 350);
+            });
+        }
+
+        // Home: a map-like trail. The oldest project is at the bottom ("Start"); a stitched path
+        // swings left and right, up from project to project, to the newest one at the top.
+        // Size 20 -> a square a tenth of the page wide, 100 -> a quarter (bigger on phones).
+        const SVG_NS = 'http://www.w3.org/2000/svg';
+        let homeItems = [];
+
+        // Top of the path: today's date, e.g. "19 Nov 2026".
+        function todayText() {
+            return new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        // Keeps the date right: changes it at midnight, and when someone comes back to a tab
+        // that was left open overnight.
+        function updateToday() {
+            const label = document.querySelector('.path-end');
+            if (label) label.textContent = todayText();
+        }
+        (function scheduleMidnight() {
+            const now = new Date();
+            const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5);
+            setTimeout(() => { updateToday(); scheduleMidnight(); }, midnight - now);
+        })();
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) updateToday();
+        });
+
+        function renderHome() {
+            const container = document.getElementById('home-projects');
+            container.innerHTML = '';
+
+            const svg = document.createElementNS(SVG_NS, 'svg');
+            svg.setAttribute('class', 'home-path');
+            svg.setAttribute('aria-hidden', 'true');
+            container.append(svg);
+
+            const oldest = projects[projects.length - 1];
+            const startLabel = document.createElement('p');
+            startLabel.className = 'path-label path-start';
+            const oldestYear = oldest && oldest.dateText ? oldest.dateText.match(/\d{4}/) : null;
+            startLabel.textContent = 'Start' + (oldestYear ? ' · ' + oldestYear[0] : '');
+            const endLabel = document.createElement('p');
+            endLabel.className = 'path-label path-end';
+            endLabel.textContent = todayText();     // today's date, kept up to date by updateToday()
+            container.append(startLabel, endLabel);
+
+            homeItems = projects.map(project => {
+                const random = seededRandom(project.folder);
+                const card = createCard(project, 'home-project');
+                card.style.setProperty('--tilt', ((random() - 0.5) * 5).toFixed(2) + 'deg');
+                card.style.setProperty('--sway-delay', (-random() * 3).toFixed(2) + 's');
+                container.append(card);
+                return { card, size: project.size, swing: random(), spacing: random() };
+            });
+
+            layoutHome();
+        }
+
+        // Fills the page row by row with as many projects as fit, newest first. Rows snake like a
+        // road on a map (left -> right, down, right -> left, ...), so older work keeps going down
+        // the page however many projects there are. The path is drawn from the oldest ("Start")
+        // to the newest.
+        function layoutHome() {
+            const container = document.getElementById('home-projects');
+            const W = container.clientWidth;
+            if (!W || !homeItems.length) return;
+
+            const scale = W < 440 ? 3.4 : W < 760 ? 2.4 : 1;
+            const top = 70;                          // room for today's date at the top
+            const gapX = Math.max(44, W * 0.035);    // room between neighbours (for the path)
+            const gapY = scale > 1 ? 58 : 66;        // room between rows (for the path)
+
+            // 1. Measure every square.
+            const boxes = homeItems.map(item => {
+                const widthPct = Math.min(80, (10 + (item.size - 20) / 80 * 15) * scale);
+                const w = W * widthPct / 100;
+                item.card.style.width = w + 'px';
+                return { item, w, h: item.card.offsetHeight };
+            });
+
+            // 2. Split into rows: as many as fit next to each other.
+            const rows = [];
+            let row = [];
+            let used = 0;
+            boxes.forEach(box => {
+                const needed = row.length ? used + gapX + box.w : box.w;
+                if (row.length && needed > W) {
+                    rows.push(row);
+                    row = [];
+                    used = 0;
+                }
+                used = row.length ? used + gapX + box.w : box.w;
+                row.push(box);
+            });
+            if (row.length) rows.push(row);
+
+            // 3. Place each row. Even rows run left -> right, odd rows right -> left.
+            let y = top;
+            rows.forEach((rowBoxes, r) => {
+                const total = rowBoxes.reduce((sum, b) => sum + b.w, 0);
+                const isLast = r === rows.length - 1;
+                // Full rows spread out over the whole width; the last row keeps normal spacing.
+                const gap = rowBoxes.length > 1 && !isLast
+                    ? Math.max(gapX, (W - total) / (rowBoxes.length - 1))
+                    : gapX;
+                const rowHeight = Math.max(...rowBoxes.map(b => b.h));
+                const ltr = r % 2 === 0;
+                let x = ltr ? 0 : W;
+                rowBoxes.forEach(box => {
+                    // A little up/down variation inside the row keeps it organic.
+                    const drop = (rowHeight - box.h) * box.item.swing * 0.85 + box.item.spacing * 14;
+                    box.x = ltr ? x : x - box.w;
+                    box.y = y + drop;
+                    box.row = r;
+                    x = ltr ? x + box.w + gap : x - box.w - gap;
+                    box.item.card.style.left = box.x + 'px';
+                    box.item.card.style.top = box.y + 'px';
+                });
+                y += rowHeight + 14 + gapY;
+            });
+
+            const bottom = Math.max(...boxes.map(b => b.y + b.h));
+            const height = bottom + 120;             // room for the "Start" label
+            container.style.height = height + 'px';
+
+            // 4. The path, from the oldest (Start) up to the newest.
+            const cx = b => b.x + b.w / 2;
+            const midY = b => b.y + b.w / 2;         // middle of the square picture
+            const vertical = (a, b, swing = true) => {
+                const k = (a.y - b.y) * 0.95;
+                const s = swing ? Math.sign(b.x - a.x || 1) * Math.min(W * 0.04, 40) : 0;
+                return `C ${a.x - s} ${a.y - k} ${b.x + s} ${b.y + k} ${b.x} ${b.y}`;
+            };
+            const sideways = (a, b) => {
+                const half = (b.x - a.x) * 0.5;
+                return `C ${a.x + half} ${a.y} ${b.x - half} ${b.y} ${b.x} ${b.y}`;
+            };
+
+            const oldest = boxes[boxes.length - 1];
+            const start = { x: cx(oldest), y: oldest.y + oldest.h + 56 };
+            const end = { x: cx(boxes[0]), y: 26 };
+            const oldestStop = { x: cx(oldest), y: oldest.y + oldest.h + 14 };
+
+            let d = `M ${start.x} ${start.y} L ${oldestStop.x} ${oldestStop.y} `;
+            const dots = [start, oldestStop];
+
+            for (let i = boxes.length - 1; i > 0; i--) {
+                const A = boxes[i];       // older
+                const B = boxes[i - 1];   // newer
+                let a, b, segment;
+                if (A.row === B.row) {
+                    // Same row: across from A's facing edge to B's facing edge.
+                    const toLeft = cx(A) > cx(B);
+                    a = { x: toLeft ? A.x - 14 : A.x + A.w + 14, y: midY(A) };
+                    b = { x: toLeft ? B.x + B.w + 14 : B.x - 14, y: midY(B) };
+                    segment = sideways(a, b);
+                } else {
+                    // Next row up: from the top of A to below B's name and date.
+                    a = { x: cx(A), y: A.y - 14 };
+                    b = { x: cx(B), y: B.y + B.h + 14 };
+                    segment = vertical(a, b);
+                }
+                d += `M ${a.x} ${a.y} ${segment} `;
+                dots.push(a, b);
+            }
+
+            const newestStop = { x: cx(boxes[0]), y: boxes[0].y - 14 };
+            d += `M ${newestStop.x} ${newestStop.y} L ${end.x} ${end.y}`;
+            dots.push(newestStop, end);
+
+            const svg = container.querySelector('.home-path');
+            svg.setAttribute('viewBox', `0 0 ${W} ${height}`);
+            svg.replaceChildren();
+
+            // The path from the oldest to the newest, in pieces between the pictures.
+            const path = document.createElementNS(SVG_NS, 'path');
+            path.setAttribute('class', 'home-path-line');
+            path.setAttribute('d', d);
+            svg.append(path);
+
+            dots.forEach((p, i) => {
+                const isEnd = i === 0 || i === dots.length - 1;
+                const dot = document.createElementNS(SVG_NS, 'circle');
+                dot.setAttribute('class', 'home-path-stop' + (isEnd ? ' is-end' : ''));
+                dot.setAttribute('cx', p.x);
+                dot.setAttribute('cy', p.y);
+                dot.setAttribute('r', isEnd ? 6 : 3.5);
+                svg.append(dot);
+            });
+
+            const startLabel = container.querySelector('.path-start');
+            startLabel.style.left = start.x + 'px';
+            startLabel.style.top = (start.y + 14) + 'px';
+            const endLabel = container.querySelector('.path-end');
+            endLabel.style.left = end.x + 'px';
+            endLabel.style.top = '0px';
+        }
+
+        // Re-draw the trail when the page width changes, the home page becomes visible, or fonts load.
+        let lastHomeWidth = 0;
+        new ResizeObserver(entries => {
+            const width = Math.round(entries[0].contentRect.width);
+            if (width !== lastHomeWidth) {
+                lastHomeWidth = width;
+                layoutHome();
+            }
+        }).observe(document.getElementById('home-projects'));
+        if (document.fonts) document.fonts.ready.then(() => layoutHome());
+
+        function renderGrid() {
+            const grid = document.getElementById('project-grid');
+            grid.innerHTML = '';
+            projects.forEach(project => grid.append(createCard(project, 'project')));
+        }
+
+        function renderDetail(project) {
+            setColor(document.getElementById('project'), project.categories[0]);
+            const back = document.getElementById('detail-back');
+            const main = categoryById[project.categories[0]];
+            back.href = '#' + main.id;
+            back.textContent = '← All ' + main.name.toLowerCase();
+            document.getElementById('detail-meta').textContent = [project.categoryNames, project.dateText].filter(Boolean).join(' · ');
+            document.getElementById('detail-title').textContent = project.name;
+            document.getElementById('detail-intro').textContent = project.short;
+            document.title = `${project.name} — Levi Lingerak`;
+
+            const text = document.getElementById('detail-text');
+            text.innerHTML = '';
+            if (project.detail) text.append(...toParagraphs(project.detail));
+
+            const facts = document.getElementById('detail-facts');
+            facts.innerHTML = '';
+            project.facts.forEach(([label, value]) => {
+                const dt = document.createElement('dt');
+                dt.textContent = label;
+                const dd = document.createElement('dd');
+                if (label === 'Link' && /^https?:\/\//i.test(value)) {
+                    const a = document.createElement('a');
+                    a.href = value;
+                    a.target = '_blank';
+                    a.rel = 'noopener';
+                    a.textContent = value.replace(/^https?:\/\/(www\.)?/i, '') + ' ↗';
+                    dd.append(a);
+                } else {
+                    dd.textContent = value;
+                }
+                facts.append(dt, dd);
+            });
+
+            const gallery = document.getElementById('detail-gallery');
+            gallery.innerHTML = '';
+            project.media.forEach((item, i) => {
+                const figure = document.createElement('figure');
+                if (item.isVideo) {
+                    const video = document.createElement('video');
+                    video.src = item.url;
+                    video.controls = true;
+                    video.playsInline = true;
+                    video.preload = 'metadata';
+                    figure.append(video);
+                    figure.className = 'is-wide';
+                } else {
+                    const img = document.createElement('img');
+                    img.src = item.url;
+                    img.alt = `${project.name} — image ${i + 1}`;
+                    img.loading = i < 2 ? 'eager' : 'lazy';
+                    img.decoding = 'async';
+                    figure.append(img);
+                    if (i === 0) figure.className = 'is-wide is-cover';
+                }
+                gallery.append(figure);
+            });
+
+            const i = projects.indexOf(project);
+            const prev = projects[(i - 1 + projects.length) % projects.length];
+            const next = projects[(i + 1) % projects.length];
+            const prevLink = document.getElementById('detail-prev');
+            const nextLink = document.getElementById('detail-next');
+            prevLink.href = '#project/' + encodeURIComponent(prev.folder);
+            prevLink.textContent = '← ' + prev.name;
+            nextLink.href = '#project/' + encodeURIComponent(next.folder);
+            nextLink.textContent = next.name + ' →';
+        }
+
+        async function loadProjects() {
+            let list = [];
+            try {
+                const response = await fetch('Projects/projects.json', { cache: 'no-cache' });
+                list = (await response.json()).projects || [];
+            } catch (e) {
+                console.error('Could not load Projects/projects.json', e);
+            }
+
+            projects = await Promise.all(list.map(loadProject));
+            // Newest first; projects without a date keep their order from projects.json.
+            projects.sort((a, b) => (b.date ?? -Infinity) - (a.date ?? -Infinity) || a.index - b.index);
+            projectsLoaded = true;
+
+            renderHome();
+            renderGrid();
+            route();
+        }
+
+        // ---- Profile (Profile/profile.txt). Empty fields keep the text already on the page. ----
+        async function loadProfile() {
+            let data;
+            try {
+                const response = await fetch('Profile/profile.txt', { cache: 'no-cache' });
+                if (!response.ok) return;
+                data = parseInfoFile(await response.text(), PROFILE_KEYS);
+            } catch (e) { return; }
+
+            document.querySelectorAll('[data-profile]').forEach(el => {
+                const value = data[el.dataset.profile];
+                if (!value) return;
+                if (el.dataset.profile === 'biography') el.replaceChildren(...toParagraphs(value));
+                else el.textContent = value;
+                el.hidden = false;
+            });
+
+            if (data['email']) {
+                document.querySelectorAll('.profile-email').forEach(a => {
+                    a.href = 'mailto:' + data['email'];
+                    a.textContent = data['email'] + ' ↗';
+                });
+            }
+
+            const handle = (data['instagram'] || '').replace(/^@/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/\/+$/, '');
+            if (handle) {
+                document.querySelectorAll('a[href*="instagram.com"]').forEach(a => {
+                    a.href = `https://www.instagram.com/${encodeURIComponent(handle)}/`;
+                });
+                document.querySelectorAll('.profile-instagram').forEach(a => {
+                    a.textContent = `Instagram @${handle} ↗`;
+                });
+            }
+        }
+
+        // ---- Background blobs float along while you scroll ----
+        // Each blob sways in its own direction and at its own pace, so they move past each
+        // other. They swing back and forth instead of sliding away, so even on a long page
+        // they stay in view.
+        if (!reduceMotion) {
+            const blobs = [...document.querySelectorAll('.blob')].map((el, i) => ({
+                el,
+                speed: 0.0011 + i * 0.00023,       // how fast it sways per pixel scrolled
+                phase: i * 1.7,                     // where in its swing it starts
+                rangeY: 14 + (i % 3) * 6,           // up/down reach, in % of the screen height
+                rangeX: 6 + ((i + 1) % 3) * 4       // sideways reach, in % of the screen width
+            }));
+            let scrollQueued = false;
+            const moveBlobs = () => {
+                scrollQueued = false;
+                const y = window.scrollY;
+                blobs.forEach(b => {
+                    const a = y * b.speed + b.phase;
+                    const dy = (Math.sin(a) - Math.sin(b.phase)) * b.rangeY;
+                    const dx = (Math.cos(a * 0.8) - Math.cos(b.phase * 0.8)) * b.rangeX;
+                    b.el.style.translate = `${dx.toFixed(2)}vw ${dy.toFixed(2)}vh`;
+                });
+            };
+            window.addEventListener('scroll', () => {
+                if (!scrollQueued) {
+                    scrollQueued = true;
+                    requestAnimationFrame(moveBlobs);
+                }
+            }, { passive: true });
+            moveBlobs();
+        }
+
+        route();
+        loadProfile();
+        loadProjects();
+    </script>
 </body>
 </html>

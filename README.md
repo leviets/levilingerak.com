@@ -1,2 +1,3 @@
 # leviets.github.io
-Not Yet
+
+Portfolio website for Levi Lingerak: https://levilingerak.com

@@ -1,0 +1,31 @@
+# ================================================================
+#  PROFILE INFO for the website
+#  - Write after the colon. Empty fields keep the text that is
+#    currently on the site.
+#  - Lines starting with # are notes for you; the site ignores them.
+#  - A long text may continue on the next lines (no colon needed).
+# ================================================================
+
+Name: Levi Lingerak
+
+Location: Eindhoven, NL
+# Shown on the home page and in the footer.
+
+Short introduction: Walnut, beech, denim and rope - made by hand, with the joints, seams and stitches left on show.
+# One or two sentences on the home page, under your name.
+
+Biography:
+# A longer text about you for the Info page.
+# Tip: who you are, what you make, how you work.
+
+Email: hello@levilingerak.nl
+# Check this address - the website domain is levilingerak.com.
+
+Instagram: levilingerak
+# Just the account name, without @.
+
+Education:
+# e.g. Design Academy Eindhoven, 2022 - now
+
+Available for:
+# e.g. Commissions, collaborations, internships

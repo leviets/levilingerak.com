@@ -1,0 +1,59 @@
+# ================================================================
+#  PROJECT INFO for the website
+#  - Write after the colon. Empty fields are simply not shown.
+#  - Lines starting with # are notes for you; the site ignores them.
+#  - A long text may continue on the next lines (no colon needed).
+# ================================================================
+# (Filled in by Claude from your School/Portfolio files - check and change anything.)
+
+Project name: Brain Knob
+# Leave empty to use the folder name.
+
+Categories: Plastics
+# Choose from: Woodwork, Textile, Metal, Stoneware, Plastics, Other
+# Several are allowed, separated by commas, e.g. "Textile, Woodwork".
+# The project then shows up under each of them in the menu.
+# The FIRST one sets the project's colour (the line around the picture):
+# Woodwork = brown, Textile = blue, Metal = grey, Stoneware = green,
+# Plastics = yellow, Other = red.
+
+Date: 16-06-2025
+# DD-MM-YYYY. Shown right under the picture. Newest projects come first.
+# (Taken from the photo files - change it if the project is from another date.)
+
+Short description: A door knob in the shape of a brain, made from dried noodles set in silicone.
+# One sentence, shown at the top of the project page.
+
+Detailed description: I experimented with many materials in plastic: noodles, paint, Barbie hair, origami, popcorn, beads, plastic shards and more. The noodles looked like a brain, so the knob became one, designed for a science lab.
+
+The noodles were cooked in painted water, dried in the oven, poured into a two-part brain mould and dried for about two days at 50 degrees. The result is set in two layers of silicone; a second version became a mould for a solid plastic knob, painted red. One of them is now the door knob of my room.
+# The story of the project: idea, process, what you learned.
+
+Materials: Noodles, silicone, Acrylic One, Smooth-Cast 300
+# e.g. Walnut, beech, brass
+
+Techniques: Mould making, casting
+# e.g. Hand-cut joinery, machine stitching, 3D printing
+
+Dimensions:
+# e.g. 40 x 30 x 25 cm
+
+Location: School
+# Where it was made, e.g. Eindhoven / name of school or workshop
+
+Made for: School assignment (year 1)
+# e.g. School assignment, client, exhibition, personal project
+
+Collaborators:
+# People who helped, e.g. Model: Name, Styling: Name
+
+Photography:
+# Who took the pictures
+
+Link:
+# Optional web address, e.g. a shop page or article (start with https://)
+
+# ---------------- HOME PAGE ----------------
+Size: 45%
+# Size of the picture on the home page, from 20% to 100%.
+# 100% = a quarter of the page width, 20% = a tenth of the page width.

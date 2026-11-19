@@ -1,0 +1,57 @@
+# ================================================================
+#  PROJECT INFO for the website
+#  - Write after the colon. Empty fields are simply not shown.
+#  - Lines starting with # are notes for you; the site ignores them.
+#  - A long text may continue on the next lines (no colon needed).
+# ================================================================
+# (Filled in by Claude from your School/Portfolio files - check and change anything.)
+
+Project name: GOLE Studio
+# Leave empty to use the folder name.
+
+Categories: Other
+# Choose from: Woodwork, Textile, Metal, Stoneware, Plastics, Other
+# Several are allowed, separated by commas, e.g. "Textile, Woodwork".
+# The project then shows up under each of them in the menu.
+# The FIRST one sets the project's colour (the line around the picture):
+# Woodwork = brown, Textile = blue, Metal = grey, Stoneware = green,
+# Plastics = yellow, Other = red.
+
+Date: 19-12-2023
+# DD-MM-YYYY. Shown right under the picture. Newest projects come first.
+# (Taken from the photo files - change it if the project is from another date.)
+
+Short description: Jewellery for my own small label: a necklace, a bracelet and earrings built from small white blocks.
+# One sentence, shown at the top of the project page.
+
+Detailed description: GOLE Studio was my plan for a small jewellery label. The pieces are built from small white blocks, with stainless-steel chain and earring pins. I worked out the costs (under a euro to make, around 20 euros for a bracelet), the packaging and a logo, and photographed the necklace, bracelet and earrings.
+# The story of the project: idea, process, what you learned.
+
+Materials: White blocks, stainless steel
+# e.g. Walnut, beech, brass
+
+Techniques: Product development, branding
+# e.g. Hand-cut joinery, machine stitching, 3D printing
+
+Dimensions:
+# e.g. 40 x 30 x 25 cm
+
+Location:
+# Where it was made, e.g. Eindhoven / name of school or workshop
+
+Made for: My own label
+# e.g. School assignment, client, exhibition, personal project
+
+Collaborators:
+# People who helped, e.g. Model: Name, Styling: Name
+
+Photography:
+# Who took the pictures
+
+Link:
+# Optional web address, e.g. a shop page or article (start with https://)
+
+# ---------------- HOME PAGE ----------------
+Size: 45%
+# Size of the picture on the home page, from 20% to 100%.
+# 100% = a quarter of the page width, 20% = a tenth of the page width.

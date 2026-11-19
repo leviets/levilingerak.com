@@ -1,0 +1,58 @@
+# ================================================================
+#  PROJECT INFO for the website
+#  - Write after the colon. Empty fields are simply not shown.
+#  - Lines starting with # are notes for you; the site ignores them.
+#  - A long text may continue on the next lines (no colon needed).
+# ================================================================
+
+Project name: 
+# Leave empty to use the folder name.
+
+Categories: Textile
+# Choose from: Woodwork, Textile, Metal, Stoneware, Plastics, Other
+# Several are allowed, separated by commas, e.g. "Textile, Woodwork".
+# The project then shows up under each of them in the menu.
+# The FIRST one sets the project's colour (the sewn thread on the home page):
+# Woodwork = brown, Textile = blue, Metal = grey, Stoneware = green,
+# Plastics = yellow, Other = red.
+# (Placeholder - change it to the real materials.)
+
+Date: 19-12-2023
+# DD-MM-YYYY. Shown right under the picture. Newest projects come first.
+# (Placeholder date - change it to the real one.)
+
+Short description:
+# One sentence, shown at the top of the project page.
+
+Detailed description:
+# The story of the project: idea, process, what you learned.
+
+Materials:
+# e.g. Walnut, beech, brass
+
+Techniques:
+# e.g. Hand-cut joinery, machine stitching, 3D printing
+
+Dimensions:
+# e.g. 40 x 30 x 25 cm
+
+Location:
+# Where it was made, e.g. Eindhoven / name of school or workshop
+
+Made for:
+# e.g. School assignment, client, exhibition, personal project
+
+Collaborators:
+# People who helped, e.g. Model: Name, Styling: Name
+
+Photography:
+# Who took the pictures
+
+Link:
+# Optional web address, e.g. a shop page or article (start with https://)
+
+# ---------------- HOME PAGE ----------------
+Size: 30%
+# Size of the picture on the home page, from 20% to 100%.
+# 100% = a quarter of the page width, 20% = a tenth of the page width.
+# (Placeholder size - change it to what you like.)
