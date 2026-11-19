@@ -1,0 +1,132 @@
+/* ================================================================
+   Designed project pages (Projects/<folder>/layout.json).
+   Used by the site (index.html) AND by the Site Editor, so the editor
+   shows exactly what the site will show.
+
+   The page is a stack of bands:
+   - split band: a left and a right half, each its own grid of 6 columns;
+   - full band:  one grid of 12 columns across the whole width
+                 (a big picture or a big title).
+   On phones the two halves of a split band go under each other, each
+   filling the width; everything inside a half keeps its arrangement.
+   All sizes are measured in the width of the half (or band), so a
+   layout scales as one piece.
+   ================================================================ */
+
+.lp-page {
+  container-type: inline-size;
+}
+
+.lp-band {
+  margin-bottom: 2.4cqi;              /* space between bands = two gutters */
+}
+
+.lp-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: 1.2cqi;                 /* the gap between the halves = the gutter */
+}
+
+.lp-half {
+  container-type: inline-size;
+  min-width: 0;
+}
+
+/* Inside a half: 6 columns. 1u = 1% of the half's width. */
+.lp-grid {
+  --u: 1cqi;
+  --lp-gap: calc(2.4 * var(--u));
+  --lp-row: calc((100cqi - 5 * var(--lp-gap)) / 24);   /* a quarter of a column high (fine, so every picture proportion fits closely) */
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--lp-gap);
+  grid-auto-rows: minmax(var(--lp-row), auto);
+  position: relative;
+}
+
+/* Across the whole width: 12 columns, and the same sizes as in a half. */
+.lp-full .lp-grid {
+  --u: 0.5cqi;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  --lp-row: calc((100cqi - 11 * var(--lp-gap)) / 48);
+}
+
+.lp-block {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Titles: the Levilingerak font, in four sizes. */
+.lp-block h2 {
+  margin: 0;
+  font-family: "Levilingerak", "Arial Black", sans-serif;
+  font-weight: normal;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  overflow-wrap: anywhere;
+}
+.lp-size-s h2  { font-size: calc(5 * var(--u)); }
+.lp-size-m h2  { font-size: calc(8 * var(--u)); }
+.lp-size-l h2  { font-size: calc(12 * var(--u)); }
+.lp-size-xl h2 { font-size: calc(17 * var(--u)); }
+
+/* Texts: Jost, in three sizes (never smaller than readable on a phone). */
+.lp-text-body p {
+  margin: 0 0 0.9em;
+  line-height: 1.55;
+}
+.lp-text-body p:last-child { margin-bottom: 0; }
+.lp-size-s .lp-text-body { font-size: max(13px, calc(2.5 * var(--u))); }
+.lp-size-m .lp-text-body { font-size: max(15px, calc(3 * var(--u))); }
+.lp-size-l .lp-text-body { font-size: max(17px, calc(3.8 * var(--u))); line-height: 1.4; }
+
+/* Pictures fill their block: cropped to it, never with bars. */
+/* A picture always keeps its proportion (square, 4:3, 3:4, 16:9 or 9:16): its height comes from its width.
+   The rows it spans only reserve the room for it. */
+.lp-picture[style*="--ratio"] {
+  align-self: start;
+  aspect-ratio: var(--ratio);
+}
+
+.lp-picture img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.lp-picture.is-empty {
+  background: repeating-linear-gradient(45deg, rgba(31, 24, 19, 0.06) 0 10px, rgba(31, 24, 19, 0.02) 10px 20px);
+}
+
+/* The facts list (materials, techniques, ...). */
+.lp-facts dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.55em 1.4em;
+  margin: 0;
+  font-size: max(13px, calc(2.4 * var(--u)));
+}
+.lp-facts dt {
+  font-size: 0.78em;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--project-ink, rgba(31, 24, 19, 0.62));
+  padding-top: 0.15em;
+}
+.lp-facts dd { margin: 0; }
+.lp-facts a { color: inherit; }
+
+/* Phones: the two halves of a split band under each other. */
+@media (max-width: 760px) {
+  .lp-split {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 2.4cqi;
+  }
+}
+.lp-page.is-phone .lp-split {          /* the editor's phone preview */
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 2.4cqi;
+}

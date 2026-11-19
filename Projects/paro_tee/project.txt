@@ -9,12 +9,12 @@ Project name:
 # Leave empty to use the folder name.
 
 Categories: Textile
-# Choose from: Woodwork, Textile, Metal, Stoneware, Plastics, Other
-# Several are allowed, separated by commas, e.g. "Textile, Woodwork".
+# Choose from: Wood, Plastic, Metal, Stone, Textile, Other
+# Several are allowed, separated by commas, e.g. "Textile, Wood".
 # The project then shows up under each of them in the menu.
 # The FIRST one sets the project's colour (the sewn thread on the home page):
-# Woodwork = brown, Textile = blue, Metal = grey, Stoneware = green,
-# Plastics = yellow, Other = red.
+# Wood = brown, Plastic = yellow, Metal = grey, Stone = green,
+# Textile = blue, Other = red.
 # (Placeholder - change it to the real materials.)
 
 Date: 19-12-2023
@@ -54,5 +54,5 @@ Link:
 # ---------------- HOME PAGE ----------------
 Size: 30%
 # Size of the picture on the home page, from 20% to 100%.
-# 100% = a quarter of the page width on a computer, 20% = a twentieth (very small).
+# 100% = half the page width on a computer, 20% = a twentieth (very small).
 # (Placeholder size - change it to what you like.)

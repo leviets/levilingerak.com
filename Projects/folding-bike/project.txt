@@ -4,22 +4,20 @@
 #  - Lines starting with # are notes for you; the site ignores them.
 #  - A long text may continue on the next lines (no colon needed).
 # ================================================================
-# (Filled in by Claude from your School/Portfolio files - check and change anything.)
 
 Project name: Folding Bike
 # Leave empty to use the folder name.
 
-Categories: Metal
-# Choose from: Woodwork, Textile, Metal, Stoneware, Plastics, Other
-# Several are allowed, separated by commas, e.g. "Textile, Woodwork".
+Categories: Other, Plastic
+# Choose from: Wood, Plastic, Metal, Stone, Textile, Other
+# Several are allowed, separated by commas, e.g. "Textile, Wood".
 # The project then shows up under each of them in the menu.
 # The FIRST one sets the project's colour (the line around the picture):
-# Woodwork = brown, Textile = blue, Metal = grey, Stoneware = green,
-# Plastics = yellow, Other = red.
+# Wood = brown, Plastic = yellow, Metal = grey, Stone = green,
+# Textile = blue, Other = red.
 
 Date: 21-12-2023
 # DD-MM-YYYY. Shown right under the picture. Newest projects come first.
-# (Taken from the photo files - change it if the project is from another date.)
 
 Short description: A vintage blue folding bike with chrome details, photographed in the studio.
 # One sentence, shown at the top of the project page.
@@ -52,6 +50,16 @@ Link:
 # Optional web address, e.g. a shop page or article (start with https://)
 
 # ---------------- HOME PAGE ----------------
-Size: 50%
+Size: 40%
 # Size of the picture on the home page, from 20% to 100%.
 # 100% = a quarter of the page width on a computer, 20% = a twentieth (very small).
+
+# ---------------- PICTURE TEXTS ----------------
+# A short text per picture: what it shows. Used as the picture's description
+# on the site (and, if turned on, shown under the picture).
+Picture folding-bike6.jpg: *Photo studio in the living room (sorry mom)
+Picture folding-bike7.jpg:
+Picture folding-bike8.jpg:
+Picture folding-bike9.jpg:
+Picture folding-bike10.jpg:
+Picture folding-bike11.jpg:

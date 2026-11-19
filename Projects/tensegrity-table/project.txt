@@ -4,22 +4,20 @@
 #  - Lines starting with # are notes for you; the site ignores them.
 #  - A long text may continue on the next lines (no colon needed).
 # ================================================================
-# (Filled in by Claude from your School/Portfolio files - check and change anything.)
 
-Project name: Tensegrity Table
+Project name: Yanci
 # Leave empty to use the folder name.
 
-Categories: Woodwork
-# Choose from: Woodwork, Textile, Metal, Stoneware, Plastics, Other
-# Several are allowed, separated by commas, e.g. "Textile, Woodwork".
+Categories: Wood
+# Choose from: Wood, Plastic, Metal, Stone, Textile, Other
+# Several are allowed, separated by commas, e.g. "Textile, Wood".
 # The project then shows up under each of them in the menu.
 # The FIRST one sets the project's colour (the line around the picture):
-# Woodwork = brown, Textile = blue, Metal = grey, Stoneware = green,
-# Plastics = yellow, Other = red.
+# Wood = brown, Plastic = yellow, Metal = grey, Stone = green,
+# Textile = blue, Other = red.
 
-Date: 11-01-2024
+Date: 08-06-2022
 # DD-MM-YYYY. Shown right under the picture. Newest projects come first.
-# (Taken from the photo files - change it if the project is from another date.)
 
 Short description: A side table that seems to float: the top hangs on thin cables and is held up by tension.
 # One sentence, shown at the top of the project page.
@@ -52,6 +50,17 @@ Link:
 # Optional web address, e.g. a shop page or article (start with https://)
 
 # ---------------- HOME PAGE ----------------
-Size: 80%
+Size: 75%
 # Size of the picture on the home page, from 20% to 100%.
-# 100% = a quarter of the page width on a computer, 20% = a twentieth (very small).
+# 100% = half the page width on a computer, 20% = a twentieth (very small).
+
+# ---------------- PICTURE TEXTS ----------------
+# A short text per picture: what it shows. Used as the picture's description
+# on the site (and, if turned on, shown under the picture).
+Picture tensegrity-table8.jpg:
+Picture tensegrity-table9.jpg:
+Picture tensegrity-table10.jpg:
+Picture tensegrity-table11.jpg:
+Picture tensegrity-table12.jpg:
+Picture tensegrity-table13.jpg:
+Picture tensegrity-table14.jpg:

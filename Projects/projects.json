@@ -1,101 +1,192 @@
 {
-  "_help": "List every project folder here. 'media' are the files in that folder's Pictures/ folder, in the order they should appear. The first image is the cover. Videos (.mp4/.webm) are allowed.",
+  "_help": "List every project folder here. 'media' are the files in that folder's Pictures/ folder, in the order they should appear. The first image is the cover; 'frame' is the shape of its picture (1:1, 4:3, 3:4, 16:9 or 9:16); 'page': false means it has no page of its own and can't be clicked; 'type': 'event' marks an event (no material, not on the material pages). Videos (.mp4/.webm) are allowed.",
   "projects": [
     {
       "folder": "dion",
-      "media": ["dion1.jpg", "dion2.jpg", "dion3.jpg", "dion4.jpg", "dion5.jpg", "dion6.jpg", "dion7.jpg", "dion8.jpg", "dion100.mp4"]
+      "media": ["dion1.jpg", "dion2.jpg", "dion3.jpg", "dion4.jpg", "dion5.jpg", "dion6.jpg", "dion7.jpg", "dion8.jpg", "dion100.mp4"],
+      "frame": "1:1"
     },
     {
       "folder": "monde",
-      "media": ["monde1.jpg", "monde2.jpg", "monde3.jpg", "monde4.jpg", "monde5.jpg", "monde6.jpg"]
+      "media": ["monde1.jpg", "monde2.jpg", "monde3.jpg", "monde4.jpg", "monde5.jpg", "monde6.jpg"],
+      "frame": "1:1"
     },
     {
       "folder": "o-bag",
-      "media": ["o-bag1.jpg", "o-bag2.jpg", "o-bag3.jpg", "o-bag4.jpg", "o-bag5.jpg", "o-bag6.jpg", "o-bag7.jpg", "o-bag8.jpg", "o-bag9.jpg"]
+      "media": ["o-bag3.jpg", "o-bag1.jpg", "o-bag2.jpg", "o-bag4.jpg", "o-bag5.jpg", "o-bag6.jpg", "o-bag7.jpg", "o-bag8.jpg", "o-bag9.jpg"],
+      "frame": "4:3"
     },
     {
       "folder": "paro_tee",
-      "media": ["paro_tee1.jpg", "paro_tee2.jpg", "paro_tee3.jpg", "paro_tee4.jpg", "paro_tee5.jpg", "paro_tee6.jpg", "paro_tee7.jpg", "paro_tee8.jpg", "paro_tee9.jpg", "paro_tee10.jpg"]
+      "media": ["paro_tee1.jpg", "paro_tee2.jpg", "paro_tee3.jpg", "paro_tee4.jpg", "paro_tee5.jpg", "paro_tee6.jpg", "paro_tee7.jpg", "paro_tee8.jpg", "paro_tee9.jpg", "paro_tee10.jpg"],
+      "frame": "1:1"
     },
     {
       "folder": "ween",
-      "media": ["ween1.jpg", "ween2.jpg", "ween3.jpg"]
+      "media": ["ween4.jpg", "ween5.jpg", "ween6.jpg", "ween7.jpg"],
+      "frame": "3:4"
     },
     {
       "folder": "hayer",
-      "media": ["hayer1.jpg", "hayer2.jpg", "hayer3.jpg", "hayer4.jpg", "hayer5.jpg", "hayer6.jpg", "hayer7.jpg", "hayer8.jpg"]
+      "media": ["hayer9.jpg", "hayer7.jpg", "hayer8.jpg", "hayer10.jpg", "hayer11.jpg", "hayer12.jpg", "hayer13.jpg", "hayer14.jpg", "hayer15.jpg", "hayer16.jpg"],
+      "frame": "1:1"
     },
     {
       "folder": "tensegrity-table",
-      "media": ["tensegrity-table1.jpg", "tensegrity-table2.jpg", "tensegrity-table3.jpg", "tensegrity-table4.jpg", "tensegrity-table5.jpg", "tensegrity-table6.jpg", "tensegrity-table7.jpg"]
+      "media": ["tensegrity-table8.jpg", "tensegrity-table9.jpg", "tensegrity-table10.jpg", "tensegrity-table11.jpg", "tensegrity-table12.jpg", "tensegrity-table13.jpg", "tensegrity-table14.jpg"],
+      "frame": "16:9"
     },
     {
       "folder": "sliding-suitcase",
-      "media": ["sliding-suitcase1.jpg", "sliding-suitcase2.jpg", "sliding-suitcase3.jpg", "sliding-suitcase4.jpg", "sliding-suitcase5.jpg"]
+      "media": ["sliding-suitcase1.jpg", "sliding-suitcase2.jpg", "sliding-suitcase3.jpg", "sliding-suitcase4.jpg", "sliding-suitcase5.jpg"],
+      "frame": "1:1"
     },
     {
       "folder": "denim-tee",
-      "media": ["denim-tee1.jpg", "denim-tee2.jpg", "denim-tee3.jpg", "denim-tee4.jpg"]
-    },
-    {
-      "folder": "plug",
-      "media": ["plug1.jpg", "plug2.jpg", "plug3.jpg"]
+      "media": ["denim-tee5.jpg", "denim-tee6.jpg", "denim-tee7.jpg", "denim-tee8.jpg", "denim-tee9.jpg", "denim-tee10.jpg", "denim-tee11.jpg", "denim-tee12.jpg", "denim-tee13.jpg", "denim-tee14.jpg"],
+      "frame": "3:4"
     },
     {
       "folder": "folding-bike",
-      "media": ["folding-bike1.jpg", "folding-bike2.jpg", "folding-bike3.jpg", "folding-bike4.jpg", "folding-bike5.jpg"]
-    },
-    {
-      "folder": "gole-studio",
-      "media": ["gole-studio1.jpg", "gole-studio2.jpg", "gole-studio3.jpg", "gole-studio4.jpg", "gole-studio5.jpg"]
+      "media": ["folding-bike6.jpg", "folding-bike7.jpg", "folding-bike8.jpg", "folding-bike9.jpg", "folding-bike10.jpg", "folding-bike11.jpg"],
+      "frame": "16:9"
     },
     {
       "folder": "hand",
-      "media": ["hand1.jpg", "hand2.jpg", "hand3.jpg", "hand4.jpg", "hand5.jpg", "hand6.jpg", "hand7.jpg"]
-    },
-    {
-      "folder": "drawings-paintings",
-      "media": ["drawings-paintings1.jpg", "drawings-paintings2.jpg", "drawings-paintings3.jpg", "drawings-paintings4.jpg", "drawings-paintings5.jpg", "drawings-paintings6.jpg"]
+      "media": ["hand19.jpg", "hand9.jpg", "hand10.jpg", "hand12.jpg", "hand11.jpg", "hand15.jpg", "hand14.jpg", "hand13.jpg", "hand16.jpg", "hand18.jpg", "hand17.jpg", "hand2.jpg", "hand3.jpg", "hand4.jpg", "hand5.jpg", "hand6.jpg", "hand7.jpg", "hand8.jpg"],
+      "frame": "1:1"
     },
     {
       "folder": "estoile",
-      "media": ["estoile3.jpg", "estoile4.jpg", "estoile5.jpg", "estoile1.jpg", "estoile2.jpg"]
+      "media": ["estoile4.jpg", "estoile3.jpg", "estoile5.jpg", "estoile1.jpg", "estoile2.jpg"],
+      "frame": "1:1"
     },
     {
       "folder": "metal-stool",
-      "media": ["metal-stool1.jpg", "metal-stool2.jpg", "metal-stool3.jpg"]
+      "media": ["metal-stool1.jpg", "metal-stool2.jpg", "metal-stool3.jpg"],
+      "frame": "3:4"
     },
     {
       "folder": "chandelier",
-      "media": ["chandelier1.jpg", "chandelier2.jpg", "chandelier3.jpg", "chandelier4.jpg", "chandelier5.jpg", "chandelier6.jpg"]
+      "media": ["chandelier1.jpg", "chandelier2.jpg", "chandelier3.jpg", "chandelier4.jpg", "chandelier5.jpg", "chandelier6.jpg"],
+      "frame": "3:4"
     },
     {
       "folder": "horse-mug",
-      "media": ["horse-mug1.jpg", "horse-mug2.jpg", "horse-mug3.jpg", "horse-mug4.jpg"]
+      "media": ["horse-mug1.jpg", "horse-mug2.jpg", "horse-mug3.jpg", "horse-mug4.jpg"],
+      "frame": "4:3"
     },
     {
       "folder": "brain-knob",
-      "media": ["brain-knob1.jpg", "brain-knob2.jpg", "brain-knob3.jpg", "brain-knob4.jpg", "brain-knob5.jpg"]
+      "media": ["brain-knob1.jpg", "brain-knob2.jpg", "brain-knob3.jpg", "brain-knob4.jpg", "brain-knob5.jpg"],
+      "frame": "3:4"
     },
     {
       "folder": "coffee-machine",
-      "media": ["coffee-machine1.jpg", "coffee-machine2.jpg", "coffee-machine3.jpg", "coffee-machine4.jpg", "coffee-machine5.jpg", "coffee-machine6.jpg"]
+      "media": ["coffee-machine1.jpg", "coffee-machine2.jpg", "coffee-machine3.jpg", "coffee-machine4.jpg", "coffee-machine5.jpg", "coffee-machine6.jpg"],
+      "frame": "3:4"
     },
     {
       "folder": "drawings",
-      "media": ["drawings1.jpg", "drawings2.jpg", "drawings3.jpg", "drawings4.jpg"]
-    },
-    {
-      "folder": "painting",
-      "media": ["painting1.jpg", "painting2.jpg", "painting3.jpg", "painting4.jpg"]
+      "media": ["drawings1.jpg", "drawings2.jpg", "drawings3.jpg", "drawings4.jpg"],
+      "frame": "3:4"
     },
     {
       "folder": "folded-vase",
-      "media": ["folded-vase1.jpg", "folded-vase2.jpg", "folded-vase3.jpg", "folded-vase4.jpg"]
+      "media": ["folded-vase5.jpg", "folded-vase6.jpg", "folded-vase7.jpg", "folded-vase8.jpg", "folded-vase9.jpg"],
+      "frame": "3:4"
     },
     {
       "folder": "boj",
-      "media": ["boj1.jpg", "boj2.jpg", "boj3.jpg", "boj4.jpg", "boj5.jpg", "boj6.jpg"]
+      "media": ["boj1.jpg", "boj2.jpg", "boj3.jpg", "boj4.jpg", "boj5.jpg", "boj6.jpg"],
+      "frame": "3:4"
+    },
+    {
+      "folder": "dutch-design-week-2014",
+      "type": "event",
+      "media": ["dutch-design-week-2014-1.jpg"],
+      "page": false,
+      "frame": "3:4"
+    },
+    {
+      "folder": "dutch-design-week-2015",
+      "type": "event",
+      "media": ["dutch-design-week-2015-1.jpg"],
+      "page": false,
+      "frame": "3:4"
+    },
+    {
+      "folder": "dutch-design-week-2016",
+      "type": "event",
+      "media": ["dutch-design-week-2016-1.jpg"],
+      "page": false,
+      "frame": "3:4"
+    },
+    {
+      "folder": "dutch-design-week-2017",
+      "type": "event",
+      "media": ["dutch-design-week-2017-1.jpg"],
+      "page": false,
+      "frame": "3:4"
+    },
+    {
+      "folder": "dutch-design-week-2018",
+      "type": "event",
+      "media": ["dutch-design-week-2018-1.jpg"],
+      "page": false,
+      "frame": "3:4"
+    },
+    {
+      "folder": "dutch-design-week-2019",
+      "type": "event",
+      "media": ["dutch-design-week-2019-1.jpg"],
+      "page": false,
+      "frame": "3:4"
+    },
+    {
+      "folder": "dutch-design-week-2021",
+      "type": "event",
+      "media": ["dutch-design-week-2021-1.jpg"],
+      "page": false,
+      "frame": "3:4"
+    },
+    {
+      "folder": "dutch-design-week-2023",
+      "type": "event",
+      "media": ["dutch-design-week-2023-1.jpg"],
+      "page": false,
+      "frame": "3:4"
+    },
+    {
+      "folder": "dutch-design-week-2024",
+      "type": "event",
+      "media": ["dutch-design-week-2024-1.jpg"],
+      "page": false,
+      "frame": "3:4"
+    },
+    {
+      "folder": "dutch-design-week-2025",
+      "type": "event",
+      "media": ["dutch-design-week-2025-1.jpg"],
+      "page": false,
+      "frame": "3:4"
+    },
+    {
+      "folder": "dutch-design-week-2026",
+      "type": "event",
+      "media": ["dutch-design-week-2026-2.jpg"],
+      "page": false,
+      "frame": "3:4"
+    },
+    {
+      "folder": "clothing-photo-shoot-",
+      "media": ["clothing-photo-shoot-1.jpg", "clothing-photo-shoot-2.jpg", "clothing-photo-shoot-3.jpg", "clothing-photo-shoot-4.jpg", "clothing-photo-shoot-5.jpg", "clothing-photo-shoot-6.jpg", "clothing-photo-shoot-7.jpg", "clothing-photo-shoot-8.jpg", "clothing-photo-shoot-9.jpg", "clothing-photo-shoot-10.jpg"],
+      "frame": "4:3"
+    },
+    {
+      "folder": "lingerak-font",
+      "media": ["lingerak-font2.jpg", "lingerak-font3.jpg", "lingerak-font4.jpg"],
+      "frame": "16:9"
     }
   ]
 }

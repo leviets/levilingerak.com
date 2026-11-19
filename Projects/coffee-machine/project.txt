@@ -4,12 +4,11 @@
 #  - Lines starting with # are notes for you; the site ignores them.
 #  - A long text may continue on the next lines (no colon needed).
 # ================================================================
-# (Filled in by Claude from your School/Portfolio files - check and change anything.)
 
-Project name: Coffee Machine
+Project name: Ether
 # Leave empty to use the folder name.
 
-Categories: Metal
+Categories: Metal, Woodwork, Plastics
 # Choose from: Woodwork, Textile, Metal, Stoneware, Plastics, Other
 # Several are allowed, separated by commas, e.g. "Textile, Woodwork".
 # The project then shows up under each of them in the menu.
@@ -17,9 +16,8 @@ Categories: Metal
 # Woodwork = brown, Textile = blue, Metal = grey, Stoneware = green,
 # Plastics = yellow, Other = red.
 
-Date: 14-06-2025
+Date: 24-05-2024
 # DD-MM-YYYY. Shown right under the picture. Newest projects come first.
-# (Taken from the photo files - change it if the project is from another date.)
 
 Short description: A coffee machine redesigned as a faceted object of folded metal triangles on a flared stand.
 # One sentence, shown at the top of the project page.
@@ -52,6 +50,16 @@ Link:
 # Optional web address, e.g. a shop page or article (start with https://)
 
 # ---------------- HOME PAGE ----------------
-Size: 70%
+Size: 100%
 # Size of the picture on the home page, from 20% to 100%.
-# 100% = a quarter of the page width on a computer, 20% = a twentieth (very small).
+# 100% = half the page width on a computer, 20% = a twentieth (very small).
+
+# ---------------- PICTURE TEXTS ----------------
+# A short text per picture: what it shows. Used as the picture's description
+# on the site (and, if turned on, shown under the picture).
+Picture coffee-machine1.jpg: Coffee Machine Open
+Picture coffee-machine2.jpg: Coffee Machine Closed
+Picture coffee-machine3.jpg: Coffee Machine Open: Lights Off
+Picture coffee-machine4.jpg: 3D Render
+Picture coffee-machine5.jpg: Early 3D Model
+Picture coffee-machine6.jpg: 2D Drawing

@@ -1,0 +1,61 @@
+# ================================================================
+#  PROJECT INFO for the website
+#  - Write after the colon. Empty fields are simply not shown.
+#  - Lines starting with # are notes for you; the site ignores them.
+#  - A long text may continue on the next lines (no colon needed).
+# ================================================================
+# (Filled in by Claude from your Sort folder - check and change anything.)
+
+Project name: Dutch Design Week 2025
+# Leave empty to use the folder name.
+
+Categories:
+# Choose from: Wood, Plastic, Metal, Stone, Textile, Other
+# Several are allowed, separated by commas, e.g. "Textile, Wood".
+# The project then shows up under each of them in the menu.
+# The FIRST one sets the project's colour (the line around the picture):
+# Wood = brown, Plastic = yellow, Metal = grey, Stone = green,
+# Textile = blue, Other = red.
+
+Date: 25-10-2025
+# DD-MM-YYYY. Shown right under the picture. Newest projects come first.
+
+Short description: My visit to Dutch Design Week in Eindhoven, 2025.
+# One sentence, shown at the top of the project page.
+
+Detailed description:
+# The story of the project: idea, process, what you learned.
+
+Materials:
+# e.g. Walnut, beech, brass
+
+Techniques:
+# e.g. Hand-cut joinery, machine stitching, 3D printing
+
+Dimensions:
+# e.g. 40 x 30 x 25 cm
+
+Location: Eindhoven
+# Where it was made, e.g. Eindhoven / name of school or workshop
+
+Made for:
+# e.g. School assignment, client, exhibition, personal project
+
+Collaborators:
+# People who helped, e.g. Model: Name, Styling: Name
+
+Photography:
+# Who took the pictures
+
+Link:
+# Optional web address, e.g. a shop page or article (start with https://)
+
+# ---------------- HOME PAGE ----------------
+Size: 35%
+# Size of the picture on the home page, from 20% to 100%.
+# 100% = half the page width on a computer, 20% = a twentieth (very small).
+
+# ---------------- PICTURE TEXTS ----------------
+# A short text per picture: what it shows. Used as the picture's description
+# on the site (and, if turned on, shown under the picture).
+Picture dutch-design-week-2025-1.jpg:

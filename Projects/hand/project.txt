@@ -4,22 +4,20 @@
 #  - Lines starting with # are notes for you; the site ignores them.
 #  - A long text may continue on the next lines (no colon needed).
 # ================================================================
-# (Filled in by Claude from your School/Portfolio files - check and change anything.)
 
-Project name: Hand
+Project name: Hend
 # Leave empty to use the folder name.
 
-Categories: Textile, Woodwork
-# Choose from: Woodwork, Textile, Metal, Stoneware, Plastics, Other
-# Several are allowed, separated by commas, e.g. "Textile, Woodwork".
+Categories: Textile, Wood, Plastic
+# Choose from: Wood, Plastic, Metal, Stone, Textile, Other
+# Several are allowed, separated by commas, e.g. "Textile, Wood".
 # The project then shows up under each of them in the menu.
 # The FIRST one sets the project's colour (the line around the picture):
-# Woodwork = brown, Textile = blue, Metal = grey, Stoneware = green,
-# Plastics = yellow, Other = red.
+# Wood = brown, Plastic = yellow, Metal = grey, Stone = green,
+# Textile = blue, Other = red.
 
-Date: 10-10-2024
+Date: 18-10-2025
 # DD-MM-YYYY. Shown right under the picture. Newest projects come first.
-# (Taken from the photo files - change it if the project is from another date.)
 
 Short description: A seat in the shape of a giant hand, upholstered in fabric with a zip.
 # One sentence, shown at the top of the project page.
@@ -52,6 +50,28 @@ Link:
 # Optional web address, e.g. a shop page or article (start with https://)
 
 # ---------------- HOME PAGE ----------------
-Size: 75%
+Size: 100%
 # Size of the picture on the home page, from 20% to 100%.
-# 100% = a quarter of the page width on a computer, 20% = a twentieth (very small).
+# 100% = half the page width on a computer, 20% = a twentieth (very small).
+
+# ---------------- PICTURE TEXTS ----------------
+# A short text per picture: what it shows. Used as the picture's description
+# on the site (and, if turned on, shown under the picture).
+Picture hand19.jpg: Final: Both
+Picture hand9.jpg: Final: Normal
+Picture hand10.jpg: Final: Okey
+Picture hand12.jpg: Final: Back
+Picture hand11.jpg: Final: Rock
+Picture hand15.jpg: Final: Detail Zipper
+Picture hand14.jpg: Final: Detail Nails
+Picture hand13.jpg: Final: Holding Each other
+Picture hand16.jpg: Final: Stop
+Picture hand18.jpg: Final: Bottom Plate
+Picture hand17.jpg: Final: Bottom Plates
+Picture hand2.jpg: First Official Prototype
+Picture hand3.jpg: First Official Prototype: Gesture Rock
+Picture hand4.jpg: First Prototype For Design Academy Admission
+Picture hand5.jpg: First Prototype For Design Academy Admission: Top
+Picture hand6.jpg: First Prototype For Design Academy Admission: Nail
+Picture hand7.jpg: First Prototype For Design Academy Admission: Zipper
+Picture hand8.jpg:
