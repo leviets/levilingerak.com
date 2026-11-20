@@ -81,9 +81,8 @@
 .lp-size-m .lp-text-body { font-size: max(15px, calc(3 * var(--u))); }
 .lp-size-l .lp-text-body { font-size: max(17px, calc(3.8 * var(--u))); line-height: 1.4; }
 
-/* Pictures fill their block: cropped to it, never with bars. */
-/* A picture always keeps its proportion (square, 4:3, 3:4, 16:9 or 9:16): its height comes from its width.
-   The rows it spans only reserve the room for it. */
+/* A picture always keeps its proportion (square, 4:3, 3:4, 16:9 or 9:16): its height comes from its
+   width, and the photo fills it exactly. The rows it spans only reserve the room for it. */
 .lp-picture[style*="--ratio"] {
   align-self: start;
   aspect-ratio: var(--ratio);
@@ -97,27 +96,10 @@
   object-fit: cover;
   display: block;
 }
+
 .lp-picture.is-empty {
   background: repeating-linear-gradient(45deg, rgba(31, 24, 19, 0.06) 0 10px, rgba(31, 24, 19, 0.02) 10px 20px);
 }
-
-/* The facts list (materials, techniques, ...). */
-.lp-facts dl {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  gap: 0.55em 1.4em;
-  margin: 0;
-  font-size: max(13px, calc(2.4 * var(--u)));
-}
-.lp-facts dt {
-  font-size: 0.78em;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--project-ink, rgba(31, 24, 19, 0.62));
-  padding-top: 0.15em;
-}
-.lp-facts dd { margin: 0; }
-.lp-facts a { color: inherit; }
 
 /* Phones: the two halves of a split band under each other. */
 @media (max-width: 760px) {
@@ -125,8 +107,4 @@
     grid-template-columns: minmax(0, 1fr);
     row-gap: 2.4cqi;
   }
-}
-.lp-page.is-phone .lp-split {          /* the editor's phone preview */
-  grid-template-columns: minmax(0, 1fr);
-  row-gap: 2.4cqi;
 }

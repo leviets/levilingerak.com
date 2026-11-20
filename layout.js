@@ -1,21 +1,21 @@
 // Designed project pages (Projects/<folder>/layout.json).
-// Used by the site (index.html) AND by the Site Editor, so both draw a page the same way.
+// Used by the site (script.js) AND by the Site Editor, so both draw a page the same way.
 //
 // layout.json:
 // { "version": 1,
 //   "bands": [
-//     { "type": "split", "rows": 8, "left": [block, ...], "right": [block, ...] },
-//     { "type": "full",  "rows": 10, "blocks": [block, ...] } ] }
-// block: { "kind": "title" | "short" | "story" | "text" | "picture" | "facts",
+//     { "type": "split", "rows": 12, "left": [block, ...], "right": [block, ...] },
+//     { "type": "full",  "rows": 8,  "blocks": [block, ...] } ] }
+// block: { "kind": "title" | "story" | "text" | "picture",
 //          "col": 1, "row": 1, "w": 6, "h": 4,          (cells: 6 columns in a half, 12 in a full band)
 //          "size": "s" | "m" | "l" | "xl",              (titles and texts)
 //          "text": "...",                               (free titles and texts)
 //          "photo": "chair1.jpg", "ratio": 0.75 }        (pictures: which photo, and its proportion)
-// The project name is not a block: it always stands at the top of the page, above the bands.
-// "short" and "story" show the project's own short description and story (project.txt).
+// "story" shows the project's own story (project.txt). The title, short description and facts are not
+// blocks: they always stand at the top of the page, above the bands.
 window.PageLayout = (() => {
-    const TITLE_KINDS = ['name', 'title'];
-    const TEXT_KINDS = ['short', 'story', 'text'];
+    const TITLE_KINDS = ['title'];
+    const TEXT_KINDS = ['story', 'text'];
 
     // How many rows a band's halves have: at least its own "rows", and enough for every block.
     function rowsOf(band) {
@@ -23,9 +23,8 @@ window.PageLayout = (() => {
         return Math.max(band.rows || 1, ...blocks.map(b => b.row + b.h - 1));
     }
 
-    // ctx: { name, short, story, facts: [[label, value]], photoUrl(file), caption(file) }
+    // ctx: { name, story, photoUrl(photo), caption(photo) }
     function blockElement(block, ctx) {
-        if (block.kind === 'name') return null;      // (older designs) the name is always at the top now
         const el = document.createElement('div');
         el.className = `lp-block lp-${block.kind}`;
         el.style.gridColumn = `${block.col} / span ${block.w}`;
@@ -33,13 +32,13 @@ window.PageLayout = (() => {
         if (TITLE_KINDS.includes(block.kind)) {
             el.classList.add('lp-size-' + (block.size || 'l'));
             const h = document.createElement('h2');
-            h.textContent = block.kind === 'name' ? ctx.name : (block.text || '');
+            h.textContent = block.text || '';
             el.append(h);
         } else if (TEXT_KINDS.includes(block.kind)) {
             el.classList.add('lp-size-' + (block.size || 'm'));
             const body = document.createElement('div');
             body.className = 'lp-text-body';
-            const text = block.kind === 'short' ? ctx.short : block.kind === 'story' ? ctx.story : (block.text || '');
+            const text = block.kind === 'story' ? ctx.story : (block.text || '');
             text.split(/\n{2,}/).filter(Boolean).forEach(part => {
                 const p = document.createElement('p');
                 p.textContent = part;
@@ -55,30 +54,12 @@ window.PageLayout = (() => {
                 img.alt = (ctx.caption && ctx.caption(block.photo)) || ctx.name;
                 img.loading = 'lazy';
                 img.decoding = 'async';
-                img.style.objectPosition = block.pos || '50% 50%';
                 el.append(img);
             } else {
                 el.classList.add('is-empty');
             }
-        } else if (block.kind === 'facts') {
-            const dl = document.createElement('dl');
-            (ctx.facts || []).forEach(([label, value]) => {
-                const dt = document.createElement('dt');
-                dt.textContent = label;
-                const dd = document.createElement('dd');
-                if (label === 'Link' && /^https?:\/\//i.test(value)) {
-                    const a = document.createElement('a');
-                    a.href = value;
-                    a.target = '_blank';
-                    a.rel = 'noopener';
-                    a.textContent = value.replace(/^https?:\/\/(www\.)?/i, '') + ' ↗';
-                    dd.append(a);
-                } else {
-                    dd.textContent = value;
-                }
-                dl.append(dt, dd);
-            });
-            el.append(dl);
+        } else {
+            return null;      // (older kinds: the name, short description and facts are at the top now)
         }
         return el;
     }
@@ -117,30 +98,30 @@ window.PageLayout = (() => {
         });
     }
 
-    return { render, rowsOf, TITLE_KINDS, TEXT_KINDS };
-})();
+    // The top of a project page: line up the top of the facts' first word ("CATEGORY") with the top of
+    // the title's capital letter, worked out from the fonts' own measurements.
+    let measure = null;
+    function alignFacts(title, facts) {
+        facts.style.marginTop = '';
+        const first = facts.querySelector('dt');
+        if (!title.textContent || !first) return;
+        const t = title.getBoundingClientRect(), f = facts.getBoundingClientRect();
+        if (f.left < t.right - 4 && f.top > t.top) return;          // stacked (phone): nothing to line up
+        measure = measure || document.createElement('canvas').getContext('2d');
+        // From the top of an element's first line to the top of its capital letters.
+        const capTop = (el, letter) => {
+            const cs = getComputedStyle(el);
+            measure.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+            const m = measure.measureText(letter);
+            const size = parseFloat(cs.fontSize);
+            const lineHeight = cs.lineHeight === 'normal' ? size * 1.2 : parseFloat(cs.lineHeight);
+            const ascent = m.fontBoundingBoxAscent, descent = m.fontBoundingBoxDescent;
+            return parseFloat(cs.paddingTop) + (lineHeight - (ascent + descent)) / 2 + ascent - m.actualBoundingBoxAscent;
+        };
+        const titleCap = t.top + capTop(title, title.textContent.trim()[0]);
+        const factsCap = first.getBoundingClientRect().top + capTop(first, (first.textContent.trim()[0] || 'C').toUpperCase());
+        facts.style.marginTop = Math.max(0, titleCap - factsCap).toFixed(1) + 'px';
+    }
 
-// The top of a project page: line up the top of the facts' first word ("CATEGORY") with the top of the
-// title's capital letter. Works out where the letters' ink starts from the fonts' own measurements.
-window.PageLayout.alignFacts = (title, facts) => {
-    facts.style.marginTop = '';
-    const first = facts.querySelector('dt');
-    if (!title.textContent || !first) return;
-    const t = title.getBoundingClientRect(), f = facts.getBoundingClientRect();
-    if (f.left < t.right - 4 && f.top > t.top) return;          // stacked (phone): nothing to line up
-    const canvas = window.PageLayout._canvas || (window.PageLayout._canvas = document.createElement('canvas'));
-    const g = canvas.getContext('2d');
-    // From the top of an element's first line to the top of its capital letters.
-    const capTop = (el, letter) => {
-        const cs = getComputedStyle(el);
-        g.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
-        const m = g.measureText(letter);
-        const size = parseFloat(cs.fontSize);
-        const lineHeight = cs.lineHeight === 'normal' ? size * 1.2 : parseFloat(cs.lineHeight);
-        const ascent = m.fontBoundingBoxAscent, descent = m.fontBoundingBoxDescent;
-        return parseFloat(cs.paddingTop) + (lineHeight - (ascent + descent)) / 2 + ascent - m.actualBoundingBoxAscent;
-    };
-    const titleCap = t.top + capTop(title, title.textContent.trim()[0]);
-    const factsCap = f.top + (first.getBoundingClientRect().top - f.top) + capTop(first, (first.textContent.trim()[0] || 'C').toUpperCase());
-    facts.style.marginTop = Math.max(0, titleCap - factsCap).toFixed(1) + 'px';
-};
+    return { render, rowsOf, alignFacts, TITLE_KINDS, TEXT_KINDS };
+})();

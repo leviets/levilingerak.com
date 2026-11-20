@@ -45,6 +45,19 @@ Made for:
 Collaborators:
 # People who helped, e.g. Model: Name, Styling: Name
 
+Supervised by:
+# Teacher, tutor or mentor who guided it
+
+Duration:
+# How long it took, e.g. 3 weeks or 40 hours
+
+Exhibited:
+# Where it was shown or what it won, e.g. Dutch Design Week 2025
+
+For sale:
+# e.g. Yes, 180 euros / On request.
+# Every fact is always shown on the page; one you leave empty shows a stripe (—).
+
 Photography:
 # Who took the pictures
 
@@ -56,3 +69,17 @@ Size: 30%
 # Size of the picture on the home page, from 20% to 100%.
 # 100% = half the page width on a computer, 20% = a twentieth (very small).
 # (Placeholder size - change it to what you like.)
+
+# ---------------- PICTURE TEXTS ----------------
+# A short text per picture: what it shows. Used as the picture's description
+# on the site (and, if turned on, shown under the picture).
+Picture paro_tee1.jpg:
+Picture paro_tee2.jpg:
+Picture paro_tee3.jpg:
+Picture paro_tee4.jpg:
+Picture paro_tee5.jpg:
+Picture paro_tee6.jpg:
+Picture paro_tee7.jpg:
+Picture paro_tee8.jpg:
+Picture paro_tee9.jpg:
+Picture paro_tee10.jpg:

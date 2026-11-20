@@ -1,0 +1,1065 @@
+// ================================================================
+// levilingerak.com — everything the pages do.
+// Projects are listed in Projects/projects.json. Each project's text comes from
+// Projects/<folder>/project.txt, its pictures from Projects/<folder>/Pictures/, and an own page
+// design (made in the Site Editor) from Projects/<folder>/layout.json.
+// Contents: materials · routing · reading the files · cards · home timeline · Info page events ·
+// the big name · project page · profile · background.
+// ================================================================
+const VIDEO_EXT = /\.(mp4|webm|mov)$/i;
+const DEFAULT_TITLE = document.title;
+
+// The materials in the menu, in this order. "color" is used for dots, lines and accents;
+// "ink" is a darker shade of it that stays readable as text. "words" are other spellings
+// accepted in project.txt.
+const CATEGORIES = [
+    { id: 'wood',      name: 'Wood',      color: '#8a5530', ink: '#7a4626', words: ['woodwork', 'woodworking', 'hout'] },
+    { id: 'plastic',   name: 'Plastic',   color: '#e0b02a', ink: '#946f00', words: ['plastics', 'kunststof'] },
+    { id: 'metal',     name: 'Metal',     color: '#7c8288', ink: '#5d6268', words: ['metals', 'metalwork', 'metaal'] },
+    { id: 'stone',     name: 'Stone',     color: '#5c8a52', ink: '#46713d', words: ['stoneware', 'ceramics', 'ceramic', 'clay', 'keramiek', 'steen'] },
+    { id: 'textile',   name: 'Textile',   color: '#2f5d93', ink: '#2a5285', words: ['textiles', 'fabric', 'denim', 'textiel'] },
+    { id: 'other',     name: 'Other',     color: '#c0392b', ink: '#a8301f', words: ['others', 'overig', 'anders'] }
+];
+const categoryById = Object.fromEntries(CATEGORIES.map(c => [c.id, c]));
+const PAGES = ['home', 'shop', 'info', 'contact', ...CATEGORIES.map(c => c.id)];
+
+// "Textile, Wood" -> ['textile', 'wood']. Old names (Woodwork, Stoneware, Plastics) still work. Anything unknown counts as Other.
+function parseCategories(value) {
+    const ids = [];
+    (value || '').split(/[,;\/&+]|\band\b|\ben\b/i).forEach(part => {
+        const word = part.trim().toLowerCase();
+        if (!word) return;
+        const match = CATEGORIES.find(c => c.id === word || c.name.toLowerCase() === word || c.words.includes(word));
+        const id = match ? match.id : 'other';
+        if (!ids.includes(id)) ids.push(id);
+    });
+    return ids.length ? ids : ['other'];
+}
+
+const EVENT_COLOR = { color: '#1f1813', ink: '#1f1813' };   // events: plain black
+function setColor(el, categoryId) {
+    const category = categoryId === 'event' ? EVENT_COLOR : categoryById[categoryId] || categoryById.other;
+    el.style.setProperty('--project-color', category.color);
+    el.style.setProperty('--project-ink', category.ink);
+}
+
+// Menu: one link per material, each in its own colour.
+const categoryNav = document.getElementById('category-nav');
+CATEGORIES.forEach(category => {
+    const link = document.createElement('a');
+    link.className = 'category-link';
+    link.href = '#' + category.id;
+    link.dataset.page = category.id;
+    link.textContent = category.name;
+    setColor(link, category.id);
+    categoryNav.append(link);
+});
+
+const navLinks = document.querySelectorAll('.nav-link, .category-link');
+const pages = document.querySelectorAll('[data-page-section]');
+let projects = [];
+let projectsLoaded = false;
+
+// ---- Routing (#home, #info, #wood, #textile, ..., #project/<folder>) ----
+function route() {
+    const hash = decodeURIComponent(window.location.hash.replace('#', ''));
+    let pageName = PAGES.includes(hash) ? hash : 'home';
+    let navName = pageName;
+    document.title = DEFAULT_TITLE;
+
+    if (categoryById[pageName]) {
+        renderCategory(pageName);
+        pageName = 'category';
+    }
+
+    if (hash.startsWith('project/')) {
+        if (!projectsLoaded) return; // route() runs again once projects are loaded
+        const project = projects.find(p => p.folder === hash.slice(8));
+        if (project && project.hasPage) {
+            renderDetail(project);
+            pageName = 'project';
+            navName = project.isEvent ? 'home' : project.categories[0];
+        }
+    }
+
+    pages.forEach(page => page.classList.toggle('active', page.dataset.pageSection === pageName));
+    navLinks.forEach(link => {
+        const isActive = link.dataset.page === navName;
+        link.classList.toggle('active', isActive);
+        if (isActive) link.setAttribute('aria-current', 'page');
+        else link.removeAttribute('aria-current');
+    });
+    window.scrollTo({ top: 0 });
+}
+
+function go(pageName) {
+    if (window.location.hash === '#' + pageName) route();
+    else window.location.hash = pageName;
+}
+
+document.querySelectorAll('.nav-link').forEach(link => link.addEventListener('click', () => go(link.dataset.page)));
+window.addEventListener('hashchange', route);
+
+// ---- Category page: every project that lists this material ----
+function renderCategory(id) {
+    const category = categoryById[id];
+    const section = document.getElementById('category');
+    setColor(section, id);
+    document.getElementById('category-title').textContent = category.name;
+    document.title = `${category.name} — Levi Lingerak`;
+
+    let visible = 0;
+    document.querySelectorAll('#project-grid .project').forEach(card => {
+        const show = card.dataset.categories.split(' ').includes(id);
+        card.classList.toggle('hidden', !show);
+        // On a material page every project takes that material's colour.
+        if (show) setColor(card, id);
+        if (show) visible++;
+    });
+    document.getElementById('project-count').textContent = visible;
+    document.getElementById('project-count-word').textContent = visible === 1 ? 'project' : 'projects';
+    document.getElementById('category-empty').hidden = visible > 0 || !projectsLoaded;
+}
+
+// Picture texts ("Picture x.jpg: ..." in project.txt) are always the pictures' descriptions for
+// search engines and screen readers. Set this to true to also show them under the pictures.
+const SHOW_PICTURE_TEXTS = false;
+
+// ---- Reading project.txt / profile.txt ----
+const PROJECT_KEYS = ['project name', 'categories', 'category', 'date', 'year', 'short description', 'detailed description',
+    'materials', 'techniques', 'dimensions', 'location', 'made for', 'supervised by', 'duration', 'exhibited',
+    'for sale', 'collaborators', 'photography', 'link', 'size'];
+const PROFILE_KEYS = ['name', 'tagline', 'location', 'short introduction', 'biography', 'email',
+    'instagram', 'education', 'available for'];
+
+// "Key: value" lines for known keys. Lines starting with # are notes.
+// Other lines continue the previous field; an empty line between them starts a new paragraph.
+function parseInfoFile(text, keys) {
+    const data = {};
+    let current = null;
+    let paragraphBreak = false;
+    text.split(/\r?\n/).forEach(raw => {
+        const line = raw.trim();
+        if (line.startsWith('#')) return;
+        if (!line) { paragraphBreak = true; return; }
+        const pic = line.match(/^picture\s+([^\s:]+\.[a-z0-9]+)\s*:\s*(.*)$/i);   // "Picture chair1.jpg: text"
+        const m = line.match(/^([A-Za-z ]+?)\s*:\s*(.*)$/) || line.match(/^(size)\s+(.*)$/i);
+        if (pic && keys === PROJECT_KEYS) {
+            current = 'picture ' + pic[1].toLowerCase();
+            data[current] = pic[2].trim();
+        } else if (m && keys.includes(m[1].trim().toLowerCase())) {
+            current = m[1].trim().toLowerCase();
+            data[current] = m[2].trim();
+        } else if (current) {
+            const sep = !data[current] ? '' : paragraphBreak ? '\n\n' : ' ';
+            data[current] += sep + line;
+        }
+        paragraphBreak = false;
+    });
+    return data;
+}
+
+function toParagraphs(text) {
+    return text.split(/\n{2,}/).map(part => {
+        const p = document.createElement('p');
+        p.textContent = part;
+        return p;
+    });
+}
+
+// Accepts DD-MM-YYYY, YYYY-MM-DD (also with / or .), or just a year.
+function parseDate(value) {
+    if (!value) return null;
+    let m = value.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);
+    if (m) return new Date(+m[1], m[2] - 1, +m[3]).getTime();
+    m = value.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})$/);
+    if (m) return new Date(+m[3], m[2] - 1, +m[1]).getTime();
+    m = value.match(/^(\d{4})$/);
+    if (m) return new Date(+m[1], 0, 1).getTime();
+    return null;
+}
+
+// "12-12-2023" -> "12 Dec 2023"; a year alone stays a year.
+function formatDate(raw, time) {
+    if (!raw) return '';
+    if (time === null || /^\d{4}$/.test(raw.trim())) return raw.trim();
+    return new Date(time).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+// Size 20-100 (%), as typed in project.txt.
+function parseSize(value) {
+    const n = parseFloat(value);
+    return isNaN(n) ? 50 : Math.min(100, Math.max(20, n));
+}
+
+// Folder "paro_tee" becomes the name "Paro tee" when project.txt has no name.
+function folderToName(folder) {
+    const name = folder.replace(/_+/g, ' ');
+    return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+function mediaUrl(folder, file) {
+    return encodeURI(`Projects/${folder}/Pictures/${file}`);
+}
+
+// Same "random" numbers for a project every visit, so the layout doesn't jump around.
+function seededRandom(seed) {
+    let h = 2166136261;
+    for (const c of seed) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+    return () => {
+        h = Math.imul(h ^ (h >>> 15), 2246822507);
+        h = Math.imul(h ^ (h >>> 13), 3266489909);
+        return ((h ^= h >>> 16) >>> 0) / 4294967296;
+    };
+}
+
+async function loadProject(entry, index) {
+    let data = {};
+    try {
+        const response = await fetch(encodeURI(`Projects/${entry.folder}/project.txt`), { cache: 'no-cache' });
+        if (response.ok) data = parseInfoFile(await response.text(), PROJECT_KEYS);
+    } catch (e) { /* no project.txt: use defaults */ }
+
+    const media = (entry.media || []).map(file => ({
+        url: mediaUrl(entry.folder, file),
+        isVideo: VIDEO_EXT.test(file),
+        caption: data['picture ' + file.toLowerCase()] || ''
+    }));
+    const cover = media.find(m => !m.isVideo);
+    const rawDate = data['date'] || data['year'] || '';
+    const date = parseDate(rawDate);
+    // Events ("type": "event" in projects.json, e.g. Dutch Design Week visits) stand on the
+    // timeline but have no material: they are not on the material pages and stay black.
+    const isEvent = entry.type === 'event';
+    const categories = isEvent ? [] : parseCategories(data['categories'] || data['category']);
+    const categoryNames = isEvent ? 'Event' : categories.map(id => categoryById[id].name).join(', ');
+
+    return {
+        index,
+        folder: entry.folder,
+        isEvent,
+        name: data['project name'] || folderToName(entry.folder),
+        categories,          // the first one sets the project's colour
+        categoryNames,
+        dateText: formatDate(rawDate, date),
+        date,
+        short: data['short description'] || '',
+        detail: data['detailed description'] || '',
+        // Every fact is always listed, in the same order; one that isn't filled in shows a stripe.
+        // (Events only have the facts that fit an event. A link is only shown when there is one.)
+        facts: [
+            [isEvent ? 'Type' : categories.length > 1 ? 'Categories' : 'Category', categoryNames],
+            ['Date', formatDate(rawDate, date)],
+            ...(isEvent ? [] : [
+                ['Materials', data['materials']],
+                ['Techniques', data['techniques']],
+                ['Dimensions', data['dimensions']]]),
+            ['Location', data['location']],
+            ...(isEvent ? [] : [
+                ['Made for', data['made for']],
+                ['Collaborators', data['collaborators']],
+                ['Supervised by', data['supervised by']],
+                ['Duration', data['duration']]]),
+            ['Exhibited', data['exhibited']],
+            ...(isEvent ? [] : [['For sale', data['for sale']]]),
+            ['Photography', data['photography']],
+            ['Link', data['link']]
+        ].map(([label, value]) => [label, (value || '').trim() || (label === 'Link' ? '' : '—')])
+         .filter(([, value]) => value),
+        size: parseSize(data['size']),
+        frame: parseFrame(entry.frame),   // proportion of the cover's frame, e.g. 16 / 9
+        hasPage: entry.page !== false,    // "page": false -> no project page, the card can't be clicked
+        cover: cover ? cover.url : null,
+        mediaFiles: entry.media || [],    // file names, for a designed page (layout.json)
+        media
+    };
+}
+
+// ---- Frame proportions on the home page: square, 4:3, 3:4, 16:9 or 9:16 ----
+// "frame" in projects.json (written by the Site Editor). Without it, the cover picture's own
+// shape is used, rounded to the nearest of these.
+const FRAMES = [1, 4 / 3, 3 / 4, 16 / 9, 9 / 16];
+function nearestFrame(ratio) {
+    return FRAMES.reduce((best, f) => Math.abs(Math.log(f / ratio)) < Math.abs(Math.log(best / ratio)) ? f : best, 1);
+}
+function parseFrame(value) {
+    const m = String(value || '').match(/^\s*(\d+(?:\.\d+)?)\s*[:x\/]\s*(\d+(?:\.\d+)?)\s*$/i);
+    if (/^\s*square\s*$/i.test(value || '')) return 1;
+    return m && +m[2] ? nearestFrame(+m[1] / +m[2]) : null;
+}
+
+// ---- Rendering ----
+function createCard(project, className) {
+    // Projects without a page of their own ("page": false in projects.json) can't be clicked.
+    const card = document.createElement(project.hasPage ? 'a' : 'div');
+    card.className = className + (project.hasPage ? '' : ' no-page');
+    if (project.hasPage) card.href = '#project/' + encodeURIComponent(project.folder);
+    card.dataset.categories = project.categories.join(' ');
+    setColor(card, project.isEvent ? 'event' : project.categories[0]);
+
+    const imageBox = document.createElement('div');
+    imageBox.className = 'project-image';
+    if (project.cover) {
+        const img = document.createElement('img');
+        img.src = project.cover;
+        img.alt = project.name;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        imageBox.append(img);
+    } else {
+        imageBox.classList.add('is-empty');
+    }
+
+    // Name on the left, date on the right.
+    const meta = document.createElement('div');
+    meta.className = 'project-meta';
+    const title = document.createElement('h3');
+    title.textContent = project.name;
+    const date = document.createElement('span');
+    date.textContent = project.dateText;
+    meta.append(title, date);
+
+    card.append(imageBox, meta);
+    const img = imageBox.querySelector('img');
+    if (img) {
+        // Soft edges on the home page and the Info page; the material pages show the pictures as they are.
+        if (className !== 'project') softEdges(img);
+        // The frame has the picture's own proportion (square, 4:3, 3:4, 16:9 or 9:16).
+        if (project.frame) imageBox.style.aspectRatio = String(project.frame);
+        else {
+            const measure = () => { if (img.naturalWidth) imageBox.style.aspectRatio = String(nearestFrame(img.naturalWidth / img.naturalHeight)); };
+            if (img.complete) measure(); else img.addEventListener('load', measure, { once: true });
+        }
+    }
+    return card;
+}
+
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ---- Soft edges: at rest a picture fades softly into the background, with round corners.
+// On hover (or keyboard focus) the mask grows outward past the picture's edges (style.css),
+// so the fade flows away: sharp and square, as if the picture comes forward. The mask is a
+// blurred rounded rectangle drawn once at the picture's exact size, so the fade bends
+// smoothly around the corners.
+const FADE = 0.025;           // width of the soft edge, as part of the picture's width (the bare minimum)
+function softMask(w, h) {
+    const f = FADE * w;                          // soft edge in pixels
+    const n = v => v.toFixed(2);
+    const inset = f * 0.5, blur = f * 0.2, round = f * 0.9;
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${n(w)}' height='${n(h)}'>` +
+        `<filter id='s' x='-20%' y='-20%' width='140%' height='140%'><feGaussianBlur stdDeviation='${n(blur)}'/></filter>` +
+        `<rect x='${n(inset)}' y='${n(inset)}' width='${n(w - 2 * inset)}' height='${n(h - 2 * inset)}' ` +
+        `rx='${n(round)}' filter='url(%23s)'/></svg>`;
+    return `url("data:image/svg+xml;utf8,${svg}")`;
+}
+function softEdges(img) {
+    let size = '';
+    const paint = () => {
+        const w = img.clientWidth, h = img.clientHeight;
+        if (!w || !h || size === w + 'x' + h) return;
+        size = w + 'x' + h;                      // only redrawn when the picture changes size
+        const mask = softMask(w, h);
+        img.style.webkitMaskImage = mask;
+        img.style.maskImage = mask;
+        img.style.setProperty('--fade-px', (FADE * w).toFixed(2) + 'px');   // used by style.css
+    };
+    new ResizeObserver(paint).observe(img);
+}
+
+// ---- Home: the timeline ----
+const SVG_NS = 'http://www.w3.org/2000/svg';
+let homeItems = [];
+
+// Top of the path: today's date, e.g. "19 Nov 2026".
+function todayText() {
+    return new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+// Keeps the date right: changes it at midnight, and when someone comes back to a tab
+// that was left open overnight.
+function updateToday() {
+    const label = document.querySelector('.path-end');
+    if (label) label.textContent = todayText();
+}
+(function scheduleMidnight() {
+    const now = new Date();
+    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5);
+    setTimeout(() => { updateToday(); scheduleMidnight(); }, midnight - now);
+})();
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) updateToday();
+});
+
+function renderHome() {
+    const container = document.getElementById('home-projects');
+    container.innerHTML = '';
+
+    const svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('class', 'home-path');
+    svg.setAttribute('aria-hidden', 'true');
+    container.append(svg);
+
+    const startLabel = document.createElement('p');
+    startLabel.className = 'path-label path-start';
+    startLabel.textContent = 'Born · 2002';   // the line starts at birth
+    const endLabel = document.createElement('p');
+    endLabel.className = 'path-label path-end';
+    endLabel.textContent = todayText();     // today's date, kept up to date by updateToday()
+    container.append(startLabel, endLabel);
+
+    // Events (e.g. Dutch Design Week) are not on the home timeline: they have their own path on the Info page.
+    homeItems = projects.filter(project => !project.isEvent).map(project => {
+        const random = seededRandom(project.folder);
+        const card = createCard(project, 'home-project');
+        random(); random();   // (two numbers once used for tilt and sway; still drawn so every project keeps its place)
+        container.append(card);
+        const item = { card, size: project.size, swing: random(), spacing: random(), frame: project.frame || 1 };
+        // No frame given: take the cover's shape once it has loaded, and lay out again.
+        const img = card.querySelector('.project-image img');
+        if (!project.frame && img) {
+            const measure = () => {
+                if (!img.naturalWidth) return;
+                const frame = nearestFrame(img.naturalWidth / img.naturalHeight);
+                if (frame !== item.frame) { item.frame = frame; scheduleHomeLayout(); }
+            };
+            if (img.complete) measure(); else img.addEventListener('load', measure, { once: true });
+        }
+        return item;
+    });
+
+    layoutHome();
+}
+
+// The path, as if drawn by hand: a calm, uneven wobble along the whole line and, between some
+// pictures, a little loop. Always the same for the same projects (seeded randomness), and calm at
+// both ends. Used on the home page and on the Info page (events).
+function handDrawn(path, boxes, centre) {
+    const random = seededRandom('hand-drawn line');
+    const STEP = 5;
+    // Measure the line once, every 2px; everything below reads from this table.
+    // Calculated here from the path's own lines and curves (asking the browser is slow).
+    const RES = 2;
+    const flat = [];
+    const nums = (path.getAttribute('d').match(/[MLC]|-?[\d.]+(?:e-?\d+)?/g) || []);
+    let cmd = '', cur = { x: 0, y: 0 };
+    for (let i = 0; i < nums.length;) {
+        if (/[MLC]/.test(nums[i])) cmd = nums[i++];
+        const n = k => parseFloat(nums[i + k]);
+        if (cmd === 'C') {
+            const [x1, y1, x2, y2, x, y] = [n(0), n(1), n(2), n(3), n(4), n(5)];
+            for (let k = 1; k <= 32; k++) {
+                const t = k / 32, u = 1 - t;
+                flat.push({
+                    x: u * u * u * cur.x + 3 * u * u * t * x1 + 3 * u * t * t * x2 + t * t * t * x,
+                    y: u * u * u * cur.y + 3 * u * u * t * y1 + 3 * u * t * t * y2 + t * t * t * y
+                });
+            }
+            cur = { x, y };
+            i += 6;
+        } else {
+            cur = { x: n(0), y: n(1) };
+            flat.push(cur);
+            i += 2;
+        }
+    }
+    const table = [flat[0]];
+    let walked = 0, next = RES;
+    for (let i = 1; i < flat.length; i++) {
+        const a = flat[i - 1], b = flat[i], len = Math.hypot(b.x - a.x, b.y - a.y);
+        while (len > 0 && walked + len >= next) {
+            const t = (next - walked) / len;
+            table.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
+            next += RES;
+        }
+        walked += len;
+    }
+    const total = walked;
+    table.push(flat[flat.length - 1]);
+    const at = s => {
+        const x = Math.max(0, Math.min(total, s)) / RES;
+        const i = Math.min(table.length - 2, Math.floor(x)), t = Math.min(1, x - i);
+        const a = table[i], b = table[i + 1] || a;
+        return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+    };
+    const tangentAt = s => {
+        const a = at(s - 1.5), b = at(s + 1.5);
+        const len = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+        return { x: (b.x - a.x) / len, y: (b.y - a.y) / len };
+    };
+
+    // Wobble: a few slow waves across the path (it is a wide, soft band, so it may swing a lot),
+    // faded out near both ends.
+    const waves = [[9, 300], [5, 130], [2.5, 60]].map(([amp, length]) =>
+        ({ amp, length: length * (0.8 + random() * 0.4), phase: random() * Math.PI * 2 }));
+    const wobble = s => {
+        const ends = Math.min(1, s / 40, (total - s) / 40);
+        return ends * waves.reduce((sum, w) => sum + w.amp * Math.sin(s / w.length * Math.PI * 2 + w.phase), 0);
+    };
+
+    // Loops: halfway between some neighbouring pictures, where the line is in the open.
+    const nearest = p => {
+        let best = 0, bestDist = Infinity;
+        table.forEach((q, i) => {
+            const dd = Math.hypot(q.x - p.x, q.y - p.y);
+            if (dd < bestDist) { bestDist = dd; best = i * RES; }
+        });
+        return best;
+    };
+    const inPicture = q => boxes.some(b => q.x > b.x - 12 && q.x < b.x + b.w + 12 && q.y > b.y - 12 && q.y < b.y + b.h + 12);
+    const loops = [];
+    const SIZE = 6;                         // loop size: a round loop of about 10px, the whole curl about 38px long
+    const SPAN = 2 * Math.PI * SIZE;
+    for (let i = boxes.length - 1; i > 0; i--) {
+        if (random() > 0.3) continue;       // a loop in about 1 of every 3 gaps
+        const s0 = (nearest(centre(boxes[i])) + nearest(centre(boxes[i - 1]))) / 2;
+        const clear = [-SPAN, 0, SPAN].every(o => !inPicture(at(s0 + o)));
+        if (clear && s0 > 60 && s0 < total - 60) loops.push({ s0, side: random() < 0.5 ? -1 : 1 });
+    }
+
+    // Walk along the line and collect the points of the new one.
+    const points = [];
+    const add = (s, extraAlong = 0, extraAcross = 0) => {
+        const p = at(s + extraAlong), t = tangentAt(s + extraAlong);
+        const across = wobble(s) + extraAcross;
+        points.push({ x: p.x - t.y * across, y: p.y + t.x * across });
+    };
+    let s = 0;
+    while (s <= total) {
+        const loop = loops.find(l => s >= l.s0 - SPAN / 2 && s < l.s0 + SPAN / 2);
+        if (loop) {
+            // One clean round loop, like a pencil curling over itself: a prolate cycloid,
+            // drawn straight along the line's direction at that spot (not bent along the curve).
+            const p0 = at(loop.s0);
+            const a = at(loop.s0 - SPAN / 2), b = at(loop.s0 + SPAN / 2);
+            const len = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+            const t = { x: (b.x - a.x) / len, y: (b.y - a.y) / len };
+            // From -π to π: the line bends out, crosses itself, makes the round loop, and
+            // comes back down to where it was going.
+            for (let k = 1; k < 48; k++) {
+                const th = -Math.PI + k / 48 * Math.PI * 2;
+                const along = SIZE * (th - 2.2 * Math.sin(th));
+                const across = wobble(loop.s0) + loop.side * SIZE * 2.2 * (1 + Math.cos(th)) / 2;
+                points.push({ x: p0.x + t.x * along - t.y * across, y: p0.y + t.y * along + t.x * across });
+            }
+            s = loop.s0 + SPAN / 2 + STEP;
+            continue;
+        }
+        add(s);
+        s += STEP;
+    }
+    add(total);
+
+    // Smooth curve through the points (Catmull-Rom as Bezier curves).
+    const f = n => n.toFixed(1);
+    let out = `M ${f(points[0].x)} ${f(points[0].y)}`;
+    for (let i = 0; i < points.length - 1; i++) {
+        const p0 = points[i - 1] || points[i], p1 = points[i], p2 = points[i + 1], p3 = points[i + 2] || p2;
+        out += ` C ${f(p1.x + (p2.x - p0.x) / 6)} ${f(p1.y + (p2.y - p0.y) / 6)} ` +
+            `${f(p2.x - (p3.x - p1.x) / 6)} ${f(p2.y - (p3.y - p1.y) / 6)} ${f(p2.x)} ${f(p2.y)}`;
+    }
+    return out;
+}
+
+let homeLayoutFrame = 0;
+function scheduleHomeLayout() {
+    cancelAnimationFrame(homeLayoutFrame);
+    homeLayoutFrame = requestAnimationFrame(() => layoutHome());
+}
+
+function layoutHome() {
+    const container = document.getElementById('home-projects');
+    const W = container.clientWidth;
+    if (!W || !homeItems.length) return;
+
+    // Width of a square in % of the page: [size 20%, size 100%].
+    // Computer: a twentieth up to half the page. Tablet and phone: relatively bigger.
+    const [minPct, maxPct] = W < 440 ? [16, 80] : W < 760 ? [10, 50] : [5, 50];
+    const SCALE = 0.8;                       // everything a bit smaller: the page looks zoomed out
+    const small = W < 760;
+    const top = 100;                         // room for today's date (on its white splash) at the top
+    const pad = small ? W * 0.03 : W * 0.07; // pictures stay this far from the sides
+    const U = W - 2 * pad;                   // the width the pictures use
+    const gapX = Math.max(70, W * 0.06);     // room between neighbours (for the path)
+    const gapY = small ? 80 : 110;           // room between rows (for the path)
+
+    // 1. Measure every frame. Size sets the side of a square; other proportions get the same
+    //    area (a 16:9 frame is wider and lower than the square, a 9:16 one narrower and taller).
+    const boxes = homeItems.map(item => {
+        const widthPct = minPct + (item.size - 20) / 80 * (maxPct - minPct);
+        const side = W * widthPct / 100 * SCALE;
+        const w = Math.min(U, side * Math.sqrt(item.frame));
+        item.card.style.width = w + 'px';
+        item.card.querySelector('.project-image').style.aspectRatio = String(item.frame);
+        return { item, w, ph: w / item.frame, h: item.card.offsetHeight };
+    });
+
+    // 2. Split into rows: as many as fit next to each other.
+    const rows = [];
+    let row = [];
+    let used = 0;
+    boxes.forEach(box => {
+        const needed = row.length ? used + gapX + box.w : box.w;
+        if (row.length && needed > U) {
+            rows.push(row);
+            row = [];
+            used = 0;
+        }
+        used = row.length ? used + gapX + box.w : box.w;
+        row.push(box);
+    });
+    if (row.length) rows.push(row);
+
+    // 3. Place each row. Even rows run left -> right, odd rows right -> left.
+    let y = top;
+    rows.forEach((rowBoxes, r) => {
+        const total = rowBoxes.reduce((sum, b) => sum + b.w, 0);
+        const isLast = r === rows.length - 1;
+        // Full rows spread out over the whole width; the last row keeps normal spacing.
+        const gap = rowBoxes.length > 1 && !isLast
+            ? Math.max(gapX, (U - total) / (rowBoxes.length - 1))
+            : gapX;
+        const rowHeight = Math.max(...rowBoxes.map(b => b.h));
+        const ltr = r % 2 === 0;
+        let x = ltr ? pad : W - pad;
+        rowBoxes.forEach(box => {
+            // A little up/down variation inside the row keeps it organic.
+            const drop = (rowHeight - box.h) * box.item.swing * 0.85 + box.item.spacing * 14;
+            box.x = ltr ? x : x - box.w;
+            box.y = y + drop;
+            box.row = r;
+            x = ltr ? x + box.w + gap : x - box.w - gap;
+            box.item.card.style.left = box.x + 'px';
+            box.item.card.style.top = box.y + 'px';
+        });
+        y += rowHeight + 14 + gapY;
+    });
+
+    const bottom = Math.max(...boxes.map(b => b.y + b.h));
+    const height = bottom + 140;             // room for the "Born" splash at the bottom
+    container.style.height = height + 'px';
+
+    // 4. One continuous path: from "Born" through the middle of every picture (behind them) up to
+    //    today's date. Across a row it curves sideways, between rows it swings down.
+    const centre = b => ({ x: b.x + b.w / 2, y: b.y + b.ph / 2 });
+    const vertical = (a, b) => {
+        const k = (a.y - b.y) * 0.95;
+        const s = Math.sign(b.x - a.x || 1) * Math.min(W * 0.04, 40);
+        return `C ${a.x - s} ${a.y - k} ${b.x + s} ${b.y + k} ${b.x} ${b.y}`;
+    };
+    const sideways = (a, b) => {
+        const half = (b.x - a.x) * 0.5;
+        return `C ${a.x + half} ${a.y} ${b.x - half} ${b.y} ${b.x} ${b.y}`;
+    };
+
+    const oldest = boxes[boxes.length - 1];
+    const start = { x: centre(oldest).x, y: oldest.y + oldest.h + 70 };   // the middle of the "Born" splash
+    const end = { x: centre(boxes[0]).x, y: 40 };                         // the middle of today's date splash
+    let d = `M ${start.x} ${start.y} L ${centre(oldest).x} ${centre(oldest).y} `;
+    for (let i = boxes.length - 1; i > 0; i--) {
+        const A = centre(boxes[i]), B = centre(boxes[i - 1]);   // older -> newer
+        d += (boxes[i].row === boxes[i - 1].row ? sideways(A, B) : vertical(A, B)) + ' ';
+    }
+    d += `L ${end.x} ${end.y}`;
+    drawPath(container.querySelector('.home-path'), W, height, d, boxes, centre);
+
+    const startLabel = container.querySelector('.path-start');
+    startLabel.style.left = start.x + 'px';
+    startLabel.style.top = start.y + 'px';
+    const endLabel = container.querySelector('.path-end');
+    endLabel.style.left = end.x + 'px';
+    endLabel.style.top = end.y + 'px';
+}
+
+// Draws a path (as if by hand) into an svg of the given size.
+function drawPath(svg, width, height, d, boxes, centre) {
+    svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    const path = document.createElementNS(SVG_NS, 'path');
+    path.setAttribute('class', 'home-path-line');
+    path.setAttribute('d', d);
+    svg.replaceChildren(path);
+    path.setAttribute('d', handDrawn(path, boxes, centre));
+}
+
+// Re-draw the trail when the page width changes, the home page becomes visible, or fonts load.
+let lastHomeWidth = 0;
+new ResizeObserver(entries => {
+    const width = Math.round(entries[0].contentRect.width);
+    if (width !== lastHomeWidth) {
+        lastHomeWidth = width;
+        layoutHome();
+    }
+}).observe(document.getElementById('home-projects'));
+if (document.fonts) document.fonts.ready.then(() => layoutHome());
+
+// ---- Events on the Info page: one path down, newest at the top, the pictures swinging
+// from side to side, with the same soft white path as the home page. ----
+let eventItems = [];
+function renderEvents() {
+    const container = document.getElementById('events-path');
+    container.innerHTML = '';
+    const svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('class', 'home-path');
+    svg.setAttribute('aria-hidden', 'true');
+    container.append(svg);
+    eventItems = projects.filter(p => p.isEvent).map(project => {
+        const card = createCard(project, 'home-project');
+        container.append(card);
+        return { card, project, frame: project.frame || 1, swing: seededRandom(project.folder)() };
+    });
+    document.getElementById('events-block').hidden = !eventItems.length;
+    layoutEvents();
+}
+function layoutEvents() {
+    const container = document.getElementById('events-path');
+    const W = container.clientWidth;
+    if (!W || !eventItems.length) return;
+    const side = Math.max(110, Math.min(260, W * 0.3));     // a square picture's width
+    let y = 40;
+    const boxes = eventItems.map((item, i) => {
+        const w = Math.min(W, side * Math.sqrt(item.frame));
+        item.card.style.width = w + 'px';
+        item.card.querySelector('.project-image').style.aspectRatio = String(item.frame);
+        const h = item.card.offsetHeight;
+        // Left and right of the middle in turn, each a little different.
+        const middle = (i % 2 === 0 ? 0.32 : 0.68) + (item.swing - 0.5) * 0.12;
+        const x = Math.max(0, Math.min(W - w, W * middle - w / 2));
+        item.card.style.left = x + 'px';
+        item.card.style.top = y + 'px';
+        const box = { x, y, w, h, ph: w / item.frame };
+        y += h + 80;
+        return box;
+    });
+    const height = y + 20;
+    container.style.height = height + 'px';
+
+    const centre = b => ({ x: b.x + b.w / 2, y: b.y + b.ph / 2 });
+    const first = centre(boxes[0]), last = boxes[boxes.length - 1];
+    let d = `M ${first.x} 0 L ${first.x} ${first.y} `;
+    for (let i = 1; i < boxes.length; i++) {
+        const a = centre(boxes[i - 1]), b = centre(boxes[i]), k = (b.y - a.y) * 0.55;
+        d += `C ${a.x} ${a.y + k} ${b.x} ${b.y - k} ${b.x} ${b.y} `;
+    }
+    d += `L ${centre(last).x} ${height}`;
+    drawPath(container.querySelector('.home-path'), W, height, d, boxes, centre);
+}
+let lastEventsWidth = 0;
+new ResizeObserver(entries => {
+    const width = Math.round(entries[0].contentRect.width);
+    if (width !== lastEventsWidth) { lastEventsWidth = width; layoutEvents(); }
+}).observe(document.getElementById('events-path'));
+if (document.fonts) document.fonts.ready.then(() => layoutEvents());
+
+// ---- The name on the home page always fills the full width of the page ----
+// Measure the name at 100px and scale it so its letters run exactly from edge to edge.
+// Measured by the ink of the letters (not their boxes): the L has empty space on its left,
+// which is pulled back so the L lines up with the text under it.
+const nameCanvas = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+// Where the name's ink really starts and ends, from its drawn pixels: the font's own numbers
+// are not exact, and it uses a special k at the end of a word. { left, right } from the start.
+function inkOf(text, font, spacing) {
+    const g = nameCanvas;
+    g.font = font;
+    if ('letterSpacing' in g) g.letterSpacing = spacing + 'px';
+    const W = Math.ceil(g.measureText(text).width + 200), H = 300;
+    g.canvas.width = W;
+    g.canvas.height = H;                      // (resizing also resets the drawing settings)
+    g.font = font;
+    if ('letterSpacing' in g) g.letterSpacing = spacing + 'px';
+    g.fillStyle = '#000';
+    g.fillText(text, 100, 200);
+    const pixels = g.getImageData(0, 0, W, H).data;
+    const inkColumn = x => { for (let y = 0; y < H; y++) if (pixels[(y * W + x) * 4 + 3] > 100) return true; return false; };
+    let left = 0, right = W - 1;
+    while (left < W && !inkColumn(left)) left++;
+    while (right > left && !inkColumn(right)) right--;
+    return left >= W ? null : { left: left - 100, right: right + 1 - 100 };
+}
+const fitName = () => {
+    const h1 = document.querySelector('.fit-name');
+    const text = h1 && h1.firstElementChild;
+    const width = h1 && h1.clientWidth;
+    if (!text || !width) return;
+    h1.style.fontSize = '100px';
+    text.style.marginLeft = '0px';
+    const range = document.createRange();
+    range.selectNodeContents(text);
+    const measured = range.getBoundingClientRect().width;   // letter boxes, incl. spacing after the last letter
+    if (!measured) return;
+    // Ink of the first and last letter, compared with their boxes.
+    const cs = getComputedStyle(h1);
+    const spacing = parseFloat(cs.letterSpacing) || 0;
+    const name = text.textContent.trim();
+    const ink = inkOf(name, `${cs.fontWeight} 100px ${cs.fontFamily}`, spacing);
+    const inkWidth = ink ? ink.right - ink.left : 0;
+    const scale = width / (inkWidth > 0 ? inkWidth : measured);
+    h1.style.fontSize = (100 * scale).toFixed(2) + 'px';
+    if (inkWidth > 0) text.style.marginLeft = (-ink.left * scale).toFixed(2) + 'px';   // the L's empty space
+};
+new ResizeObserver(fitName).observe(document.querySelector('.fit-name'));
+if (document.fonts) document.fonts.ready.then(fitName);
+fitName();
+
+// ---- Sticky header: the big name on the home page dissolves softly into it while scrolling ----
+const topBar = document.getElementById('top-bar');
+const bigName = document.querySelector('.fit-name');
+// Height of the soft zone under the header where the name fades out (a bit more for a bigger name).
+const fadeLength = () => Math.min(80, Math.max(40, parseFloat(getComputedStyle(bigName).fontSize) * 0.28));
+let headerQueued = false;
+function updateHeaderName() {
+    headerQueued = false;
+    const onHome = document.getElementById('home').classList.contains('active');
+    if (onHome) {
+        const line = topBar.getBoundingClientRect().bottom;
+        const box = bigName.getBoundingClientRect();
+        // Where the material line is, measured inside the name.
+        const cut = line - box.top;
+        // A fixed soft zone right under the header: the letters fade as they pass through it.
+        // It never changes size, so nothing pops; at the top of the page the name sits below it.
+        const soft = fadeLength();
+        if (cut + soft > 0) {
+            const mask = `linear-gradient(to bottom, transparent ${cut.toFixed(1)}px, #000 ${(cut + soft).toFixed(1)}px)`;
+            bigName.style.webkitMaskImage = mask;
+            bigName.style.maskImage = mask;
+        } else {
+            bigName.style.webkitMaskImage = '';
+            bigName.style.maskImage = '';
+        }
+    }
+}
+const queueHeaderName = () => {
+    if (!headerQueued) { headerQueued = true; requestAnimationFrame(updateHeaderName); }
+};
+window.addEventListener('scroll', queueHeaderName, { passive: true });
+window.addEventListener('resize', queueHeaderName);
+window.addEventListener('hashchange', () => setTimeout(updateHeaderName, 0));
+if (document.fonts) document.fonts.ready.then(updateHeaderName);
+updateHeaderName();
+
+function renderGrid() {
+    const grid = document.getElementById('project-grid');
+    grid.innerHTML = '';
+    projects.forEach(project => grid.append(createCard(project, 'project')));
+}
+
+function renderDetail(project) {
+    setColor(document.getElementById('project'), project.isEvent ? 'event' : project.categories[0]);
+    document.getElementById('detail-title').textContent = project.name;
+    requestAnimationFrame(fitDetailTitle);
+    document.getElementById('detail-intro').textContent = project.short;
+    document.title = `${project.name} — Levi Lingerak`;
+
+    const text = document.getElementById('detail-text');
+    text.innerHTML = '';
+    if (project.detail) text.append(...toParagraphs(project.detail));
+
+    const facts = document.getElementById('detail-facts');
+    facts.innerHTML = '';
+    project.facts.forEach(([label, value]) => {
+        const dt = document.createElement('dt');
+        dt.textContent = label;
+        const dd = document.createElement('dd');
+        if (label === 'Link' && /^https?:\/\//i.test(value)) {
+            const a = document.createElement('a');
+            a.href = value;
+            a.target = '_blank';
+            a.rel = 'noopener';
+            a.textContent = value.replace(/^https?:\/\/(www\.)?/i, '') + ' ↗';
+            dd.append(a);
+        } else {
+            dd.textContent = value;
+        }
+        facts.append(dt, dd);
+    });
+
+    const gallery = document.getElementById('detail-gallery');
+    gallery.innerHTML = '';
+    project.media.forEach((item, i) => {
+        const figure = document.createElement('figure');
+        if (item.isVideo) {
+            const video = document.createElement('video');
+            video.src = item.url;
+            video.controls = true;
+            video.playsInline = true;
+            video.preload = 'metadata';
+            figure.append(video);
+            figure.className = 'is-wide';
+        } else {
+            const img = document.createElement('img');
+            img.src = item.url;
+            img.alt = item.caption || `${project.name} — image ${i + 1}`;
+            img.loading = i < 2 ? 'eager' : 'lazy';
+            img.decoding = 'async';
+            figure.append(img);
+            // Every picture in its own proportion (square, 4:3, 3:4, 16:9 or 9:16).
+            // The cover spans the full width when it is wide; an upright cover sits beside the next picture.
+            const shape = ratio => {
+                figure.style.aspectRatio = String(ratio);
+                figure.classList.toggle('is-wide', i === 0 && ratio > 1);
+            };
+            if (i === 0) figure.classList.add('is-cover');
+            if (i === 0 && project.frame) shape(project.frame);
+            const measure = () => { if (img.naturalWidth) shape(nearestFrame(img.naturalWidth / img.naturalHeight)); };
+            if (img.complete) measure(); else img.addEventListener('load', measure, { once: true });
+        }
+        if (item.caption) {
+            if (item.isVideo) figure.querySelector('video').setAttribute('aria-label', item.caption);
+            if (SHOW_PICTURE_TEXTS) {
+                const caption = document.createElement('figcaption');
+                caption.textContent = item.caption;
+                figure.append(caption);
+            }
+        }
+        gallery.append(figure);
+    });
+
+    const withPage = projects.filter(p => p.hasPage);   // previous / next skip projects without a page
+    const i = withPage.indexOf(project);
+    const prev = withPage[(i - 1 + withPage.length) % withPage.length];
+    const next = withPage[(i + 1) % withPage.length];
+    const prevLink = document.getElementById('detail-prev');
+    const nextLink = document.getElementById('detail-next');
+    prevLink.href = '#project/' + encodeURIComponent(prev.folder);
+    prevLink.textContent = '← ' + prev.name;
+    nextLink.href = '#project/' + encodeURIComponent(next.folder);
+    nextLink.textContent = next.name + ' →';
+
+    showDesignedPage(project);
+}
+
+// The title stays inside the left half: a long name gets smaller instead of running on.
+function fitDetailTitle() {
+    const title = document.getElementById('detail-title');
+    const room = title.parentElement.clientWidth;
+    title.style.fontSize = '';
+    if (!room || !title.textContent) return;
+    const wide = title.scrollWidth;
+    if (wide > room) {
+        const size = parseFloat(getComputedStyle(title).fontSize);
+        title.style.fontSize = (size * room / wide * 0.98).toFixed(1) + 'px';
+    }
+    PageLayout.alignFacts(title, document.getElementById('detail-facts'));
+}
+window.addEventListener('resize', () => requestAnimationFrame(fitDetailTitle));
+if (document.fonts) document.fonts.ready.then(fitDetailTitle);
+
+// ---- A designed page (layout.json from the Site Editor): replaces the story and the pictures
+// (the top with title, description and facts always stays). ----
+function showDefaultPage(show) {
+    document.querySelector('#project .detail-body').hidden = !show;
+    document.getElementById('detail-gallery').hidden = !show;
+    document.getElementById('detail-custom').hidden = show;
+}
+async function showDesignedPage(project) {
+    if (project.layout === undefined) {          // not looked for yet
+        project.layout = null;
+        try {
+            const response = await fetch(encodeURI(`Projects/${project.folder}/layout.json`), { cache: 'no-cache' });
+            if (response.ok) project.layout = await response.json();
+        } catch (e) { /* no designed page: the automatic one stays */ }
+    }
+    const current = decodeURIComponent(location.hash.slice(1)) === 'project/' + project.folder;
+    if (!current) return;                        // the visitor already went elsewhere
+    if (!project.layout || !(project.layout.bands || []).length) { showDefaultPage(true); return; }
+    const captions = Object.fromEntries(project.media.map((m, i) => [project.mediaFiles[i], m.caption]));
+    PageLayout.render(document.getElementById('detail-custom'), project.layout, {
+        name: project.name,
+        story: project.detail,
+        photoUrl: file => project.mediaFiles.includes(file) ? mediaUrl(project.folder, file) : '',
+        caption: file => captions[file] || ''
+    });
+    showDefaultPage(false);
+}
+
+async function loadProjects() {
+    let list = [];
+    try {
+        const response = await fetch('Projects/projects.json', { cache: 'no-cache' });
+        list = (await response.json()).projects || [];
+    } catch (e) {
+        console.error('Could not load Projects/projects.json', e);
+    }
+
+    projects = await Promise.all(list.map(loadProject));
+    // Newest first; projects without a date keep their order from projects.json.
+    projects.sort((a, b) => (b.date ?? -Infinity) - (a.date ?? -Infinity) || a.index - b.index);
+    projectsLoaded = true;
+
+    renderHome();
+    renderEvents();
+    renderGrid();
+    route();
+}
+
+// ---- Profile (Profile/profile.txt). Empty fields keep the text already on the page. ----
+async function loadProfile() {
+    let data;
+    try {
+        const response = await fetch('Profile/profile.txt', { cache: 'no-cache' });
+        if (!response.ok) return;
+        data = parseInfoFile(await response.text(), PROFILE_KEYS);
+    } catch (e) { return; }
+
+    document.querySelectorAll('[data-profile]').forEach(el => {
+        const value = data[el.dataset.profile];
+        if (!value) return;
+        if (el.dataset.profile === 'biography') el.replaceChildren(...toParagraphs(value));
+        else el.textContent = value;
+        el.hidden = false;
+    });
+
+    if (data['email']) {
+        document.querySelectorAll('.profile-email').forEach(a => {
+            a.href = 'mailto:' + data['email'];
+            a.textContent = data['email'] + ' ↗';
+        });
+    }
+
+    const handle = (data['instagram'] || '').replace(/^@/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/\/+$/, '');
+    if (handle) {
+        document.querySelectorAll('a[href*="instagram.com"]').forEach(a => {
+            a.href = `https://www.instagram.com/${encodeURIComponent(handle)}/`;
+        });
+        document.querySelectorAll('.profile-instagram').forEach(a => {
+            a.textContent = `Instagram @${handle} ↗`;
+        });
+        document.querySelectorAll('.profile-instagram-handle').forEach(a => {
+            a.textContent = `@${handle} ↗`;
+        });
+    }
+}
+
+// ---- Background blobs float along while you scroll ----
+// Each blob sways in its own direction and at its own pace, so they move past each
+// other. They swing back and forth instead of sliding away, so even on a long page
+// they stay in view.
+if (!reduceMotion) {
+    const blobs = [...document.querySelectorAll('.blob')].map((el, i) => ({
+        el,
+        speed: 0.0005 + i * 0.0001,         // how fast it sways per pixel scrolled (slow)
+        phase: i * 1.7,                     // where in its swing it starts
+        rangeY: 18 + (i % 3) * 6,           // up/down reach, in % of the screen height
+        rangeX: 8 + ((i + 1) % 3) * 4       // sideways reach, in % of the screen width
+    }));
+    let scrollQueued = false;
+    const moveBlobs = () => {
+        scrollQueued = false;
+        const y = window.scrollY;
+        blobs.forEach(b => {
+            const a = y * b.speed + b.phase;
+            const dy = (Math.sin(a) - Math.sin(b.phase)) * b.rangeY;
+            const dx = (Math.cos(a * 0.8) - Math.cos(b.phase * 0.8)) * b.rangeX;
+            b.el.style.translate = `${dx.toFixed(2)}vw ${dy.toFixed(2)}vh`;
+        });
+    };
+    window.addEventListener('scroll', () => {
+        if (!scrollQueued) {
+            scrollQueued = true;
+            requestAnimationFrame(moveBlobs);
+        }
+    }, { passive: true });
+    moveBlobs();
+}
+
+route();
+loadProfile();
+loadProjects();
