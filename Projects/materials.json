@@ -1,0 +1,41 @@
+{
+  "_help": "Made by the Site Editor (Materials tab): the colour of each material and the text beside its name on its page.",
+  "materials": [
+    {
+      "id": "wood",
+      "name": "Wood",
+      "color": "#b9781d",
+      "description": "I learned to work with wood at HMC Amsterdam"
+    },
+    {
+      "id": "plastic",
+      "name": "Plastic",
+      "color": "#f9c943",
+      "description": ""
+    },
+    {
+      "id": "metal",
+      "name": "Metal",
+      "color": "#a3a6a8",
+      "description": ""
+    },
+    {
+      "id": "stone",
+      "name": "Stone",
+      "color": "#519541",
+      "description": ""
+    },
+    {
+      "id": "textile",
+      "name": "Textile",
+      "color": "#4a81bf",
+      "description": ""
+    },
+    {
+      "id": "other",
+      "name": "Other",
+      "color": "#ff513d",
+      "description": ""
+    }
+  ]
+}

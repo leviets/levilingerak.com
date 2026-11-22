@@ -1,0 +1,83 @@
+# ================================================================
+#  PROJECT INFO for the website
+#  - Write after the colon. Empty fields are simply not shown.
+#  - Lines starting with # are notes for you; the site ignores them.
+#  - A long text may continue on the next lines (no colon needed).
+# ================================================================
+
+Project name: Magdalena
+# Leave empty to use the folder name.
+
+What it is: Necklace
+# e.g. Chair, Lamp, Bag, Video. Shown under the name on the site.
+
+Categories: Wood
+# Choose from: Wood, Plastic, Metal, Stone, Textile, Other
+# Several are allowed, separated by commas, e.g. "Textile, Wood".
+# The project then shows up under each of them in the menu.
+# The FIRST one sets the project's colour (the line around the picture):
+# Wood = brown, Plastic = yellow, Metal = grey, Stone = green,
+# Textile = blue, Other = red.
+
+Date: 09-01-2026
+# DD-MM-YYYY. Shown right under the picture. Newest projects come first.
+
+Short description:
+# One sentence, shown at the top of the project page.
+
+Detailed description:
+# The story of the project: idea, process, what you learned.
+
+Materials:
+# e.g. Walnut, beech, brass
+
+Wood part: Veneer
+# Per material: what that part is, e.g. "Plastic part: the 3D-printed handle".
+# Shown across from the name on that material's page (in its colour), and in the facts.
+
+Techniques:
+# e.g. Hand-cut joinery, machine stitching, 3D printing
+
+Dimensions:
+# e.g. 40 x 30 x 25 cm
+
+Location:
+# Where it was made, e.g. Eindhoven / name of school or workshop
+
+Made for:
+# e.g. School assignment, client, exhibition, personal project
+
+Collaborators:
+# People who helped, e.g. Model: Name, Styling: Name
+
+Supervised by:
+# Teacher, tutor or mentor who guided it
+
+Duration:
+# How long it took, e.g. 3 weeks or 40 hours
+
+Learnt:
+# What you learnt from it
+
+Exhibited:
+# Where it was shown or what it won, e.g. Dutch Design Week 2025
+
+For sale:
+# e.g. Yes, 180 euros / On request.
+# Every fact is always shown on the page; one you leave empty shows a stripe (—).
+
+Photography:
+# Who took the pictures
+
+Link:
+# Optional web address, e.g. a shop page or article (start with https://)
+
+# ---------------- HOME PAGE ----------------
+Size: 60%
+# Size of the picture on the home page, from 20% to 100%.
+# 100% = half the page width on a computer, 20% = a twentieth (very small).
+
+# ---------------- PICTURE TEXTS ----------------
+# A short text per picture: what it shows. Used as the picture's description
+# on the site (and, if turned on, shown under the picture).
+Picture magdalena1.jpg:

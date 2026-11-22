@@ -82,6 +82,7 @@ function route() {
         }
     }
 
+    if (pageName !== 'project') showFilm(null);      // a film stops playing when you leave its page
     pages.forEach(page => page.classList.toggle('active', page.dataset.pageSection === pageName));
     navLinks.forEach(link => {
         const isActive = link.dataset.page === navName;
@@ -106,29 +107,76 @@ function renderCategory(id) {
     const section = document.getElementById('category');
     setColor(section, id);
     document.getElementById('category-title').textContent = category.name;
+    const desc = document.getElementById('category-desc');        // the material's own text, beside its name
+    desc.textContent = category.description || '';
+    desc.hidden = !category.description;
     document.title = `${category.name} — Levi Lingerak`;
 
     let visible = 0;
     document.querySelectorAll('#project-grid .project').forEach(card => {
-        const show = card.dataset.categories.split(' ').includes(id);
+        // (Work in progress stays on the home page only.)
+        const show = card.dataset.categories.split(' ').includes(id) && !card.project.wip;
         card.classList.toggle('hidden', !show);
+        if (!show) return;
         // On a material page every project takes that material's colour.
-        if (show) setColor(card, id);
-        if (show) visible++;
+        setColor(card, id);
+        // Up to 3 items ("3D printed hinges, zip, tubes"), one under the other.
+        card.querySelector('.project-part').textContent = (card.project.parts[id] || '').split(',').map(s => s.trim()).filter(Boolean).slice(0, 3).join('\n');
+        visible++;
     });
-    document.getElementById('project-count').textContent = visible;
-    document.getElementById('project-count-word').textContent = visible === 1 ? 'project' : 'projects';
+    layoutWall();
     document.getElementById('category-empty').hidden = visible > 0 || !projectsLoaded;
 }
+
+// Material pages as a photo wall: every picture in a row the same height, each in its own
+// proportion, the rows filling the page width. (On a phone: one picture per row.)
+const WALL_DATE = 0;           // room beside each picture (none: the material pages show no date)
+function layoutWall() {
+    const grid = document.getElementById('project-grid');
+    const width = grid.clientWidth;
+    if (!width) return;                          // not on screen yet: the ResizeObserver comes back
+    const cards = [...grid.querySelectorAll('.project:not(.hidden)')];
+    const gap = parseFloat(getComputedStyle(grid).columnGap) || 0;
+    const ratioOf = card => parseFloat(card.querySelector('.project-image').style.aspectRatio) || 4 / 3;
+    if (width < 600) { cards.forEach(card => { card.style.width = '100%'; }); return; }
+    const target = Math.max(300, width * 0.28);  // the height a row aims for (about the size of Oso)
+    // Height of a row of these cards when it fills the width exactly.
+    const fit = list => {
+        const ratios = list.reduce((sum, c) => sum + ratioOf(c), 0);
+        const room = width - list.length * WALL_DATE - (list.length - 1) * gap - 1;   // (1px spare against rounding)
+        return Math.floor(room / ratios * 100) / 100;
+    };
+    const place = (list, height) => list.forEach(card => { card.style.width = (ratioOf(card) * height + WALL_DATE) + 'px'; });
+    let row = [];
+    cards.forEach(card => {
+        const without = row.length ? fit(row) : Infinity;
+        const withIt = fit([...row, card]);
+        if (withIt > target) { row.push(card); return; }   // still room
+        // Full: take this picture in only if the row doesn't get smaller than the minimum; otherwise it
+        // starts the next row (and this row grows a bit taller to fill the width).
+        // (A little smaller is allowed when the row would otherwise become very tall.)
+        const smallest = without > target * 1.4 ? target * 0.84 : target * 0.9;
+        if (row.length && withIt < smallest) {
+            place(row, without);
+            row = [card];
+        } else {
+            place([...row, card], withIt);
+            row = [];
+        }
+    });
+    if (row.length) place(row, Math.min(target, fit(row)));   // the last row keeps the normal height
+}
+new ResizeObserver(layoutWall).observe(document.getElementById('project-grid'));
 
 // Picture texts ("Picture x.jpg: ..." in project.txt) are always the pictures' descriptions for
 // search engines and screen readers. Set this to true to also show them under the pictures.
 const SHOW_PICTURE_TEXTS = false;
 
 // ---- Reading project.txt / profile.txt ----
-const PROJECT_KEYS = ['project name', 'categories', 'category', 'date', 'year', 'short description', 'detailed description',
+const PROJECT_KEYS = ['project name', 'what it is', 'categories', 'category', 'date', 'year', 'short description', 'detailed description',
     'materials', 'techniques', 'dimensions', 'location', 'made for', 'supervised by', 'duration', 'exhibited',
-    'for sale', 'collaborators', 'photography', 'link', 'size'];
+    'for sale', 'collaborators', 'photography', 'link', 'size', 'learnt',
+    ...CATEGORIES.map(c => c.id + ' part')];      // e.g. "Plastic part: the 3D-printed handle"
 const PROFILE_KEYS = ['name', 'tagline', 'location', 'short introduction', 'biography', 'email',
     'instagram', 'education', 'available for'];
 
@@ -243,6 +291,9 @@ async function loadProject(entry, index) {
         categoryNames,
         dateText: formatDate(rawDate, date),
         date,
+        kind: (data['what it is'] || '').trim(),   // what it is, e.g. "Chair" or "Video"
+        // What each material is used for ("Plastic part: ..."), shown on the material pages and in the facts.
+        parts: Object.fromEntries(categories.map(id => [id, (data[id + ' part'] || '').trim()])),
         short: data['short description'] || '',
         detail: data['detailed description'] || '',
         // Every fact is always listed, in the same order; one that isn't filled in shows a stripe.
@@ -252,6 +303,7 @@ async function loadProject(entry, index) {
             ['Date', formatDate(rawDate, date)],
             ...(isEvent ? [] : [
                 ['Materials', data['materials']],
+                ...categories.map(id => [categoryById[id].name + ' part', data[id + ' part']]),
                 ['Techniques', data['techniques']],
                 ['Dimensions', data['dimensions']]]),
             ['Location', data['location']],
@@ -259,7 +311,8 @@ async function loadProject(entry, index) {
                 ['Made for', data['made for']],
                 ['Collaborators', data['collaborators']],
                 ['Supervised by', data['supervised by']],
-                ['Duration', data['duration']]]),
+                ['Duration', data['duration']],
+                ['Learnt', data['learnt']]]),
             ['Exhibited', data['exhibited']],
             ...(isEvent ? [] : [['For sale', data['for sale']]]),
             ['Photography', data['photography']],
@@ -268,7 +321,15 @@ async function loadProject(entry, index) {
          .filter(([, value]) => value),
         size: parseSize(data['size']),
         frame: parseFrame(entry.frame),   // proportion of the cover's frame, e.g. 16 / 9
-        hasPage: entry.page !== false,    // "page": false -> no project page, the card can't be clicked
+        // "page": false -> no project page; "wip": true -> work in progress: shown blurred, not clickable.
+        wip: entry.wip === true,
+        hasPage: entry.page !== false && entry.wip !== true,
+        // A film: "youtube" (the video's id) plays at the top of the project page; "hover" is a few silent
+        // seconds of it that play over the thumbnail on hover (both written by the Site Editor).
+        youtube: entry.youtube || '',
+        hoverClip: entry.hover ? mediaUrl(entry.folder, entry.hover) : null,
+        // A picture project: optional pictures ("swap": one file name or a list) shown one after another on hover.
+        swap: entry.swap && !entry.hover ? [].concat(entry.swap).slice(0, 10).map(file => mediaUrl(entry.folder, file)) : null,   // (10 at most)
         cover: cover ? cover.url : null,
         mediaFiles: entry.media || [],    // file names, for a designed page (layout.json)
         media
@@ -292,7 +353,7 @@ function parseFrame(value) {
 function createCard(project, className) {
     // Projects without a page of their own ("page": false in projects.json) can't be clicked.
     const card = document.createElement(project.hasPage ? 'a' : 'div');
-    card.className = className + (project.hasPage ? '' : ' no-page');
+    card.className = className + (project.hasPage ? '' : ' no-page') + (project.wip ? ' is-wip' : '');
     if (project.hasPage) card.href = '#project/' + encodeURIComponent(project.folder);
     card.dataset.categories = project.categories.join(' ');
     setColor(card, project.isEvent ? 'event' : project.categories[0]);
@@ -309,6 +370,13 @@ function createCard(project, className) {
     } else {
         imageBox.classList.add('is-empty');
     }
+    if (project.wip) {                           // work in progress: "Coming soon" over the blurred picture
+        const soon = document.createElement('span');
+        soon.className = 'coming-soon';
+        soon.textContent = 'Coming soon';
+        if (project.cover) soon.style.backgroundImage = `linear-gradient(rgba(31, 24, 19, 0.45), rgba(31, 24, 19, 0.45)), url("${project.cover}")`;   // the sharp picture, seen through the letters
+        imageBox.append(soon);
+    }
 
     // Name on the left, date on the right.
     const meta = document.createElement('div');
@@ -318,20 +386,72 @@ function createCard(project, className) {
     const date = document.createElement('span');
     date.textContent = project.dateText;
     meta.append(title, date);
+    const kind = document.createElement('p');      // what it is, under the name
+    kind.className = 'project-kind';
+    kind.textContent = project.kind;
+    if (className === 'project') {
+        // Material pages: across from the name, in that material's colour, what the material is used
+        // for in this project (e.g. "3D printed hinges" on the Plastic page). Filled in by renderCategory.
+        // (beside the name when it fits, otherwise on the line under it)
+        const part = document.createElement('p');
+        part.className = 'project-part';
+        // The name with "what it is" right under it (always the same distance), the part text beside them.
+        const nameBlock = document.createElement('div');
+        nameBlock.className = 'project-name-block';
+        nameBlock.append(title, kind);
+        const row = document.createElement('div');
+        row.className = 'project-title-row';
+        row.append(nameBlock, part);
+        meta.prepend(row);
+        card.project = project;
+    } else if (project.kind) {
+        meta.append(kind);
+    }
 
     card.append(imageBox, meta);
     const img = imageBox.querySelector('img');
     if (img) {
-        // Soft edges on the home page and the Info page; the material pages show the pictures as they are.
-        if (className !== 'project') softEdges(img);
+        const clip = project.hoverClip && project.hasPage && !reduceMotion ? hoverClip(card, imageBox, project.hoverClip)
+            : project.swap && project.swap.length && !project.wip ? hoverPictures(card, imageBox, project.swap) : null;
+        // Soft edges on the home, material and Info pages (not on the project pages themselves).
+        softEdges(img, clip);
         // The frame has the picture's own proportion (square, 4:3, 3:4, 16:9 or 9:16).
         if (project.frame) imageBox.style.aspectRatio = String(project.frame);
         else {
-            const measure = () => { if (img.naturalWidth) imageBox.style.aspectRatio = String(nearestFrame(img.naturalWidth / img.naturalHeight)); };
+            const measure = () => {
+                if (!img.naturalWidth) return;
+                imageBox.style.aspectRatio = String(nearestFrame(img.naturalWidth / img.naturalHeight));
+                if (className === 'project') layoutWall();
+            };
             if (img.complete) measure(); else img.addEventListener('load', measure, { once: true });
         }
     }
     return card;
+}
+
+// A film project: its few silent seconds play over the thumbnail while the mouse is on it.
+// Nothing is downloaded until the first hover.
+function hoverClip(card, imageBox, url) {
+    const clip = document.createElement('video');
+    clip.className = 'hover-clip';
+    clip.muted = true;
+    clip.loop = true;
+    clip.playsInline = true;
+    clip.preload = 'none';
+    clip.setAttribute('aria-hidden', 'true');
+    clip.src = url;
+    imageBox.append(clip);
+    let rest = 0;
+    clip.addEventListener('playing', () => imageBox.classList.add('is-playing'));
+    card.addEventListener('mouseenter', () => {
+        clearTimeout(rest);
+        clip.play().catch(() => {});
+    });
+    card.addEventListener('mouseleave', () => {
+        imageBox.classList.remove('is-playing');
+        rest = setTimeout(() => { clip.pause(); clip.currentTime = 0; }, 600);   // after it has faded out
+    });
+    return clip;
 }
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -341,7 +461,7 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 // so the fade flows away: sharp and square, as if the picture comes forward. The mask is a
 // blurred rounded rectangle drawn once at the picture's exact size, so the fade bends
 // smoothly around the corners.
-const FADE = 0.025;           // width of the soft edge, as part of the picture's width (the bare minimum)
+const FADE = 0.015;           // width of the soft edge, as part of the picture's width (the bare minimum)
 function softMask(w, h) {
     const f = FADE * w;                          // soft edge in pixels
     const n = v => v.toFixed(2);
@@ -352,16 +472,69 @@ function softMask(w, h) {
         `rx='${n(round)}' filter='url(%23s)'/></svg>`;
     return `url("data:image/svg+xml;utf8,${svg}")`;
 }
-function softEdges(img) {
+// The hover pictures: they lie over the cover; while the mouse is on the card they fade in one after
+// another, round and round, like a little slideshow (style.css: .hover-swap). Mouse off: the cover again.
+const SLIDE_MS = 1400;        // each picture this long
+const HOVER_DELAY = 500;      // the slideshow starts after the mouse has been on the card this long
+const FADE_MS = 800;          // a picture's fade-in (style.css: .hover-swap)
+function hoverPictures(card, imageBox, urls) {
+    const slides = urls.map(url => {
+        const pic = document.createElement('img');
+        pic.className = 'hover-swap';
+        pic.src = url;
+        pic.alt = '';
+        pic.loading = 'lazy';
+        pic.decoding = 'async';
+        imageBox.append(pic);
+        return pic;
+    });
+    let wait = 0, timer = 0, at = -1, layer = 1;
+    // The next picture fades in on top of the one before, which stays fully visible underneath until
+    // the new one is there (so the cover never shines through in between).
+    const show = i => {
+        at = i;
+        const pic = slides[i];
+        const reveal = () => {
+            if (slides[at] !== pic) return;                      // (moved on, or the mouse left, meanwhile)
+            pic.style.zIndex = ++layer;
+            pic.classList.add('is-shown');
+            setTimeout(() => slides.forEach(other => { if (other !== slides[at]) other.classList.remove('is-shown'); }), FADE_MS);
+        };
+        // A picture that hasn't loaded yet waits (the one before stays visible meanwhile).
+        if (pic.complete && pic.naturalWidth) reveal(); else pic.addEventListener('load', reveal, { once: true });
+    };
+    const start = () => {
+        clearTimeout(wait);
+        clearInterval(timer);
+        wait = setTimeout(() => {
+            show(0);
+            if (slides.length > 1) timer = setInterval(() => show((at + 1) % slides.length), SLIDE_MS);
+        }, HOVER_DELAY);
+    };
+    const stop = () => {
+        clearTimeout(wait);
+        clearInterval(timer);
+        at = -1;
+        slides.forEach(pic => pic.classList.remove('is-shown'));    // all fade out together: the cover again
+    };
+    card.addEventListener('mouseenter', start);
+    card.addEventListener('mouseleave', stop);
+    card.addEventListener('focusin', start);
+    card.addEventListener('focusout', stop);    return slides;
+}
+
+function softEdges(img, clip) {
     let size = '';
     const paint = () => {
         const w = img.clientWidth, h = img.clientHeight;
         if (!w || !h || size === w + 'x' + h) return;
         size = w + 'x' + h;                      // only redrawn when the picture changes size
         const mask = softMask(w, h);
-        img.style.webkitMaskImage = mask;
-        img.style.maskImage = mask;
-        img.style.setProperty('--fade-px', (FADE * w).toFixed(2) + 'px');   // used by style.css
+        [img].concat(clip || []).forEach(el => {     // (a hover clip or hover pictures get the same edges)
+            el.style.webkitMaskImage = mask;
+            el.style.maskImage = mask;
+            el.style.setProperty('--fade-px', (FADE * w).toFixed(2) + 'px');   // used by style.css
+        });
     };
     new ResizeObserver(paint).observe(img);
 }
@@ -774,11 +947,25 @@ function inkOf(text, font, spacing) {
     while (right > left && !inkColumn(right)) right--;
     return left >= W ? null : { left: left - 100, right: right + 1 - 100 };
 }
+// The name runs from the left of the logo's blue circle (it has a thin see-through rim: 10 of its 192 pixels)
+// to the right of the Instagram circle. Without them in view: the full width of the name's box.
+const LOGO_RIM = 10 / 192;
+const NAME_SIZE = 0.98;         // a little smaller than that, centred between them
+function nameRoom(h1) {
+    const box = h1.getBoundingClientRect();
+    const logo = document.querySelector('.brand img'), insta = document.querySelector('.instagram-button');
+    const l = logo && logo.getBoundingClientRect(), r = insta && insta.getBoundingClientRect();
+    if (!l || !r || !l.width || !r.width) return { start: 0, width: h1.clientWidth };
+    const logoLeft = (l.left + l.right) / 2 - logo.offsetWidth / 2;          // (not grown by its hover)
+    const start = logoLeft + logo.offsetWidth * LOGO_RIM - box.left;
+    return { start, width: r.right - box.left - start };
+}
 const fitName = () => {
     const h1 = document.querySelector('.fit-name');
     const text = h1 && h1.firstElementChild;
-    const width = h1 && h1.clientWidth;
-    if (!text || !width) return;
+    if (!text || !h1.clientWidth) return;
+    const { start, width } = nameRoom(h1);
+    if (width <= 0) return;
     h1.style.fontSize = '100px';
     text.style.marginLeft = '0px';
     const range = document.createRange();
@@ -789,11 +976,13 @@ const fitName = () => {
     const cs = getComputedStyle(h1);
     const spacing = parseFloat(cs.letterSpacing) || 0;
     const name = text.textContent.trim();
-    const ink = inkOf(name, `${cs.fontWeight} 100px ${cs.fontFamily}`, spacing);
+    // (A browser that can't space letters on a canvas would measure the ink too narrow: then the boxes are used.)
+    const ink = 'letterSpacing' in nameCanvas ? inkOf(name, `${cs.fontWeight} 100px ${cs.fontFamily}`, spacing) : null;
     const inkWidth = ink ? ink.right - ink.left : 0;
-    const scale = width / (inkWidth > 0 ? inkWidth : measured);
+    const scale = NAME_SIZE * width / (inkWidth > 0 ? inkWidth : measured);
     h1.style.fontSize = (100 * scale).toFixed(2) + 'px';
-    if (inkWidth > 0) text.style.marginLeft = (-ink.left * scale).toFixed(2) + 'px';   // the L's empty space
+    const indent = start + width * (1 - NAME_SIZE) * 0.35;   // between the logo and Instagram, a touch to the left (looks centred)
+    text.style.marginLeft = (indent - (inkWidth > 0 ? ink.left * scale : 0)).toFixed(2) + 'px';   // minus the L's empty space
 };
 new ResizeObserver(fitName).observe(document.querySelector('.fit-name'));
 if (document.fonts) document.fonts.ready.then(fitName);
@@ -838,13 +1027,16 @@ updateHeaderName();
 function renderGrid() {
     const grid = document.getElementById('project-grid');
     grid.innerHTML = '';
-    projects.forEach(project => grid.append(createCard(project, 'project')));
+    // Material pages: the most important (biggest on the home page) first, then newest.
+    [...projects].sort((a, b) => b.size - a.size || (b.date ?? -Infinity) - (a.date ?? -Infinity))
+        .forEach(project => grid.append(createCard(project, 'project')));
 }
 
 function renderDetail(project) {
     setColor(document.getElementById('project'), project.isEvent ? 'event' : project.categories[0]);
     document.getElementById('detail-title').textContent = project.name;
     requestAnimationFrame(fitDetailTitle);
+    document.getElementById('detail-kind').textContent = project.kind;
     document.getElementById('detail-intro').textContent = project.short;
     document.title = `${project.name} — Levi Lingerak`;
 
@@ -871,9 +1063,12 @@ function renderDetail(project) {
         facts.append(dt, dd);
     });
 
+    showFilm(project);
+
     const gallery = document.getElementById('detail-gallery');
     gallery.innerHTML = '';
     project.media.forEach((item, i) => {
+        if (i === 0 && project.youtube && !item.isVideo) return;   // a film's thumbnail: the film itself is above
         const figure = document.createElement('figure');
         if (item.isVideo) {
             const video = document.createElement('video');
@@ -926,6 +1121,26 @@ function renderDetail(project) {
     showDesignedPage(project);
 }
 
+// A film on YouTube: its player at the top of the project page, under the title and facts.
+// (Called without a project when leaving the page, so the film stops.)
+function showFilm(project) {
+    const box = document.getElementById('detail-video');
+    const src = project && project.youtube
+        ? `https://www.youtube-nocookie.com/embed/${encodeURIComponent(project.youtube)}?rel=0` : '';
+    box.hidden = !src;
+    const current = box.querySelector('iframe');
+    if (current && current.dataset.src === src) return;
+    box.innerHTML = '';
+    if (!src) return;
+    const frame = document.createElement('iframe');
+    frame.src = frame.dataset.src = src;
+    frame.title = project.name;
+    frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    frame.allowFullscreen = true;
+    frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    box.append(frame);
+}
+
 // The title stays inside the left half: a long name gets smaller instead of running on.
 function fitDetailTitle() {
     const title = document.getElementById('detail-title');
@@ -970,7 +1185,30 @@ async function showDesignedPage(project) {
     showDefaultPage(false);
 }
 
+// ---- Material colours and texts: Projects/materials.json (made in the Site Editor's Materials tab) ----
+// A changed colour replaces the one above, for the dots, lines, lettering and the background alike.
+async function loadMaterials() {
+    let list = [];
+    try {
+        const response = await fetch('Projects/materials.json', { cache: 'no-cache' });
+        if (response.ok) list = (await response.json()).materials || [];
+    } catch (e) { /* no file: the colours above */ }
+    list.forEach(m => {
+        const category = categoryById[m.id];
+        if (!category) return;
+        category.description = String(m.description || '').trim();
+        if (/^#[0-9a-f]{6}$/i.test(m.color || '') && m.color.toLowerCase() !== category.color.toLowerCase()) {
+            category.color = m.color;
+            category.ink = m.color;                                       // the lettering in exactly this colour
+            const blob = document.querySelector('.blob-' + m.id);       // the background takes the new colour too
+            if (blob) blob.style.setProperty('--c', m.color);
+        }
+    });
+    document.querySelectorAll('.category-link').forEach(link => setColor(link, link.dataset.page));
+}
+
 async function loadProjects() {
+    await loadMaterials();
     let list = [];
     try {
         const response = await fetch('Projects/projects.json', { cache: 'no-cache' });

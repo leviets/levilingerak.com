@@ -4,10 +4,12 @@
 #  - Lines starting with # are notes for you; the site ignores them.
 #  - A long text may continue on the next lines (no colon needed).
 # ================================================================
-# (Filled in by Claude from your School/Portfolio files - check and change anything.)
 
 Project name: Horse Mug
 # Leave empty to use the folder name.
+
+What it is: Mug
+# e.g. Chair, Lamp, Bag, Video. Shown under the name on the site.
 
 Categories: Stone
 # Choose from: Wood, Plastic, Metal, Stone, Textile, Other
@@ -19,7 +21,6 @@ Categories: Stone
 
 Date: 15-06-2025
 # DD-MM-YYYY. Shown right under the picture. Newest projects come first.
-# (Taken from the photo files - change it if the project is from another date.)
 
 Short description: A round, slip-cast mug with a horse as its handle, standing on a horseshoe.
 # One sentence, shown at the top of the project page.
@@ -31,6 +32,10 @@ Casting took a lot of testing: I wrote down how long the slip stayed in the moul
 
 Materials: Ceramic slip
 # e.g. Walnut, beech, brass
+
+Stone part: Clay
+# Per material: what that part is, e.g. "Plastic part: the 3D-printed handle".
+# Shown across from the name on that material's page (in its colour), and in the facts.
 
 Techniques: 3D modelling, 3D printing, mould making, slip casting
 # e.g. Hand-cut joinery, machine stitching, 3D printing
@@ -53,6 +58,9 @@ Supervised by:
 Duration:
 # How long it took, e.g. 3 weeks or 40 hours
 
+Learnt:
+# What you learnt from it
+
 Exhibited:
 # Where it was shown or what it won, e.g. Dutch Design Week 2025
 
@@ -74,6 +82,8 @@ Size: 50%
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
+Picture horse-mug5.jpg:
+Picture horse-mug6.jpg:
 Picture horse-mug1.jpg:
 Picture horse-mug2.jpg:
 Picture horse-mug3.jpg:

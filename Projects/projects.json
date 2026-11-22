@@ -3,7 +3,8 @@
   "projects": [
     {
       "folder": "dion",
-      "media": ["dion1.jpg", "dion2.jpg", "dion3.jpg", "dion4.jpg", "dion5.jpg", "dion6.jpg", "dion7.jpg", "dion8.jpg", "dion100.mp4"],
+      "media": ["dion2.jpg", "dion1.jpg", "dion3.jpg", "dion4.jpg", "dion5.jpg", "dion6.jpg", "dion7.jpg", "dion8.jpg"],
+      "hover": "dion-hover.mp4",
       "frame": "1:1"
     },
     {
@@ -28,17 +29,19 @@
     },
     {
       "folder": "hayer",
-      "media": ["hayer9.jpg", "hayer7.jpg", "hayer8.jpg", "hayer10.jpg", "hayer11.jpg", "hayer12.jpg", "hayer13.jpg", "hayer14.jpg", "hayer15.jpg", "hayer16.jpg"],
+      "media": ["hayer1.jpg", "hayer9.jpg", "hayer7.jpg", "hayer8.jpg", "hayer10.jpg", "hayer11.jpg", "hayer12.jpg", "hayer13.jpg", "hayer14.jpg", "hayer15.jpg", "hayer16.jpg"],
       "frame": "1:1"
     },
     {
       "folder": "tensegrity-table",
       "media": ["tensegrity-table8.jpg", "tensegrity-table9.jpg", "tensegrity-table10.jpg", "tensegrity-table11.jpg", "tensegrity-table12.jpg", "tensegrity-table13.jpg", "tensegrity-table14.jpg"],
-      "frame": "16:9"
+      "hover": "tensegrity-table-hover.mp4",
+      "frame": "3:4"
     },
     {
       "folder": "sliding-suitcase",
       "media": ["sliding-suitcase1.jpg", "sliding-suitcase2.jpg", "sliding-suitcase3.jpg", "sliding-suitcase4.jpg", "sliding-suitcase5.jpg"],
+      "wip": true,
       "frame": "1:1"
     },
     {
@@ -63,42 +66,50 @@
     },
     {
       "folder": "metal-stool",
-      "media": ["metal-stool1.jpg", "metal-stool2.jpg", "metal-stool3.jpg"],
+      "media": ["metal-stool4.jpg", "metal-stool5.jpg", "metal-stool1.jpg", "metal-stool2.jpg", "metal-stool3.jpg", "metal-stool6.jpg", "metal-stool7.jpg", "metal-stool8.jpg", "metal-stool9.jpg", "metal-stool10.jpg", "metal-stool11.jpg", "metal-stool12.jpg", "metal-stool13.jpg", "metal-stool14.jpg"],
+      "hover": "metal-stool-hover.mp4",
       "frame": "3:4"
     },
     {
       "folder": "chandelier",
       "media": ["chandelier1.jpg", "chandelier2.jpg", "chandelier3.jpg", "chandelier4.jpg", "chandelier5.jpg", "chandelier6.jpg"],
+      "wip": true,
       "frame": "3:4"
     },
     {
       "folder": "horse-mug",
-      "media": ["horse-mug1.jpg", "horse-mug2.jpg", "horse-mug3.jpg", "horse-mug4.jpg"],
+      "media": ["horse-mug5.jpg", "horse-mug6.jpg", "horse-mug1.jpg", "horse-mug2.jpg", "horse-mug3.jpg", "horse-mug4.jpg"],
+      "wip": true,
       "frame": "4:3"
     },
     {
       "folder": "brain-knob",
       "media": ["brain-knob1.jpg", "brain-knob2.jpg", "brain-knob3.jpg", "brain-knob4.jpg", "brain-knob5.jpg"],
+      "wip": true,
       "frame": "3:4"
     },
     {
       "folder": "coffee-machine",
       "media": ["coffee-machine1.jpg", "coffee-machine2.jpg", "coffee-machine3.jpg", "coffee-machine4.jpg", "coffee-machine5.jpg", "coffee-machine6.jpg"],
+      "wip": true,
       "frame": "3:4"
     },
     {
       "folder": "drawings",
       "media": ["drawings1.jpg", "drawings2.jpg", "drawings3.jpg", "drawings4.jpg"],
+      "wip": true,
       "frame": "3:4"
     },
     {
       "folder": "folded-vase",
       "media": ["folded-vase5.jpg", "folded-vase6.jpg", "folded-vase7.jpg", "folded-vase8.jpg", "folded-vase9.jpg"],
+      "wip": true,
       "frame": "3:4"
     },
     {
       "folder": "boj",
       "media": ["boj1.jpg", "boj2.jpg", "boj3.jpg", "boj4.jpg", "boj5.jpg", "boj6.jpg"],
+      "wip": true,
       "frame": "3:4"
     },
     {
@@ -185,8 +196,92 @@
     },
     {
       "folder": "lingerak-font",
-      "media": ["lingerak-font2.jpg", "lingerak-font3.jpg", "lingerak-font4.jpg"],
+      "media": ["lingerak-font4.jpg", "lingerak-font2.jpg", "lingerak-font3.jpg"],
       "frame": "16:9"
+    },
+    {
+      "folder": "the-art-is-always-better",
+      "media": ["the-art-is-always-better1.jpg"],
+      "youtube": "xsUxH_7nPCI",
+      "hover": "the-art-is-always-better-hover.mp4",
+      "frame": "16:9"
+    },
+    {
+      "folder": "oso",
+      "media": ["oso1.jpg", "oso2.jpg", "oso3.jpg"],
+      "wip": true,
+      "frame": "3:4"
+    },
+    {
+      "folder": "me-and-my-muses",
+      "media": ["me-and-my-muses1.jpg", "me-and-my-muses2.jpg", "me-and-my-muses3.jpg", "me-and-my-muses4.jpg", "me-and-my-muses5.jpg", "me-and-my-muses6.jpg"],
+      "swap": ["me-and-my-muses2.jpg", "me-and-my-muses3.jpg", "me-and-my-muses4.jpg", "me-and-my-muses5.jpg", "me-and-my-muses6.jpg"],
+      "frame": "1:1"
+    },
+    {
+      "folder": "lamp",
+      "media": ["lamp1.jpg"],
+      "wip": true,
+      "frame": "1:1"
+    },
+    {
+      "folder": "chairly",
+      "media": ["chairly1.jpg", "chairly8.jpg", "chairly9.jpg", "chairly10.jpg"],
+      "frame": "3:4"
+    },
+    {
+      "folder": "st-even",
+      "media": ["st-even1.jpg", "st-even2.jpg"],
+      "wip": true,
+      "frame": "3:4"
+    },
+    {
+      "folder": "drawers-desk",
+      "media": ["drawers-desk1.jpg"],
+      "wip": true,
+      "frame": "3:4"
+    },
+    {
+      "folder": "beet-projector2",
+      "media": ["beet-projector2-1.jpg", "beet-projector2-2.jpg", "beet-projector2-3.jpg", "beet-projector2-4.jpg", "beet-projector2-5.jpg", "beet-projector2-6.jpg", "beet-projector2-7.jpg"],
+      "wip": true,
+      "frame": "4:3"
+    },
+    {
+      "folder": "magdalena",
+      "media": ["magdalena1.jpg"],
+      "wip": true,
+      "frame": "3:4"
+    },
+    {
+      "folder": "nr-193-nr-202",
+      "media": ["nr-193-nr-202-1.jpg"],
+      "wip": true,
+      "frame": "3:4"
+    },
+    {
+      "folder": "drawers-chair",
+      "media": ["drawers-chair1.jpg"],
+      "wip": true,
+      "frame": "3:4"
+    },
+    {
+      "folder": "tower",
+      "media": ["tower1.jpg"],
+      "wip": true,
+      "frame": "9:16"
+    },
+    {
+      "folder": "art-apparatus",
+      "media": ["art-apparatus1.jpg"],
+      "wip": true,
+      "frame": "4:3"
+    },
+    {
+      "folder": "pfaff-station",
+      "media": ["pfaff-station1.jpg"],
+      "wip": true,
+      "frame": "3:4"
     }
   ]
 }

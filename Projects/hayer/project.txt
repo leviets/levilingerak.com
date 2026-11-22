@@ -8,6 +8,9 @@
 Project name: Hayer
 # Leave empty to use the folder name.
 
+What it is: Record Player
+# e.g. Chair, Lamp, Bag, Video. Shown under the name on the site.
+
 Categories: Wood
 # Choose from: Wood, Plastic, Metal, Stone, Textile, Other
 # Several are allowed, separated by commas, e.g. "Textile, Wood".
@@ -30,6 +33,10 @@ I drew the dust cover as six side panels with 45-degree mitres and one top plate
 Materials: Wood (dark frame, light panels), clear dust cover
 # e.g. Walnut, beech, brass
 
+Wood part: Walnust Frame, Birch Plywood
+# Per material: what that part is, e.g. "Plastic part: the 3D-printed handle".
+# Shown across from the name on that material's page (in its colour), and in the facts.
+
 Techniques: Cabinet making, mitre joints, technical drawing
 # e.g. Hand-cut joinery, machine stitching, 3D printing
 
@@ -50,6 +57,9 @@ Supervised by:
 
 Duration:
 # How long it took, e.g. 3 weeks or 40 hours
+
+Learnt:
+# What you learnt from it
 
 Exhibited:
 # Where it was shown or what it won, e.g. Dutch Design Week 2025
@@ -72,6 +82,7 @@ Size: 100%
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
+Picture hayer1.jpg:
 Picture hayer9.jpg:
 Picture hayer7.jpg:
 Picture hayer8.jpg:

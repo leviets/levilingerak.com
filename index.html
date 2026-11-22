@@ -60,10 +60,10 @@
         <section class="page" id="category" data-page-section="category">
             <div class="portfolio-heading">
                 <div>
-                    <p class="eyebrow">Work in</p>
                     <h2 id="category-title"></h2>
                 </div>
-                <p class="project-count"><span id="project-count">0</span> <span id="project-count-word">projects</span></p>
+                <!-- The material's own text (Projects/materials.json, written in the Site Editor) -->
+                <p class="category-desc" id="category-desc" hidden></p>
             </div>
 
             <div class="project-grid" id="project-grid"></div>
@@ -76,12 +76,13 @@
             <div class="detail-heading">
                 <div class="detail-top">
                     <div class="detail-top-text">
-                        <h2 id="detail-title"></h2>
+                        <h2 id="detail-title"></h2><p class="detail-kind" id="detail-kind"></p>
                         <p class="detail-intro" id="detail-intro"></p>
                     </div>
                     <dl class="detail-facts" id="detail-facts"></dl>
                 </div>
             </div>
+            <div class="detail-video" id="detail-video" hidden></div>
             <div class="detail-body">
                 <div class="detail-text" id="detail-text"></div>
             </div>

@@ -8,6 +8,9 @@
 Project name: Yanci
 # Leave empty to use the folder name.
 
+What it is:
+# e.g. Chair, Lamp, Bag, Video. Shown under the name on the site.
+
 Categories: Wood
 # Choose from: Wood, Plastic, Metal, Stone, Textile, Other
 # Several are allowed, separated by commas, e.g. "Textile, Wood".
@@ -27,6 +30,10 @@ Detailed description: Two Z-shaped wooden frames hook into each other without to
 
 Materials: Wood, steel cable, glass
 # e.g. Walnut, beech, brass
+
+Wood part: Oak Wood Frame
+# Per material: what that part is, e.g. "Plastic part: the 3D-printed handle".
+# Shown across from the name on that material's page (in its colour), and in the facts.
 
 Techniques: Tensegrity, joinery
 # e.g. Hand-cut joinery, machine stitching, 3D printing
@@ -48,6 +55,9 @@ Supervised by:
 
 Duration:
 # How long it took, e.g. 3 weeks or 40 hours
+
+Learnt:
+# What you learnt from it
 
 Exhibited:
 # Where it was shown or what it won, e.g. Dutch Design Week 2025

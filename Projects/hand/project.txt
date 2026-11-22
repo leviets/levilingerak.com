@@ -8,6 +8,9 @@
 Project name: Hend
 # Leave empty to use the folder name.
 
+What it is: Object
+# e.g. Chair, Lamp, Bag, Video. Shown under the name on the site.
+
 Categories: Textile, Wood, Plastic
 # Choose from: Wood, Plastic, Metal, Stone, Textile, Other
 # Several are allowed, separated by commas, e.g. "Textile, Wood".
@@ -27,6 +30,10 @@ Detailed description: A chair shaped like a hand reaching up. The frame is made 
 
 Materials: Blockboard, tubes, fabric, zip
 # e.g. Walnut, beech, brass
+
+Plastic part: 3D printed hinges
+# Per material: what that part is, e.g. "Plastic part: the 3D-printed handle".
+# Shown under the project on that material's page (in its colour), and in the facts.
 
 Techniques: Upholstery, sewing, woodworking
 # e.g. Hand-cut joinery, machine stitching, 3D printing

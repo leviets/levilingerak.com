@@ -4,10 +4,12 @@
 #  - Lines starting with # are notes for you; the site ignores them.
 #  - A long text may continue on the next lines (no colon needed).
 # ================================================================
-# (Filled in by Claude from your School/Portfolio files - check and change anything.)
 
 Project name: Metal Stool
 # Leave empty to use the folder name.
+
+What it is: Stool
+# e.g. Chair, Lamp, Bag, Video. Shown under the name on the site.
 
 Categories: Metal
 # Choose from: Wood, Plastic, Metal, Stone, Textile, Other
@@ -19,7 +21,6 @@ Categories: Metal
 
 Date: 20-01-2025
 # DD-MM-YYYY. Shown right under the picture. Newest projects come first.
-# (Taken from the photo files - change it if the project is from another date.)
 
 Short description: A stool folded from triangles of sheet metal.
 # One sentence, shown at the top of the project page.
@@ -29,6 +30,10 @@ Detailed description:
 
 Materials: Sheet metal
 # e.g. Walnut, beech, brass
+
+Metal part: Steel (Sadly Rusted)
+# Per material: what that part is, e.g. "Plastic part: the 3D-printed handle".
+# Shown across from the name on that material's page (in its colour), and in the facts.
 
 Techniques: Folding, metalwork
 # e.g. Hand-cut joinery, machine stitching, 3D printing
@@ -51,6 +56,9 @@ Supervised by:
 Duration:
 # How long it took, e.g. 3 weeks or 40 hours
 
+Learnt:
+# What you learnt from it
+
 Exhibited:
 # Where it was shown or what it won, e.g. Dutch Design Week 2025
 
@@ -65,13 +73,24 @@ Link:
 # Optional web address, e.g. a shop page or article (start with https://)
 
 # ---------------- HOME PAGE ----------------
-Size: 35%
+Size: 80%
 # Size of the picture on the home page, from 20% to 100%.
 # 100% = half the page width on a computer, 20% = a twentieth (very small).
 
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
+Picture metal-stool4.jpg:
+Picture metal-stool5.jpg:
 Picture metal-stool1.jpg:
 Picture metal-stool2.jpg:
 Picture metal-stool3.jpg:
+Picture metal-stool6.jpg:
+Picture metal-stool7.jpg:
+Picture metal-stool8.jpg:
+Picture metal-stool9.jpg:
+Picture metal-stool10.jpg:
+Picture metal-stool11.jpg:
+Picture metal-stool12.jpg:
+Picture metal-stool13.jpg:
+Picture metal-stool14.jpg:

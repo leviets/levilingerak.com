@@ -4,10 +4,12 @@
 #  - Lines starting with # are notes for you; the site ignores them.
 #  - A long text may continue on the next lines (no colon needed).
 # ================================================================
-# (Filled in by Claude from your School/Portfolio files - check and change anything.)
 
 Project name: Sliding Suitcase
 # Leave empty to use the folder name.
+
+What it is:
+# e.g. Chair, Lamp, Bag, Video. Shown under the name on the site.
 
 Categories: Wood
 # Choose from: Wood, Plastic, Metal, Stone, Textile, Other
@@ -19,7 +21,6 @@ Categories: Wood
 
 Date: 07-07-2022
 # DD-MM-YYYY. Shown right under the picture. Newest projects come first.
-# (Taken from the photo files - change it if the project is from another date.)
 
 Short description: A wooden suitcase that opens like a drawer: pull out the bottom and the top slides open with it.
 # One sentence, shown at the top of the project page.
@@ -31,6 +32,10 @@ Walnut for the frame and handle: a hard wood, so the handle is strong and the ca
 
 Materials: Walnut, beech, fabric, magnets
 # e.g. Walnut, beech, brass
+
+Wood part: Walnut Frame
+# Per material: what that part is, e.g. "Plastic part: the 3D-printed handle".
+# Shown across from the name on that material's page (in its colour), and in the facts.
 
 Techniques: Sliding (tambour) door, CAD drawings, rendering
 # e.g. Hand-cut joinery, machine stitching, 3D printing
@@ -52,6 +57,9 @@ Supervised by:
 
 Duration:
 # How long it took, e.g. 3 weeks or 40 hours
+
+Learnt:
+# What you learnt from it
 
 Exhibited:
 # Where it was shown or what it won, e.g. Dutch Design Week 2025

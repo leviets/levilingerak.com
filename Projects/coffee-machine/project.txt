@@ -8,13 +8,16 @@
 Project name: Ether
 # Leave empty to use the folder name.
 
-Categories: Metal, Woodwork, Plastics
-# Choose from: Woodwork, Textile, Metal, Stoneware, Plastics, Other
-# Several are allowed, separated by commas, e.g. "Textile, Woodwork".
+What it is: Coffee Machine
+# e.g. Chair, Lamp, Bag, Video. Shown under the name on the site.
+
+Categories: Metal, Wood, Plastic
+# Choose from: Wood, Plastic, Metal, Stone, Textile, Other
+# Several are allowed, separated by commas, e.g. "Textile, Wood".
 # The project then shows up under each of them in the menu.
 # The FIRST one sets the project's colour (the line around the picture):
-# Woodwork = brown, Textile = blue, Metal = grey, Stoneware = green,
-# Plastics = yellow, Other = red.
+# Wood = brown, Plastic = yellow, Metal = grey, Stone = green,
+# Textile = blue, Other = red.
 
 Date: 24-05-2024
 # DD-MM-YYYY. Shown right under the picture. Newest projects come first.
@@ -27,6 +30,12 @@ Detailed description: Made for the Turn Around assignment. The machine is built 
 
 Materials: Sheet metal
 # e.g. Walnut, beech, brass
+
+Metal part: Aluminium Origami Sphere
+Wood part: Walnut Base
+Plastic part: PLA Hinge, PLA Containers
+# Per material: what that part is, e.g. "Plastic part: the 3D-printed handle".
+# Shown across from the name on that material's page (in its colour), and in the facts.
 
 Techniques: 3D modelling, rendering, metalwork
 # e.g. Hand-cut joinery, machine stitching, 3D printing
@@ -48,6 +57,9 @@ Supervised by:
 
 Duration:
 # How long it took, e.g. 3 weeks or 40 hours
+
+Learnt:
+# What you learnt from it
 
 Exhibited:
 # Where it was shown or what it won, e.g. Dutch Design Week 2025

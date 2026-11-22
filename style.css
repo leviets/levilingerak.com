@@ -179,6 +179,13 @@ a {
   transform: scale(1.08);   /* grows slightly */
 }
 
+/* The logo and the Instagram patch a little lower, away from the top edge of the page. */
+.brand img,
+.instagram-button {
+  position: relative;
+  top: 8px;
+}
+
 .main-nav {
   display: flex;
   gap: clamp(20px, 4vw, 64px);
@@ -190,46 +197,45 @@ a {
   position: relative;
   padding: 38px 0 35px;
   border: 0;
-  background: none;
   font: inherit;
   font-size: 0.74rem;
   letter-spacing: 0.03em;
   cursor: pointer;
+  /* A thin line close under the word of the page you are on: drawn at the bottom of the text itself
+     (not of the padding around it, which changes with the screen size). It grows from the left. */
+  background: linear-gradient(var(--ink), var(--ink)) no-repeat left 0 top calc(100% + 1px) / 0 1px;
+  background-origin: content-box;
+  background-clip: padding-box;   /* (so the line may sit just below the text, clear of the p) */
+  transition: background-size 220ms ease;
 }
 
-/* A thin line just under the word of the page you are on. */
-.nav-link::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 100%;
-  top: calc(50% + 0.95em);   /* just under the word, whatever the padding around it */
-  height: 1px;
-  background: var(--ink);
-  transition: right 220ms ease;
+.nav-link.active {
+  background-size: 100% 1px;
 }
 
-.nav-link.active::after {
-  right: 0;
-}
-
+/* A copy of the logo patch (Profile/Pictures/instagram-patch.png: the logo without its mark), same size and shadow,
+   with the Instagram icon in white on it. */
 .instagram-button {
+  position: relative;
   display: grid;
   place-items: center;
   align-self: center;
   flex-shrink: 0;
-  width: 52px;
-  height: 52px;
-  border: 2px dashed var(--denim);
-  border-radius: 50%;
-  color: var(--denim);
-  transition: background 180ms ease, color 180ms ease, transform 350ms cubic-bezier(0.34, 1.4, 0.64, 1);
+  width: 64px;
+  height: 64px;
+  background: url("Profile/Pictures/instagram-patch.png?v=3") center / contain no-repeat;   /* (square: the frayed threads stay whole) */
+  color: #fff;
+  filter: drop-shadow(0 3px 4px rgba(31, 24, 19, 0.18));
+  transition: transform 350ms cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.instagram-button svg {
+  width: 35px;
+  height: 35px;
 }
 
 .instagram-button:hover,
 .instagram-button:focus-visible {
-  background: var(--denim);
-  color: var(--paper);
   transform: scale(1.08);
 }
 
@@ -416,6 +422,7 @@ h1 {
 
 .project-image {
   position: relative;
+  isolation: isolate;     /* its hover pictures stack inside the frame, never above the header */
   aspect-ratio: 4 / 3;   /* until the picture's own proportion is known */
   box-shadow: 0 22px 40px -12px rgba(31, 24, 19, 0);
   transition: box-shadow 1400ms ease;
@@ -480,6 +487,21 @@ h1 {
   color: var(--project-ink, inherit);
 }
 
+/* What it is (e.g. Chair, Video): a small line under the name. */
+.project-kind {
+  flex-basis: 100%;
+  margin: 2px 0 0;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(31, 24, 19, 0.55);
+}
+
+.home-project .project-kind {
+  margin: 0;
+  font-size: clamp(0.5rem, 5cqi, 0.68rem);
+}
+
 /* Home page cards: placed by the script; name and date scale with the picture, so they also fit
    under very small ones. */
 .home-project {
@@ -503,10 +525,11 @@ h1 {
   font-size: clamp(0.5rem, 5cqi, 0.68rem);
 }
 
-/* Soft edges (home page and Info page): a mask made per picture by the script (softEdges),
+/* Soft edges (home, material and Info pages): a mask made per picture by the script (softEdges),
    a softly blurred rounded rectangle at the picture's exact size. On hover the mask grows until
    its soft edge and round corners lie outside the picture: sharp and square. */
-.home-project .project-image img {
+.home-project .project-image :is(img, video),
+.project .project-image :is(img, video) {
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
   -webkit-mask-repeat: no-repeat;
@@ -517,34 +540,113 @@ h1 {
   transition: -webkit-mask-size 1400ms ease, mask-size 1400ms ease, clip-path 1400ms ease;
 }
 
-.home-project:hover .project-image img,
-.home-project:focus-visible .project-image img {
+.home-project:hover .project-image :is(img, video),
+.project:hover .project-image :is(img, video),
+.home-project:focus-visible .project-image :is(img, video),
+.project:focus-visible .project-image :is(img, video) {
   -webkit-mask-size: calc(100% + 3.4 * var(--fade-px, 0px)) calc(100% + 3.4 * var(--fade-px, 0px));
   mask-size: calc(100% + 3.4 * var(--fade-px, 0px)) calc(100% + 3.4 * var(--fade-px, 0px));
   clip-path: inset(0px);
 }
 
-/* Without a page of their own (the Dutch Design Week visits): not clickable, so no reaction to the mouse. */
-.home-project.no-page {
+/* A film project: a few silent seconds of the film play over the thumbnail on hover (script: hoverClip). */
+.project-image video.hover-clip {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 500ms ease, -webkit-mask-size 1400ms ease, mask-size 1400ms ease, clip-path 1400ms ease;
+}
+
+.project-image.is-playing video.hover-clip {
+  opacity: 1;
+}
+
+/* A picture project's hover pictures ("swap" in projects.json): on hover they fade in over the cover one after another,
+   each new one on top of the one before (the script sets .is-shown and the order), so the cover never shows in between.
+   A plain fade: no blur, so nothing flickers. They keep the cover's soft edges and frame. */
+.project-image img.hover-swap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 600ms ease, -webkit-mask-size 1400ms ease, mask-size 1400ms ease, clip-path 1400ms ease;
+  pointer-events: none;
+}
+
+.project-image img.hover-swap.is-shown {
+  opacity: 1;
+}
+/* Without a page of their own (the Dutch Design Week visits, work in progress): not clickable,
+   so no reaction to the mouse. */
+.no-page {
   cursor: default;
 }
 
+.project.no-page:hover,
 .home-project.no-page:hover {
   transform: none;
 }
 
+.project.no-page:hover .project-image,
 .home-project.no-page:hover .project-image {
   box-shadow: 0 22px 40px -12px rgba(31, 24, 19, 0);
 }
 
-.home-project.no-page:hover .project-image img {
+.home-project.no-page:hover .project-image img,
+.project.no-page:hover .project-image img {
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
   clip-path: inset(calc(var(--fade-px, 0px) * 0.1));
 }
 
+.project.no-page:hover h3,
 .home-project.no-page:hover h3 {
   color: inherit;
+}
+
+/* Work in progress ("wip": true in projects.json): the picture blurred, the name and date readable. */
+.is-wip .project-image img {
+  filter: blur(14px) brightness(1.3) saturate(0.75);   /* lighter, so the sharp letters of "Coming soon" stand out */
+}
+
+/* On the material pages the pictures have sharp edges: keep the blur inside the frame. */
+.project.is-wip .project-image {
+  overflow: hidden;
+}
+
+.project.is-wip .project-image img {
+  transform: scale(1.15);
+}
+
+/* "Coming soon" in the Levilingerak font: the letters are cut out of the blur, so the sharp
+   picture shows through them. */
+.is-wip .project-image {
+  container-type: inline-size;
+}
+
+.coming-soon {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  padding: 0 8%;
+  font-family: "Levilingerak", sans-serif;
+  font-size: clamp(1.1rem, 13cqw, 4.5rem);
+  line-height: 1;
+  text-align: center;
+  color: transparent;
+  background-size: cover;
+  background-position: center;
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: drop-shadow(0 1px 6px rgba(255, 255, 255, 0.35));
+  pointer-events: none;
 }
 
 /* ---- Material pages ---- */
@@ -561,10 +663,16 @@ h1 {
   margin-top: 0.42em;   /* the title font reaches above its line, so the gap grows with the size */
 }
 
-.project-count {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
+/* The material's own text, beside its big name and reaching the right edge of the page (from Projects/materials.json). */
+.category-desc {
+  flex: 1;
+  align-self: flex-start;      /* starts level with the top of the big name's letters */
+  margin: calc(clamp(4.2rem, 9vw, 8.5rem) * 0.2 - 10px) 0 0 clamp(24px, 4vw, 60px);
+  text-align: right;
+  font-size: 0.95rem;
+  line-height: 1.3;
+  color: rgba(31, 24, 19, 0.75);
+  white-space: pre-line;
 }
 
 /* The material page and the project page take on the material's colour. */
@@ -576,20 +684,13 @@ h1 {
 }
 
 #category .portfolio-heading {
-  position: relative;
-  margin-bottom: 38px;
+  padding-top: 25px;      /* the material's name close under the header */
+  padding-bottom: 14px;   /* the projects start close under the material's name */
 }
 
-/* A stitched line in the material's colour under the heading. */
-#category .portfolio-heading::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 2px;
-  color: var(--project-color);
-  background: var(--stitch);
+
+#category .portfolio-heading h2 {
+  margin-top: calc(0.42em - 14px);
 }
 
 .category-empty {
@@ -598,19 +699,26 @@ h1 {
 }
 
 .project-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 48px 30px;
-  padding: 30px 0 100px;
+  padding: 16px 0 100px;
 }
 
-/* Each card: the picture in its own proportion, the name underneath, the date upright along the
-   right edge of the picture. */
+/* A photo wall: every picture in a row the same height, each in its own proportion (the widths
+   are set by the script: layoutWall). */
+.project-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+/* Each card: the picture, the date upright along its right edge; under it the name with, across
+   from it in this page's colour, what that material is in the project; then what it is. */
 .project-grid .project {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  column-gap: 8px;
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
+  flex: none;
+  max-width: 100%;
 }
 
 .project .project-image {
@@ -622,23 +730,52 @@ h1 {
   display: contents;
 }
 
-.project .project-meta h3 {
+.project-title-row {
   grid-column: 1;
   grid-row: 2;
-  padding-top: 12px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: flex;
+  flex-wrap: wrap;               /* a long part text moves to the line under the name */
+  align-items: baseline;
+  gap: 2px 12px;
+  padding-top: 10px;
 }
 
+.project .project-meta h3 {
+  min-width: 0;
+  white-space: normal;
+  line-height: 1.1;
+}
+
+/* No date on the material pages. */
 .project .project-meta span {
-  grid-column: 2;
-  grid-row: 1;
-  align-self: end;
-  margin: 0;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);   /* reads from bottom to top */
+  display: none;
 }
 
+/* What this page's material is in the project (e.g. "3D printed hinges, zip, tubes"), in its colour. */
+.project-part {
+  flex: 0 0 auto;
+  align-self: flex-start;         /* its top line as far from the picture as the name */
+  max-width: 100%;
+  margin: 0 0 0 auto;
+  text-align: right;
+  white-space: pre-line;          /* up to 3 items, one under the other */
+  font-family: "Levilingerak", sans-serif;
+  font-size: 0.86rem;
+  line-height: 1.2;
+  color: var(--project-color);
+}
+
+.project-part:empty {
+  display: none;
+}
+
+.project-name-block {
+  min-width: 0;
+}
+
+.project-name-block .project-kind {
+  margin: 4px 0 0;   /* the same distance under every name */
+}
 .project.hidden {
   display: none;
 }
@@ -677,6 +814,19 @@ h1 {
   display: none;
 }
 
+/* What it is (e.g. Chair, Video), right under the title. */
+.detail-kind {
+  margin: 22px 0 0;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--project-ink, inherit);
+}
+
+.detail-kind:empty {
+  display: none;
+}
+
 /* Its top lines up with the top of the title's capital (PageLayout.alignFacts). */
 .detail-facts {
   display: grid;
@@ -707,6 +857,20 @@ h1 {
 .detail-facts a {
   color: var(--denim);
   text-decoration: none;
+}
+
+/* A film (YouTube) under the top, the full width of the page, on both the automatic and a designed page. */
+.detail-video {
+  padding-bottom: 44px;
+}
+
+.detail-video iframe,
+.detail-video .film-stand-in {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  background: #000;
 }
 
 /* The automatic page: the story under the top in the left half, then the pictures. */
@@ -933,12 +1097,6 @@ footer {
 /* ================================================================
    Smaller screens (widest first) and the compact header on wide screens
    ================================================================ */
-@media (max-width: 1000px) {
-  .project-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
 @media (max-width: 800px) {
   .site-header {
     height: 82px;
@@ -965,7 +1123,6 @@ footer {
   }
 
   .project-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 36px 18px;
   }
 
@@ -1033,16 +1190,19 @@ footer {
     gap: 14px;
   }
 
+  .category-desc {
+    order: 3;
+    flex-basis: 100%;
+    margin: 0;
+    text-align: left;   /* on a phone: under the name */
+  }
+
   #category .portfolio-heading h2 {
     font-size: clamp(2.6rem, 15vw, 3.8rem);
   }
 }
 
 @media (max-width: 520px) {
-  .project-grid {
-    grid-template-columns: 1fr;   /* one picture per row on the material pages */
-  }
-
   .contact-list {
     grid-template-columns: 1fr;
     gap: 4px;
@@ -1077,13 +1237,13 @@ footer {
   }
 
   .instagram-button {
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
   }
 
   .instagram-button svg {
-    width: 20px;
-    height: 20px;
+    width: 27px;
+    height: 27px;
   }
 
   .category-link {
@@ -1152,11 +1312,6 @@ footer {
 
   .nav-link {
     padding: 4px 0 10px;
-  }
-
-  .nav-link::after {
-    top: auto;
-    bottom: 4px;
   }
 
   .category-nav {
