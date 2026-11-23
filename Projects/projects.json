@@ -79,8 +79,9 @@
     {
       "folder": "horse-mug",
       "media": ["horse-mug5.jpg", "horse-mug6.jpg", "horse-mug1.jpg", "horse-mug2.jpg", "horse-mug3.jpg", "horse-mug4.jpg"],
-      "wip": true,
-      "frame": "4:3"
+      "grade": 100,
+      "colour": 100,
+      "frame": "1:1"
     },
     {
       "folder": "brain-knob",
@@ -231,9 +232,10 @@
     },
     {
       "folder": "st-even",
-      "media": ["st-even1.jpg", "st-even2.jpg"],
-      "wip": true,
-      "frame": "3:4"
+      "media": ["st-even2.jpg", "st-even4.jpg", "st-even5.jpg", "st-even6.jpg", "st-even7.jpg"],
+      "grade": 100,
+      "colour": 100,
+      "frame": "1:1"
     },
     {
       "folder": "drawers-desk",
@@ -267,9 +269,9 @@
     },
     {
       "folder": "tower",
-      "media": ["tower1.jpg"],
-      "wip": true,
-      "frame": "9:16"
+      "media": ["tower12.jpg", "tower19.jpg", "tower20.jpg", "tower21.jpg", "tower22.jpg", "tower23.jpg", "tower24.jpg", "tower25.jpg", "tower26.jpg", "tower27.jpg", "tower28.jpg", "tower29.jpg"],
+      "studio": {"wall":[128.91667625998662,130.38675661363482,128.38159924481383],"floor":[199.44988833375535,204.4298805056063,206.25558906822013],"brightness":-30,"warmth":10,"colour":100},
+      "frame": "4:3"
     },
     {
       "folder": "art-apparatus",
@@ -282,6 +284,12 @@
       "media": ["pfaff-station1.jpg"],
       "wip": true,
       "frame": "3:4"
+    },
+    {
+      "folder": "melle-l",
+      "media": ["melle-l1.jpg"],
+      "wip": true,
+      "frame": "4:3"
     }
   ]
 }

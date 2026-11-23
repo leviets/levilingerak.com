@@ -81,5 +81,8 @@ Size: 50%
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
-Picture st-even1.jpg:
 Picture st-even2.jpg:
+Picture st-even4.jpg:
+Picture st-even5.jpg:
+Picture st-even6.jpg:
+Picture st-even7.jpg:

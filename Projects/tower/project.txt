@@ -31,7 +31,7 @@ Detailed description:
 Materials:
 # e.g. Walnut, beech, brass
 
-Stone part: White Concrete
+Stone part: White Concrete, Mini Glass Panes
 # Per material: what that part is, e.g. "Plastic part: the 3D-printed handle".
 # Shown across from the name on that material's page (in its colour), and in the facts.
 
@@ -73,11 +73,22 @@ Link:
 # Optional web address, e.g. a shop page or article (start with https://)
 
 # ---------------- HOME PAGE ----------------
-Size: 40%
+Size: 49%
 # Size of the picture on the home page, from 20% to 100%.
 # 100% = half the page width on a computer, 20% = a twentieth (very small).
 
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
-Picture tower1.jpg:
+Picture tower12.jpg:
+Picture tower19.jpg:
+Picture tower20.jpg:
+Picture tower21.jpg:
+Picture tower22.jpg:
+Picture tower23.jpg:
+Picture tower24.jpg:
+Picture tower25.jpg:
+Picture tower26.jpg:
+Picture tower27.jpg:
+Picture tower28.jpg:
+Picture tower29.jpg:
