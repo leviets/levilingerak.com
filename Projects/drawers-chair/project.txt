@@ -81,4 +81,6 @@ Size: 80%
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
+Picture drawers-chair2.jpg:
+Picture drawers-chair3.jpg:
 Picture drawers-chair1.jpg:

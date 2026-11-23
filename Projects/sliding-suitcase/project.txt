@@ -82,8 +82,15 @@ Size: 55%
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
+Picture sliding-suitcase6.jpg:
 Picture sliding-suitcase1.jpg:
 Picture sliding-suitcase2.jpg:
 Picture sliding-suitcase3.jpg:
 Picture sliding-suitcase4.jpg:
 Picture sliding-suitcase5.jpg:
+Picture sliding-suitcase7.jpg:
+Picture sliding-suitcase8.jpg:
+Picture sliding-suitcase9.jpg:
+Picture sliding-suitcase10.jpg:
+Picture sliding-suitcase11.jpg:
+Picture sliding-suitcase12.jpg:

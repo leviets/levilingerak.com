@@ -5,7 +5,7 @@
 #  - A long text may continue on the next lines (no colon needed).
 # ================================================================
 
-Project name: BÖJ
+Project name: Salon
 # Leave empty to use the folder name.
 
 What it is: Lamp
@@ -82,9 +82,18 @@ Size: 80%
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
+Picture boj7.jpg:
+Picture boj8.jpg:
 Picture boj1.jpg:
+Picture boj13.jpg:
+Picture boj14.jpg:
 Picture boj2.jpg:
 Picture boj3.jpg:
 Picture boj4.jpg:
 Picture boj5.jpg:
 Picture boj6.jpg:
+Picture boj9.jpg:
+Picture boj10.jpg:
+Picture boj11.jpg:
+Picture boj12.jpg:
+Picture boj22.jpg:

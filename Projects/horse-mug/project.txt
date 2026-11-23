@@ -82,8 +82,8 @@ Size: 50%
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
-Picture horse-mug5.jpg:
-Picture horse-mug6.jpg:
+Picture horse-mug7.jpg:
+Picture horse-mug8.jpg:
 Picture horse-mug1.jpg:
 Picture horse-mug2.jpg:
 Picture horse-mug3.jpg:

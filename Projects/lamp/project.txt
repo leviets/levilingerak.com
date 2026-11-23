@@ -81,4 +81,15 @@ Size: 50%
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
+Picture lamp4.jpg:
+Picture lamp5.jpg:
+Picture lamp6.jpg:
+Picture lamp7.jpg:
+Picture lamp8.jpg:
+Picture lamp2.jpg:
+Picture lamp3.jpg:
 Picture lamp1.jpg:
+Picture lamp9.jpg:
+Picture lamp10.jpg:
+Picture lamp11.jpg:
+Picture lamp12.jpg:

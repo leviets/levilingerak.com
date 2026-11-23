@@ -82,9 +82,10 @@ Size: 100%
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
+Picture coffee-machine7.jpg:
+Picture coffee-machine8.jpg:
 Picture coffee-machine1.jpg: Coffee Machine Open
 Picture coffee-machine2.jpg: Coffee Machine Closed
-Picture coffee-machine3.jpg: Coffee Machine Open: Lights Off
 Picture coffee-machine4.jpg: 3D Render
 Picture coffee-machine5.jpg: Early 3D Model
 Picture coffee-machine6.jpg: 2D Drawing

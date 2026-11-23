@@ -73,17 +73,23 @@ Link:
 # Optional web address, e.g. a shop page or article (start with https://)
 
 # ---------------- HOME PAGE ----------------
-Size: 60%
+Size: 53%
 # Size of the picture on the home page, from 20% to 100%.
 # 100% = half the page width on a computer, 20% = a twentieth (very small).
 
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
-Picture beet-projector2-1.jpg:
-Picture beet-projector2-2.jpg:
-Picture beet-projector2-3.jpg:
-Picture beet-projector2-4.jpg:
-Picture beet-projector2-5.jpg:
-Picture beet-projector2-6.jpg:
+Picture beet-projector2-8.jpg:
+Picture beet-projector2-9.jpg:
+Picture beet-projector2-10.jpg:
+Picture beet-projector2-11.jpg:
+Picture beet-projector2-12.jpg:
+Picture beet-projector2-13.jpg:
+Picture beet-projector2-14.jpg:
+Picture beet-projector2-15.jpg:
+Picture beet-projector2-16.jpg:
+Picture beet-projector2-17.jpg:
+Picture beet-projector2-18.jpg:
+Picture beet-projector2-19.jpg:
 Picture beet-projector2-7.jpg:

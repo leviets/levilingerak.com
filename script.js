@@ -330,6 +330,8 @@ async function loadProject(entry, index) {
         hoverClip: entry.hover ? mediaUrl(entry.folder, entry.hover) : null,
         // A picture project: optional pictures ("swap": one file name or a list) shown one after another on hover.
         swap: entry.swap && !entry.hover ? [].concat(entry.swap).slice(0, 10).map(file => mediaUrl(entry.folder, file)) : null,   // (10 at most)
+        // "reverse": the hover goes back and forth (photos 1-2-3-2-1; a clip has it built in by the Site Editor).
+        reverse: !!entry.reverse,
         cover: cover ? cover.url : null,
         mediaFiles: entry.media || [],    // file names, for a designed page (layout.json)
         media
@@ -411,10 +413,21 @@ function createCard(project, className) {
     card.append(imageBox, meta);
     const img = imageBox.querySelector('img');
     if (img) {
-        const clip = project.hoverClip && project.hasPage && !reduceMotion ? hoverClip(card, imageBox, project.hoverClip)
-            : project.swap && project.swap.length && !project.wip ? hoverPictures(card, imageBox, project.swap) : null;
+        const withClip = project.hoverClip && project.hasPage && !reduceMotion;
+        const withSwap = !withClip && project.swap && project.swap.length && !project.wip;
+        // A hover clip or hover pictures lie in one box with the cover, and that box gets the soft edges: one mask,
+        // one hover animation, so the clip can never drift a pixel from the picture (that made the square twitch).
+        let media = null;
+        if (withClip || withSwap) {
+            media = document.createElement('div');
+            media.className = 'project-media';
+            img.replaceWith(media);
+            media.append(img);
+        }
+        if (withClip) hoverClip(card, media, project.hoverClip);
+        else if (withSwap) hoverPictures(card, media, project.swap, project.reverse);
         // Soft edges on the home, material and Info pages (not on the project pages themselves).
-        softEdges(img, clip);
+        softEdges(img, media || img);
         // The frame has the picture's own proportion (square, 4:3, 3:4, 16:9 or 9:16).
         if (project.frame) imageBox.style.aspectRatio = String(project.frame);
         else {
@@ -431,6 +444,7 @@ function createCard(project, className) {
 
 // A film project: its few silent seconds play over the thumbnail while the mouse is on it.
 // Nothing is downloaded until the first hover.
+const HOVER_ANIMATION_MS = 500;       // the clip starts this long after the mouse comes on (the edges grow in 1400ms, style.css)
 function hoverClip(card, imageBox, url) {
     const clip = document.createElement('video');
     clip.className = 'hover-clip';
@@ -441,15 +455,36 @@ function hoverClip(card, imageBox, url) {
     clip.setAttribute('aria-hidden', 'true');
     clip.src = url;
     imageBox.append(clip);
-    let rest = 0;
-    clip.addEventListener('playing', () => imageBox.classList.add('is-playing'));
+    card.classList.add('has-hover-clip');        // (style.css: one layer, so nothing twitches)
+    // Loaded in full once the card comes near the screen, so it doesn't stutter while it starts.
+    const near = new IntersectionObserver(entries => {
+        if (!entries.some(e => e.isIntersecting)) return;
+        near.disconnect();
+        clip.preload = 'auto';
+        clip.load();
+    }, { rootMargin: '300px' });
+    near.observe(card);
+    let rest = 0, wait = 0, hovering = false;
+    // Fade in only once a moving frame is really on screen (not while the first frames are still decoding).
+    const show = () => { if (hovering) imageBox.classList.add('is-playing'); };
     card.addEventListener('mouseenter', () => {
+        hovering = true;
         clearTimeout(rest);
-        clip.play().catch(() => {});
+        clearTimeout(wait);
+        // The clip starts once the hover animation (the zoom and the edges growing, style.css) has finished.
+        wait = setTimeout(() => {
+            if (!hovering) return;
+            clip.play().then(() => {
+                if (clip.requestVideoFrameCallback) clip.requestVideoFrameCallback(() => clip.requestVideoFrameCallback(show));
+                else show();
+            }).catch(() => {});
+        }, HOVER_ANIMATION_MS);
     });
     card.addEventListener('mouseleave', () => {
+        hovering = false;
+        clearTimeout(wait);
         imageBox.classList.remove('is-playing');
-        rest = setTimeout(() => { clip.pause(); clip.currentTime = 0; }, 600);   // after it has faded out
+        rest = setTimeout(() => { clip.pause(); clip.currentTime = 0; }, 400);   // after it has faded out
     });
     return clip;
 }
@@ -477,7 +512,7 @@ function softMask(w, h) {
 const SLIDE_MS = 1400;        // each picture this long
 const HOVER_DELAY = 500;      // the slideshow starts after the mouse has been on the card this long
 const FADE_MS = 800;          // a picture's fade-in (style.css: .hover-swap)
-function hoverPictures(card, imageBox, urls) {
+function hoverPictures(card, imageBox, urls, backAndForth = false) {
     const slides = urls.map(url => {
         const pic = document.createElement('img');
         pic.className = 'hover-swap';
@@ -488,7 +523,10 @@ function hoverPictures(card, imageBox, urls) {
         imageBox.append(pic);
         return pic;
     });
-    let wait = 0, timer = 0, at = -1, layer = 1;
+    let wait = 0, timer = 0, at = -1, layer = 1, step = 0;
+    // The order: 1, 2, 3, 1, 2, 3 … or back and forth: 1, 2, 3, 2, 1, 2, 3 …
+    const order = slides.map((s, i) => i);
+    if (backAndForth && slides.length > 2) order.push(...order.slice(1, -1).reverse());
     // The next picture fades in on top of the one before, which stays fully visible underneath until
     // the new one is there (so the cover never shines through in between).
     const show = i => {
@@ -507,8 +545,9 @@ function hoverPictures(card, imageBox, urls) {
         clearTimeout(wait);
         clearInterval(timer);
         wait = setTimeout(() => {
-            show(0);
-            if (slides.length > 1) timer = setInterval(() => show((at + 1) % slides.length), SLIDE_MS);
+            step = 0;
+            show(order[0]);
+            if (slides.length > 1) timer = setInterval(() => { step = (step + 1) % order.length; show(order[step]); }, SLIDE_MS);
         }, HOVER_DELAY);
     };
     const stop = () => {
@@ -520,21 +559,21 @@ function hoverPictures(card, imageBox, urls) {
     card.addEventListener('mouseenter', start);
     card.addEventListener('mouseleave', stop);
     card.addEventListener('focusin', start);
-    card.addEventListener('focusout', stop);    return slides;
+    card.addEventListener('focusout', stop);
+    return slides;
 }
 
-function softEdges(img, clip) {
+// The soft edges go on `target`: the picture itself, or the box holding it with its hover clip or pictures.
+function softEdges(img, target) {
     let size = '';
     const paint = () => {
         const w = img.clientWidth, h = img.clientHeight;
         if (!w || !h || size === w + 'x' + h) return;
         size = w + 'x' + h;                      // only redrawn when the picture changes size
         const mask = softMask(w, h);
-        [img].concat(clip || []).forEach(el => {     // (a hover clip or hover pictures get the same edges)
-            el.style.webkitMaskImage = mask;
-            el.style.maskImage = mask;
-            el.style.setProperty('--fade-px', (FADE * w).toFixed(2) + 'px');   // used by style.css
-        });
+        target.style.webkitMaskImage = mask;
+        target.style.maskImage = mask;
+        target.style.setProperty('--fade-px', (FADE * w).toFixed(2) + 'px');   // used by style.css
     };
     new ResizeObserver(paint).observe(img);
 }
@@ -1212,7 +1251,8 @@ async function loadProjects() {
     let list = [];
     try {
         const response = await fetch('Projects/projects.json', { cache: 'no-cache' });
-        list = (await response.json()).projects || [];
+        // "hidden": true (set in the Site Editor): not on the site at all, not even its own page.
+        list = ((await response.json()).projects || []).filter(entry => entry.hidden !== true);
     } catch (e) {
         console.error('Could not load Projects/projects.json', e);
     }

@@ -74,15 +74,17 @@ Link:
 # Optional web address, e.g. a shop page or article (start with https://)
 
 # ---------------- HOME PAGE ----------------
-Size: 50%
+Size: 70%
 # Size of the picture on the home page, from 20% to 100%.
 # 100% = half the page width on a computer, 20% = a twentieth (very small).
 
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
-Picture st-even2.jpg:
-Picture st-even4.jpg:
-Picture st-even5.jpg:
+Picture st-even17.jpg:
 Picture st-even6.jpg:
+Picture st-even16.jpg:
+Picture st-even4.jpg:
+Picture st-even8.jpg:
+Picture st-even5.jpg:
 Picture st-even7.jpg:

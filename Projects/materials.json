@@ -4,19 +4,19 @@
     {
       "id": "wood",
       "name": "Wood",
-      "color": "#b9781d",
+      "color": "#a66407",
       "description": "I learned to work with wood at HMC Amsterdam"
     },
     {
       "id": "plastic",
       "name": "Plastic",
-      "color": "#f9c943",
+      "color": "#e0a606",
       "description": ""
     },
     {
       "id": "metal",
       "name": "Metal",
-      "color": "#a3a6a8",
+      "color": "#737c82",
       "description": ""
     },
     {
@@ -28,13 +28,13 @@
     {
       "id": "textile",
       "name": "Textile",
-      "color": "#4a81bf",
+      "color": "#3d6fa9",
       "description": ""
     },
     {
       "id": "other",
       "name": "Other",
-      "color": "#ff513d",
+      "color": "#c53526",
       "description": ""
     }
   ]

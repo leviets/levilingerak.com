@@ -528,8 +528,8 @@ h1 {
 /* Soft edges (home, material and Info pages): a mask made per picture by the script (softEdges),
    a softly blurred rounded rectangle at the picture's exact size. On hover the mask grows until
    its soft edge and round corners lie outside the picture: sharp and square. */
-.home-project .project-image :is(img, video),
-.project .project-image :is(img, video) {
+.home-project .project-image :is(img, video, .project-media),
+.project .project-image :is(img, video, .project-media) {
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
   -webkit-mask-repeat: no-repeat;
@@ -540,45 +540,64 @@ h1 {
   transition: -webkit-mask-size 1400ms ease, mask-size 1400ms ease, clip-path 1400ms ease;
 }
 
-.home-project:hover .project-image :is(img, video),
-.project:hover .project-image :is(img, video),
-.home-project:focus-visible .project-image :is(img, video),
-.project:focus-visible .project-image :is(img, video) {
+.home-project:hover .project-image :is(img, video, .project-media),
+.project:hover .project-image :is(img, video, .project-media),
+.home-project:focus-visible .project-image :is(img, video, .project-media),
+.project:focus-visible .project-image :is(img, video, .project-media) {
   -webkit-mask-size: calc(100% + 3.4 * var(--fade-px, 0px)) calc(100% + 3.4 * var(--fade-px, 0px));
   mask-size: calc(100% + 3.4 * var(--fade-px, 0px)) calc(100% + 3.4 * var(--fade-px, 0px));
   clip-path: inset(0px);
 }
 
+/* A cover with a hover clip or hover pictures: they lie together in one box (script: createCard), and that box
+   has the soft edges and the hover animation. The pictures inside have none of their own, so the clip and the
+   cover can never drift apart while the edges grow (that made the square twitch). */
+.project-media {
+  position: absolute;
+  inset: 0;
+}
+
+.project-image .project-media > :is(img, video) {
+  -webkit-mask: none !important;
+  mask: none !important;
+  clip-path: none !important;
+}
+
 /* A film project: a few silent seconds of the film play over the thumbnail on hover (script: hoverClip). */
-.project-image video.hover-clip {
+.project-image .project-media > video.hover-clip {   /* (inside the box: beats the general edge rule) */
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 500ms ease, -webkit-mask-size 1400ms ease, mask-size 1400ms ease, clip-path 1400ms ease;
+  transition: opacity 250ms ease;     /* a quick fade from the picture to the clip, and back */
 }
 
-.project-image.is-playing video.hover-clip {
+/* A card with a hover clip is its own layer from the start, so the picture and the playing clip zoom together. */
+.has-hover-clip {
+  will-change: transform;
+}
+
+.project-image .project-media.is-playing > video.hover-clip {
   opacity: 1;
 }
 
 /* A picture project's hover pictures ("swap" in projects.json): on hover they fade in over the cover one after another,
    each new one on top of the one before (the script sets .is-shown and the order), so the cover never shows in between.
    A plain fade: no blur, so nothing flickers. They keep the cover's soft edges and frame. */
-.project-image img.hover-swap {
+.project-image .project-media > img.hover-swap {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 600ms ease, -webkit-mask-size 1400ms ease, mask-size 1400ms ease, clip-path 1400ms ease;
+  transition: opacity 600ms ease;
   pointer-events: none;
 }
 
-.project-image img.hover-swap.is-shown {
+.project-image .project-media > img.hover-swap.is-shown {
   opacity: 1;
 }
 /* Without a page of their own (the Dutch Design Week visits, work in progress): not clickable,
@@ -597,8 +616,8 @@ h1 {
   box-shadow: 0 22px 40px -12px rgba(31, 24, 19, 0);
 }
 
-.home-project.no-page:hover .project-image img,
-.project.no-page:hover .project-image img {
+.home-project.no-page:hover .project-image :is(img, .project-media),
+.project.no-page:hover .project-image :is(img, .project-media) {
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
   clip-path: inset(calc(var(--fade-px, 0px) * 0.1));

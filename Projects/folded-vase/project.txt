@@ -81,8 +81,9 @@ Size: 70%
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
-Picture folded-vase5.jpg: A
+Picture folded-vase1.jpg:
 Picture folded-vase6.jpg: B
-Picture folded-vase7.jpg: C
 Picture folded-vase8.jpg: D
+Picture folded-vase7.jpg: C
 Picture folded-vase9.jpg: E
+Picture folded-vase5.jpg: A

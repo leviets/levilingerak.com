@@ -80,15 +80,8 @@ Size: 49%
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
+Picture tower1.jpg:
+Picture tower9.jpg:
+Picture tower10.jpg:
+Picture tower11.jpg:
 Picture tower12.jpg:
-Picture tower19.jpg:
-Picture tower20.jpg:
-Picture tower21.jpg:
-Picture tower22.jpg:
-Picture tower23.jpg:
-Picture tower24.jpg:
-Picture tower25.jpg:
-Picture tower26.jpg:
-Picture tower27.jpg:
-Picture tower28.jpg:
-Picture tower29.jpg:
