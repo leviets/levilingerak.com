@@ -5,13 +5,13 @@
 #  - A long text may continue on the next lines (no colon needed).
 # ================================================================
 
-Project name: Beet Projector
+Project name: Slice Of Beet
 # Leave empty to use the folder name.
 
 What it is: Lamp
 # e.g. Chair, Lamp, Bag, Video. Shown under the name on the site.
 
-Categories: Stone
+Categories: Stone, Plastic
 # Choose from: Wood, Plastic, Metal, Stone, Textile, Other
 # Several are allowed, separated by commas, e.g. "Textile, Wood".
 # The project then shows up under each of them in the menu.
@@ -22,41 +22,42 @@ Categories: Stone
 Date: 13-11-2026
 # DD-MM-YYYY. Shown right under the picture. Newest projects come first.
 
-Short description:
+Short description: For a client project at the Design Academy Eindhoven we were invited to create a "thing" with Beet at its core. I looked in to preservation; and used this preserved "Slice Of Beet" in a custom made projector.
 # One sentence, shown at the top of the project page.
 
-Detailed description:
+Detailed description: I tried a few ways of creating a stable material out of a beet itself by adding the juice in a concrete mix, compressing it in to block and drying it in different shapes. Most experiments somewhat worked but either the color or the aesthetics of the beet were lost. The nicest looking sample of these test was still a simple horizontally sliced slice of beet, with the downside that time took a toll on them.
 # The story of the project: idea, process, what you learned.
 
-Materials:
+Materials: Ceramic
 # e.g. Walnut, beech, brass
 
-Stone part: Clay
+Stone part: Ceramics
+Plastic part: 3D Printed TPU
 # Per material: what that part is, e.g. "Plastic part: the 3D-printed handle".
 # Shown across from the name on that material's page (in its colour), and in the facts.
 
-Techniques:
+Techniques: Slipcasting
 # e.g. Hand-cut joinery, machine stitching, 3D printing
 
-Dimensions:
+Dimensions: 15 x 15 x 20
 # e.g. 40 x 30 x 25 cm
 
-Location:
+Location: Design Academy Eindhoven
 # Where it was made, e.g. Eindhoven / name of school or workshop
 
-Made for:
+Made for: Bietenclub
 # e.g. School assignment, client, exhibition, personal project
 
-Collaborators:
+Collaborators: -
 # People who helped, e.g. Model: Name, Styling: Name
 
-Supervised by:
+Supervised by: Kiki & Joost
 # Teacher, tutor or mentor who guided it
 
-Duration:
+Duration: 5 Weeks
 # How long it took, e.g. 3 weeks or 40 hours
 
-Learnt:
+Learnt: Simple Electronics, Slip casting, Plaster Molding
 # What you learnt from it
 
 Exhibited:
@@ -66,7 +67,7 @@ For sale:
 # e.g. Yes, 180 euros / On request.
 # Every fact is always shown on the page; one you leave empty shows a stripe (—).
 
-Photography:
+Photography: Levi Lingerak
 # Who took the pictures
 
 Link:
@@ -90,6 +91,6 @@ Picture beet-projector2-14.jpg:
 Picture beet-projector2-15.jpg:
 Picture beet-projector2-16.jpg:
 Picture beet-projector2-17.jpg:
-Picture beet-projector2-18.jpg:
 Picture beet-projector2-19.jpg:
+Picture beet-projector2-18.jpg:
 Picture beet-projector2-7.jpg:

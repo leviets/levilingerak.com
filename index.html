@@ -71,10 +71,12 @@
         </section>
 
         <section class="page" id="project" data-page-section="project">
-            <!-- The top of every project page: title (always in the left half, it shrinks to fit) with the
-                 short description under it, and the facts in the right half. -->
+            <!-- The top of every project page: the title (it shrinks to fit), what it is and the short description in the
+                 left half, the pictures at the top (one wide or two upright, chosen in the Site Editor) in the right
+                 half. The facts stand at the bottom of the page (events: in the right half at the top). -->
             <div class="detail-heading">
                 <div class="detail-top">
+                    <figure class="detail-top-picture" id="detail-top-picture" hidden></figure>
                     <div class="detail-top-text">
                         <h2 id="detail-title"></h2><p class="detail-kind" id="detail-kind"></p>
                         <p class="detail-intro" id="detail-intro"></p>
@@ -89,6 +91,7 @@
             <div class="detail-gallery" id="detail-gallery"></div>
             <!-- A designed page (Projects/<folder>/layout.json, made in the Site Editor) replaces the parts above. -->
             <div class="detail-custom" id="detail-custom" hidden></div>
+            <div class="detail-facts-end" id="detail-facts-end"></div>
             <nav class="detail-nav" aria-label="More projects">
                 <a id="detail-prev" href="#home"></a>
                 <a id="detail-next" href="#home"></a>

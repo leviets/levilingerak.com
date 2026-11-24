@@ -800,7 +800,7 @@ h1 {
 }
 
 /* ---- Project page ---- */
-/* The top: title + short description in the left half, all facts in the right half. */
+/* The top: title + short description in the left half; the picture (projects) or all facts (events) in the right half. */
 .detail-heading {
   padding: 44px 0 36px;   /* starts just below the soft fade under the header */
 }
@@ -876,6 +876,72 @@ h1 {
 .detail-facts a {
   color: var(--denim);
   text-decoration: none;
+}
+
+/* A label with its value. At the top (events) they line up in the two columns of the list. */
+.detail-top .detail-facts > div {
+  display: contents;
+}
+
+/* A project: its picture at the top in the left half, the title and short description beside it. */
+.detail-top-picture {
+  margin: 0;
+}
+
+/* One wide picture, or two upright ones side by side (just as high: script.js sets their widths). */
+.detail-top-picture img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.detail-top-picture.is-pair {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.detail-top-picture.is-pair img {
+  flex: 0.75 1 0;
+  min-width: 0;
+}
+
+.detail-top.has-picture h2 {
+  margin-top: 0;
+}
+
+/* The title, what it is and the description in the left half, the picture in the right half
+   (on a phone: the picture first, above the title). */
+@media (min-width: 761px) {
+  .detail-top.has-picture .detail-top-picture {
+    order: 2;
+  }
+}
+
+/* A thin black line under the picture, title and description, across the page. */
+.detail-top.has-picture {
+  padding-bottom: 36px;
+  border-bottom: 1px solid #1f1813;
+}
+
+/* A project's facts: at the bottom of the page, in columns. */
+.detail-facts-end {
+  padding: 20px 0 8px;
+}
+
+.detail-facts-end:empty {
+  display: none;
+}
+
+.detail-facts-end .detail-facts {
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 24px 32px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(31, 24, 19, 0.14);
+}
+
+.detail-facts-end .detail-facts dt {
+  padding: 0 0 4px;
 }
 
 /* A film (YouTube) under the top, the full width of the page, on both the automatic and a designed page. */

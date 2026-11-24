@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "bands": [
+    {
+      "type": "split",
+      "left": [
+        {
+          "kind": "picture",
+          "col": 1,
+          "row": 1,
+          "w": 6,
+          "h": 10,
+          "ratio": 1.7777777777777777,
+          "photo": "folding-bike6.jpg"
+        }
+      ],
+      "right": [
+        {
+          "kind": "picture",
+          "col": 1,
+          "row": 1,
+          "w": 6,
+          "h": 17,
+          "ratio": 1,
+          "photo": "folding-bike7.jpg"
+        }
+      ]
+    },
+    {
+      "type": "split",
+      "left": [
+        {
+          "kind": "picture",
+          "col": 1,
+          "row": 1,
+          "w": 6,
+          "h": 17,
+          "ratio": 1,
+          "photo": "folding-bike8.jpg"
+        }
+      ],
+      "right": [
+        {
+          "kind": "picture",
+          "col": 1,
+          "row": 1,
+          "w": 6,
+          "h": 17,
+          "ratio": 1,
+          "photo": "folding-bike9.jpg"
+        }
+      ]
+    },
+    {
+      "type": "split",
+      "left": [
+        {
+          "kind": "picture",
+          "col": 1,
+          "row": 1,
+          "w": 6,
+          "h": 17,
+          "ratio": 1,
+          "photo": "folding-bike10.jpg"
+        },
+        {
+          "kind": "text",
+          "col": 1,
+          "row": 18,
+          "w": 6,
+          "h": 8,
+          "size": "m",
+          "text": ""
+        },
+        {
+          "kind": "text",
+          "col": 1,
+          "row": 26,
+          "w": 6,
+          "h": 8,
+          "size": "m",
+          "text": ""
+        },
+        {
+          "kind": "text",
+          "col": 1,
+          "row": 34,
+          "w": 6,
+          "h": 8,
+          "size": "m",
+          "text": ""
+        }
+      ],
+      "right": [
+        {
+          "kind": "picture",
+          "col": 1,
+          "row": 1,
+          "w": 6,
+          "h": 17,
+          "ratio": 1,
+          "photo": "folding-bike11.jpg"
+        }
+      ]
+    }
+  ]
+}

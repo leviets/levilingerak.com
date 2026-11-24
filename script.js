@@ -333,6 +333,9 @@ async function loadProject(entry, index) {
         // "reverse": the hover goes back and forth (photos 1-2-3-2-1; a clip has it built in by the Site Editor).
         reverse: !!entry.reverse,
         cover: cover ? cover.url : null,
+        // The pictures at the top of the project page, right of the title: "top" in projects.json, one wide
+        // picture or two upright ones side by side (chosen in the Site Editor). Without it: no picture there.
+        top: [].concat(entry.top || []).filter(file => (entry.media || []).includes(file)).slice(0, 2),
         mediaFiles: entry.media || [],    // file names, for a designed page (layout.json)
         media
     };
@@ -1083,9 +1086,29 @@ function renderDetail(project) {
     text.innerHTML = '';
     if (project.detail) text.append(...toParagraphs(project.detail));
 
+    // A project: its picture at the top, right of the title, and the facts at the bottom of the page.
+    // An event: no picture there, its facts at the top in the right half.
+    const topPicture = document.getElementById('detail-top-picture');
+    const topIndexes = project.isEvent ? [] : project.top.map(file => project.mediaFiles.indexOf(file));
+    topPicture.innerHTML = '';
+    topPicture.hidden = !topIndexes.length;
+    topPicture.classList.toggle('is-pair', topIndexes.length === 2);
+    topIndexes.forEach(i => {
+        const img = document.createElement('img');
+        img.src = project.media[i].url;
+        img.alt = project.media[i].caption || project.name;
+        img.decoding = 'async';
+        // Two upright pictures: widths in proportion, so both are just as high.
+        const share = () => { if (img.naturalWidth) img.style.flexGrow = String(img.naturalWidth / img.naturalHeight); };
+        if (img.complete) share(); else img.addEventListener('load', share, { once: true });
+        topPicture.append(img);
+    });
+    document.querySelector('#project .detail-top').classList.toggle('has-picture', topIndexes.length > 0);
     const facts = document.getElementById('detail-facts');
+    (project.isEvent ? document.querySelector('#project .detail-top') : document.getElementById('detail-facts-end')).append(facts);
     facts.innerHTML = '';
     project.facts.forEach(([label, value]) => {
+        const pair = document.createElement('div');     // (a label with its value, kept together in the columns)
         const dt = document.createElement('dt');
         dt.textContent = label;
         const dd = document.createElement('dd');
@@ -1099,7 +1122,8 @@ function renderDetail(project) {
         } else {
             dd.textContent = value;
         }
-        facts.append(dt, dd);
+        pair.append(dt, dd);
+        facts.append(pair);
     });
 
     showFilm(project);
@@ -1108,6 +1132,7 @@ function renderDetail(project) {
     gallery.innerHTML = '';
     project.media.forEach((item, i) => {
         if (i === 0 && project.youtube && !item.isVideo) return;   // a film's thumbnail: the film itself is above
+        if (topIndexes.includes(i)) return;                              // already at the top, right of the title
         const figure = document.createElement('figure');
         if (item.isVideo) {
             const video = document.createElement('video');
@@ -1192,6 +1217,7 @@ function fitDetailTitle() {
         title.style.fontSize = (size * room / wide * 0.98).toFixed(1) + 'px';
     }
     PageLayout.alignFacts(title, document.getElementById('detail-facts'));
+    PageLayout.alignPicture(title, document.getElementById('detail-top-picture'));
 }
 window.addEventListener('resize', () => requestAnimationFrame(fitDetailTitle));
 if (document.fonts) document.fonts.ready.then(fitDetailTitle);
