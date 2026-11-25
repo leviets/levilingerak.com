@@ -131,6 +131,31 @@ a {
   opacity: calc(var(--o, 0.3) * 0.5);
 }
 
+/* The other background, "Ball behind" (Site Editor, Materials tab → Background): a ball behind every project.
+   script.js places them (its translate is the ball's middle) and sets their size and strength. */
+.bg-blobs.mode-projects .blob {
+  display: none;
+}
+
+/* (A soft colour gradient instead of a blur, and only a slow turn and swell: light for the computer, also
+   with many balls on the screen.) */
+.pball {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(closest-side, var(--c) 0%, color-mix(in srgb, var(--c) 55%, transparent) 45%, transparent 100%);
+  opacity: 0;
+  will-change: translate;
+  transition: opacity 1.2s ease, width 1.6s ease, height 1.6s ease;
+  animation: blob-turn var(--speed, 46s) ease-in-out var(--delay, 0s) infinite alternate;
+}
+
+.pball.is-shown {
+  opacity: var(--o, 0.32);
+}
+
 /* A slow turn and swell (where they float is up to script.js). */
 @keyframes blob-turn {
   0%   { transform: rotate(0deg) scale(1); }
@@ -146,7 +171,7 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .blob {
+  .blob, .pball {
     animation: none;
   }
 }
@@ -244,6 +269,45 @@ a {
 
 .nav-link.active {
   background-size: 100% 1px;
+}
+
+/* Home page: once the big name has scrolled up out of sight, it takes the place of Home, Shop, Info and Contact
+   at the top (it comes up from below as the words go). script.js sets .name-in-bar. */
+.main-nav {
+  position: relative;
+}
+
+.nav-link {
+  transition: background-size 220ms ease, opacity 1100ms ease, translate 1100ms ease;
+}
+
+.bar-name-top {
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  translate: -50% 0%;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  font-family: "Levilingerak", sans-serif;
+  font-size: 1.8rem;
+  line-height: 1;
+  letter-spacing: -0.055em;
+  color: var(--ink);
+  text-decoration: none;
+  transition: opacity 1500ms ease, translate 1700ms cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.name-in-bar .bar-name-top {
+  opacity: 1;
+  translate: -50% -50%;
+  pointer-events: auto;
+}
+
+.name-in-bar .nav-link {
+  opacity: 0;
+  translate: 0 -8px;
+  pointer-events: none;
 }
 
 /* A copy of the logo patch (Profile/Pictures/instagram-patch.png: the logo without its mark), same size and shadow,
@@ -364,11 +428,58 @@ h2 {
   letter-spacing: -0.055em;
 }
 
-/* ---- Home: the big name, the intro and the timeline ---- */
+/* ---- Home: the big name and the timeline ---- */
+/* The opening screen: only the name, in the middle of the screen (the bottom padding as tall as the
+   header, so the name sits in the middle of the whole window). One scroll goes on to the path (script.js). */
 .home-copy {
   position: relative;
   z-index: 2;
-  padding: calc(4vh + 34px) 0 2vh;   /* 34px: clears the soft fade under the header; the pictures close under the text */
+  height: calc(100vh - var(--bar-h, 90px));
+  height: calc(100svh - var(--bar-h, 90px));
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 0 var(--bar-h, 90px);
+}
+
+/* The little arrow at the bottom of the opening screen */
+.home-arrow {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  translate: -50% 0;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 200ms;
+  animation: arrow-bob 2.6s ease-in-out infinite;
+}
+
+.home-arrow:hover,
+.home-arrow:focus-visible {
+  opacity: 1;
+}
+
+.home-arrow svg {
+  width: 26px;
+  height: 26px;
+}
+
+@keyframes arrow-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(7px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-arrow { animation: none; }
 }
 
 /* The name always fills the page width (fitName in script.js). */
@@ -389,33 +500,6 @@ h1 {
 .baseline-l {
   position: relative;
   top: 0.023em;
-}
-
-.intro {
-  max-width: none;              /* across the page, as wide as the big name above it (script.js fitName) */
-  padding: 0 var(--name-right, 0px) 0 var(--name-left, 0px);
-  font-size: clamp(1.15rem, 2vw, 1.55rem);
-  line-height: 1.35;
-  margin-top: -4.85vw;          /* close under the name, up beside the tail of the g (vw: grows with the name) */
-  white-space: pre-line;        /* the line breaks you type in the editor */
-  font-weight: 260;             /* a touch thinner than the rest of the site */
-}
-
-/* The introduction's first sentence: on its own line, a little apart from the rest. */
-.intro-lead {
-  display: block;
-  margin-bottom: calc(0.45em + 2.25vw);   /* (vw: halfway between the name and the rest) */
-}
-
-/* Phone: the first line is as wide as the name, so the text stays under the tail of the g. */
-@media (max-width: 760px) {
-  .intro {
-    margin-top: 0.3em;
-  }
-
-  .intro-lead {
-    margin-bottom: 0.45em;
-  }
 }
 
 /* The timeline: positions and the path are calculated in script.js (layoutHome). */
@@ -1158,6 +1242,16 @@ h1 {
   line-height: 1.55;
 }
 
+
+/* The short introduction (Info & Contact tab), above the biography: its first sentence on its own line. */
+.info-copy .info-intro {
+  white-space: pre-line;        /* the line breaks you type in the editor */
+}
+
+.intro-lead {
+  display: block;
+  margin-bottom: 0.7em;
+}
 .info-with-events .info-copy > * + * {
   margin-top: 28px;
 }
@@ -1218,6 +1312,11 @@ h1 {
 
 #shop .contact-page h2 {
   margin-top: 0.2em;
+}
+
+#shop .shop-lead {
+  margin: 0.9em 0 0.5em;
+  font-size: clamp(1.1rem, 1.8vw, 1.5rem);
 }
 
 .contact-intro {
@@ -1471,6 +1570,45 @@ footer {
 /* Wider screens: one compact header. Logo on the left, Instagram on the right; in between
    Home / Shop / Info / Contact centred, with the materials spread over the full width below it. */
 @media (min-width: 900px) {
+
+  /* Big screens: the name comes in the middle of the materials, which move aside to make room for it. */
+  .bar-name-top {
+    display: none;
+  }
+
+  .bar-name-mid {
+    position: relative;
+    flex: none;
+    width: 0;
+    margin-inline: var(--hide-m, -9px);   /* (hidden: takes back the room it would add, so all materials stand evenly apart; script.js) */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    white-space: nowrap;
+    font-family: "Levilingerak", sans-serif;
+    font-size: 2.1rem;
+    line-height: 1;
+    letter-spacing: -0.055em;
+    color: var(--ink);
+    text-decoration: none;
+    opacity: 0;
+    translate: 0 45%;
+    pointer-events: none;
+    /* Going away: the name fades down and out quickly, the materials close up just after it. */
+    transition: width 850ms cubic-bezier(0.45, 0, 0.25, 1) 100ms, margin 850ms cubic-bezier(0.45, 0, 0.25, 1) 100ms,
+                opacity 600ms ease, translate 750ms cubic-bezier(0.4, 0, 0.6, 1);
+  }
+
+  .name-in-bar .bar-name-mid {
+    width: var(--name-w, 15rem);
+    margin-inline: 0;
+    opacity: 1;
+    translate: 0 calc(-0.05em - 4px);   /* (a touch above the middle of the materials) */
+    pointer-events: auto;
+    /* Coming: first the materials move aside to make room, then the name slides up into it. */
+    transition: width 850ms cubic-bezier(0.45, 0, 0.25, 1), margin 850ms cubic-bezier(0.45, 0, 0.25, 1),
+                opacity 900ms ease 150ms, translate 1000ms cubic-bezier(0.2, 0.8, 0.3, 1) 150ms;
+  }
   .top-bar {
     display: grid;
     grid-template-columns: auto 1fr auto;
@@ -1536,3 +1674,20 @@ footer {
   }
 }
 
+
+@media (max-width: 899px) {
+  .bar-name-mid {
+    display: none;
+  }
+}
+
+/* The one-scroll jump on the home page (morphName in script.js): the big name fades out quickly as the
+   page starts to glide, and the small name fades in at the top right after. */
+.fit-name {
+  transition: opacity 450ms ease;
+}
+
+.big-fade .fit-name {
+  opacity: 0;
+  transition-duration: 260ms;
+}

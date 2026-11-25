@@ -1,5 +1,6 @@
 {
-  "_help": "Made by the Site Editor (Materials tab): the colour of each material and the text beside its name on its page.",
+  "_help": "Made by the Site Editor (Materials tab): the colour of each material, the text beside its name on its page, and the background (\"free\": floating balls, \"projects\": a ball behind every project).",
+  "background": "free",
   "materials": [
     {
       "id": "wood",

@@ -31,6 +31,8 @@
             <button class="nav-link" type="button" data-page="shop">Shop</button>
             <button class="nav-link" type="button" data-page="info">Info</button>
             <button class="nav-link" type="button" data-page="contact">Contact</button>
+            <!-- Once the big name has scrolled away on the home page it stands here instead of the words (script.js). -->
+            <a class="bar-name bar-name-top" href="#home" tabindex="-1" aria-hidden="true"><span class="baseline-l">L</span>evi <span class="baseline-l">L</span>ingerak</a>
         </nav>
         <!-- Same size as the logo, mirrored on the right. -->
         <a class="instagram-button" href="https://www.instagram.com/levilingerak/" target="_blank" rel="noopener" aria-label="Levi Lingerak on Instagram">
@@ -50,7 +52,7 @@
         <section class="page active" id="home" data-page-section="home">
             <div class="home-copy">
                 <h1 class="fit-name"><span><span class="baseline-l">L</span>evi <span class="baseline-l">L</span>ingerak</span></h1>
-                <p class="intro" data-profile="short introduction">Walnut, beech, denim and rope — made by hand, with the joints, seams and stitches left on show.</p>
+                <button class="home-arrow" type="button" aria-label="Scroll down to the work"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg></button>
             </div>
 
             <div class="home-projects" id="home-projects" aria-label="Projects, newest at the top"></div>
@@ -104,6 +106,7 @@
                 <p class="eyebrow" data-profile="info label">About</p>
                 <h2 data-profile="info title">Making useful things with a point of view.</h2>
                 <div class="info-copy">
+                    <p class="info-intro" data-profile="short introduction" hidden></p>
                     <div class="info-bio" data-profile="biography">
                         <p>I’m Levi Lingerak, an Eindhoven-based designer and maker exploring the relationship between material, function and form.</p>
                         <p>My work moves across wood, metal, textiles, plastics and stoneware, with an emphasis on clear ideas and hands-on experimentation.</p>
@@ -111,8 +114,8 @@
                     <p class="info-education" data-profile="education" hidden></p>
                     <div class="contact">
                         <span>Available for <span data-profile="available for">commissions and collaborations</span></span>
-                        <a class="profile-email" href="mailto:hello@levilingerak.nl">hello@levilingerak.nl ↗</a>
-                        <a class="profile-instagram" href="https://www.instagram.com/levilingerak/" target="_blank" rel="noopener">Instagram @levilingerak ↗</a>
+                        <a class="profile-email" href="mailto:hello@levilingerak.nl">hello@levilingerak.nl</a>
+                        <a class="profile-instagram" href="https://www.instagram.com/levilingerak/" target="_blank" rel="noopener">Instagram @levilingerak</a>
                     </div>
                 </div>
             </div>
@@ -127,7 +130,8 @@
         <section class="page" id="shop" data-page-section="shop">
             <div class="contact-page">
                 <p class="eyebrow">Shop</p>
-                <h2>Coming soon</h2>
+                <p class="shop-lead">Still learning the business part...</p>
+                <h2>Nothing for sale! (Yet)</h2>
             </div>
         </section>
 
@@ -139,9 +143,9 @@
                 <p class="contact-intro" data-profile="contact intro">For commissions, collaborations or just a question about a project: send me a message.</p>
                 <dl class="contact-list">
                     <dt>Email</dt>
-                    <dd><a class="profile-email" href="mailto:hello@levilingerak.nl">hello@levilingerak.nl ↗</a></dd>
+                    <dd><a class="profile-email" href="mailto:hello@levilingerak.nl">hello@levilingerak.nl</a></dd>
                     <dt>Instagram</dt>
-                    <dd><a class="profile-instagram-handle" href="https://www.instagram.com/levilingerak/" target="_blank" rel="noopener">@levilingerak ↗</a></dd>
+                    <dd><a class="profile-instagram-handle" href="https://www.instagram.com/levilingerak/" target="_blank" rel="noopener">@levilingerak</a></dd>
                     <dt>Location</dt>
                     <dd data-profile="location">Eindhoven, NL</dd>
                     <dt>Available for</dt>
@@ -153,7 +157,7 @@
 
     <footer>
         <span>© 2026 <span data-profile="name">Levi Lingerak</span></span>
-        <a class="footer-instagram profile-instagram-plain" href="https://www.instagram.com/levilingerak/" target="_blank" rel="noopener">Instagram ↗</a>
+        <a class="footer-instagram profile-instagram-plain" href="https://www.instagram.com/levilingerak/" target="_blank" rel="noopener">Instagram</a>
         <span data-profile="location">Eindhoven, NL</span>
     </footer>
 

@@ -14,10 +14,10 @@ const DEFAULT_TITLE = document.title;
 // accepted in project.txt.
 const CATEGORIES = [
     { id: 'wood',      name: 'Wood',      color: '#8a5530', ink: '#7a4626', words: ['woodwork', 'woodworking', 'hout'] },
-    { id: 'plastic',   name: 'Plastic',   color: '#e0b02a', ink: '#946f00', words: ['plastics', 'kunststof'] },
     { id: 'metal',     name: 'Metal',     color: '#7c8288', ink: '#5d6268', words: ['metals', 'metalwork', 'metaal'] },
-    { id: 'stone',     name: 'Stone',     color: '#5c8a52', ink: '#46713d', words: ['stoneware', 'ceramics', 'ceramic', 'clay', 'keramiek', 'steen'] },
     { id: 'textile',   name: 'Textile',   color: '#2f5d93', ink: '#2a5285', words: ['textiles', 'fabric', 'denim', 'textiel'] },
+    { id: 'plastic',   name: 'Plastic',   color: '#e0b02a', ink: '#946f00', words: ['plastics', 'kunststof'] },
+    { id: 'stone',     name: 'Stone',     color: '#5c8a52', ink: '#46713d', words: ['stoneware', 'ceramics', 'ceramic', 'clay', 'keramiek', 'steen'] },
     { id: 'other',     name: 'Other',     color: '#c0392b', ink: '#a8301f', words: ['others', 'overig', 'anders'] }
 ];
 const categoryById = Object.fromEntries(CATEGORIES.map(c => [c.id, c]));
@@ -91,6 +91,7 @@ function route() {
         else link.removeAttribute('aria-current');
     });
     window.scrollTo({ top: 0 });
+    requestAnimationFrame(updateBarName);   // (the name in the top bar: on a material page straight away)
     requestAnimationFrame(() => arrangeBlobs(categoryById[pageName === 'category' ? hash : ''] ? hash : null));   // the background follows
 }
 
@@ -647,7 +648,7 @@ function renderHome() {
         const card = createCard(project, 'home-project');
         random(); random();   // (two numbers once used for tilt and sway; still drawn so every project keeps its place)
         container.append(card);
-        const item = { card, size: project.size, swing: random(), spacing: random(), frame: project.frame || 1 };
+        const item = { card, project, size: project.size, swing: random(), spacing: random(), frame: project.frame || 1 };
         // No frame given: take the cover's shape once it has loaded, and lay out again.
         const img = card.querySelector('.project-image img');
         if (!project.frame && img) {
@@ -810,7 +811,8 @@ function layoutHome() {
     const [minPct, maxPct] = W < 440 ? [16, 80] : W < 760 ? [10, 50] : [5, 50];
     const SCALE = 0.8;                       // everything a bit smaller: the page looks zoomed out
     const small = W < 760;
-    const top = 0;                           // the first pictures start right under the intro
+    // The first pictures start well clear of the name (and the tail of its g): a part of the name's size.
+    const top = parseFloat(getComputedStyle(document.querySelector('.fit-name')).fontSize) * 0.35;
     const pad = small ? W * 0.03 : W * 0.07; // pictures stay this far from the sides
     const U = W - 2 * pad;                   // the width the pictures use
     const gapX = Math.max(70, W * 0.06);     // room between neighbours (for the path)
@@ -845,6 +847,7 @@ function layoutHome() {
 
     // 3. Place each row. Even rows run left -> right, odd rows right -> left.
     let y = top;
+    const placed = [];
     rows.forEach((rowBoxes, r) => {
         const total = rowBoxes.reduce((sum, b) => sum + b.w, 0);
         const isLast = r === rows.length - 1;
@@ -855,17 +858,32 @@ function layoutHome() {
         const rowHeight = Math.max(...rowBoxes.map(b => b.h));
         const ltr = r % 2 === 0;
         let x = ltr ? pad : W - pad;
-        rowBoxes.forEach(box => {
-            // A little up/down variation inside the row keeps it organic (the first row less, so it starts close under the text).
-            const drop = ((rowHeight - box.h) * box.item.swing * 0.85 + box.item.spacing * 14) * (r === 0 ? 0.35 : 1);
+        // Each next picture along the row a small, uneven step lower, so the path also runs down a little while it
+        // crosses the page (not only straight left to right, then right to left).
+        const step = rowHeight * 0.1;
+        // Where each picture could stand: just under the pictures above it and near it (not under the lowest of
+        // the whole row), so no big empty spaces open up.
+        const floors = rowBoxes.map(box => {
             box.x = ltr ? x : x - box.w;
-            box.y = y + drop;
-            box.row = r;
             x = ltr ? x + box.w + gap : x - box.w - gap;
+            const above = placed.filter(p => p.x < box.x + box.w + gapX * 1.1 && p.x + p.w > box.x - gapX * 1.1);
+            return above.length ? Math.max(...above.map(p => p.y + p.h)) + 14 + gapY * 0.75 : y;   // (nothing above it: under the row before)
+        });
+        // … but pulled halfway towards the row's middle height, and never far above its neighbour in the row,
+        // so the path doesn't shoot steeply up and down between two pictures.
+        const middle = floors.reduce((s, f) => s + f, 0) / floors.length;
+        rowBoxes.forEach((box, j) => {
+            // A little up/down variation inside the row keeps it organic (the first row less, so it starts close under the text).
+            const drop = ((rowHeight - box.h) * box.item.swing * 0.5 + box.item.spacing * 14) * (r === 0 ? 0.35 : 1);
+            let at = Math.max(floors[j], (floors[j] + middle) / 2) + drop + j * step * (0.4 + box.item.spacing * 1.2);
+            if (j) at = Math.max(at, rowBoxes[j - 1].y - rowHeight * 0.35);
+            box.y = at;
+            placed.push(box);
+            box.row = r;
             box.item.card.style.left = box.x + 'px';
             box.item.card.style.top = box.y + 'px';
         });
-        y += rowHeight + 14 + gapY;
+        y = Math.min(...rowBoxes.map(b => b.y + b.h)) + 14 + gapY * 0.75;
     });
 
     const bottom = Math.max(...boxes.map(b => b.y + b.h));
@@ -1056,6 +1074,179 @@ new ResizeObserver(fitName).observe(document.querySelector('.fit-name'));
 if (document.fonts) document.fonts.ready.then(fitName);
 fitName();
 
+// Once the big name has scrolled up out of sight (home page), it stands small at the top instead of
+// Home, Shop, Info and Contact (style.css .bar-name). Clicking it goes back up.
+var nameMorphing = false;   // (while the big name flies into the bar, or back: morphName)
+function updateBarName() {
+    if (nameMorphing) return;
+    const name = document.querySelector('.fit-name');
+    const onHome = document.getElementById('home').classList.contains('active');
+    // Only once the big name is gone completely, the tail of the g too (the bottom of its box), behind the header.
+    const gone = name.getBoundingClientRect().bottom <= document.getElementById('top-bar').getBoundingClientRect().bottom;
+    // (on the material pages the name always stands at the top, in place of Home, Shop, Info and Contact)
+    const onMaterial = document.getElementById('category').classList.contains('active');
+    document.body.classList.toggle('name-in-bar', (onHome && gone) || onMaterial);
+    if (!onHome || !gone) document.body.classList.remove('big-fade');   // (the big name is always back when it can be seen)
+}
+window.addEventListener('scroll', updateBarName, { passive: true });
+window.addEventListener('hashchange', () => requestAnimationFrame(updateBarName));
+// (On a big screen it comes in the middle of the materials, which move aside: between the third and the fourth.)
+const midName = document.querySelector('.bar-name-top').cloneNode(true);
+midName.className = 'bar-name bar-name-mid';
+midName.innerHTML = '<span>' + midName.innerHTML + '</span>';
+categoryNav.insertBefore(midName, categoryNav.children[Math.ceil(CATEGORIES.length / 2)]);
+// (its room is about as wide as the name itself, the name stays in the middle)
+const measureMidName = () => {
+    midName.style.setProperty('--name-w', (midName.firstChild.offsetWidth - 28) + 'px');
+    // Hidden it still counts as a place in the row: take that place back (one even gap of the six), so Textile
+    // and Plastic stand as far apart as the other materials.
+    const links = [...categoryNav.querySelectorAll('.category-link')];
+    const free = categoryNav.clientWidth - links.reduce((s, a) => s + a.getBoundingClientRect().width, 0);
+    midName.style.setProperty('--hide-m', (-free / (links.length - 1) / 2).toFixed(1) + 'px');
+};
+measureMidName();
+if (document.fonts) document.fonts.ready.then(measureMidName);
+window.addEventListener('resize', measureMidName);
+// (the logo too: on the home page already, it goes back up)
+document.querySelectorAll('.bar-name, .brand').forEach(link => link.addEventListener('click', e => {
+    if (!document.getElementById('home').classList.contains('active')) return;   // (another page: just go home)
+    e.preventDefault();
+    morphName(false);
+    glideTo(0);
+}));
+
+// ---- Home: first only the name, filling the screen. One scroll down glides straight to the path,
+// one scroll up from the top of the path glides back to the name: never anything in between. ----
+const homePage = document.getElementById('home');
+const homeCopy = homePage.querySelector('.home-copy');
+const headerBar = document.getElementById('top-bar');
+const setBarHeight = () => document.documentElement.style.setProperty('--bar-h', headerBar.offsetHeight + 'px');
+setBarHeight();
+window.addEventListener('resize', setBarHeight);
+const isHome = () => homePage.classList.contains('active');
+// (where the path starts: the opening screen has gone up behind the header)
+const pathTop = () => Math.round(homeCopy.getBoundingClientRect().bottom + window.scrollY - headerBar.offsetHeight);
+let gliding = false, glideEnd = 0, glideDir = 0, glideRun = 0;
+let lastDir = 1, lastY = window.scrollY;   // (which way the page was last moved by hand: 1 down, -1 up)
+let byHand = false;   // (a glide taken over: scrolling in between is free until it rests)
+function glideTo(y) {
+    if (reduceMotion) { window.scrollTo({ top: y, behavior: 'instant' }); return; }
+    const from = window.scrollY, dist = y - from, t0 = performance.now(), duration = 950, run = ++glideRun;
+    gliding = true;
+    byHand = false;
+    glideDir = lastDir = Math.sign(dist) || lastDir;
+    const step = now => {
+        if (run !== glideRun) return;   // (taken over)
+        const k = Math.max(0, Math.min(1, (now - t0) / duration));
+        const ease = 1 - Math.pow(1 - k, 3);   // (gets going straight away, settles softly)
+        window.scrollTo({ top: from + dist * ease, behavior: 'instant' });
+        lastY = window.scrollY;
+        if (k < 1) requestAnimationFrame(step);
+        else { gliding = false; glideEnd = performance.now(); if (nameFlight) nameFlight.done(); }
+    };
+    requestAnimationFrame(step);
+}
+// Scrolling against a glide stops it: from there on the scrolling is by hand.
+function stopGlide() {
+    glideRun++;
+    gliding = false;
+    byHand = true;
+    lastY = window.scrollY;   // (from here on, which way the page goes is measured from here)
+    if (nameFlight) { clearTimeout(nameFlight.timer); nameFlight.done(); }
+}
+// dir 1 = down, -1 = up. Returns true when it took over the scroll.
+function snapHome(dir) {
+    if (!isHome()) return false;
+    const p = pathTop(), y = window.scrollY;
+    if (gliding) {
+        if (dir === glideDir) return true;   // (the same way: the rest of the swipe is swallowed)
+        stopGlide();                         // (the other way: you take over)
+        lastDir = dir;
+        return false;
+    }
+    if (byHand && y > 0 && y < p) { lastDir = dir; return false; }   // (in between, by hand: free)
+    // (a moment after a glide, the left-over swipe of a trackpad is swallowed)
+    if (performance.now() - glideEnd < 650 && y <= p + 2) return true;
+    if (dir > 0 && y < p - 2) { morphName(true); glideTo(p); return true; }
+    if (dir < 0 && y <= p + 2 && y > 0) { morphName(false); glideTo(0); return true; }
+    return false;
+}
+// The name goes into the top bar with a fade, as soon as the glide starts (not after it): the big
+// name fades out quickly, and just after that the small one fades in. On the way up it goes the
+// other way round. (glideTo calls nameFlight.done at the end.)
+let nameFlight = null;
+function morphName(toBar) {
+    if (reduceMotion || !isHome()) return;
+    const body = document.body;
+    if (nameFlight) clearTimeout(nameFlight.timer);
+    nameMorphing = true;
+    body.classList.add('big-fade');
+    const timer = toBar
+        ? setTimeout(() => body.classList.add('name-in-bar'), 60)               // (small name in, once the big one is nearly gone)
+        : (body.classList.remove('name-in-bar'), setTimeout(() => body.classList.remove('big-fade'), 120));   // (small out, then big back in)
+    nameFlight = {
+        timer,
+        done() {
+            requestAnimationFrame(() => {
+                nameMorphing = false;
+                nameFlight = null;
+                updateBarName();
+                if (!body.classList.contains('name-in-bar')) body.classList.remove('big-fade');
+            });
+        }
+    };
+}
+window.addEventListener('wheel', e => {
+    if (e.ctrlKey || !e.deltaY) return;   // (zooming)
+    if (snapHome(Math.sign(e.deltaY))) e.preventDefault();
+}, { passive: false });
+window.addEventListener('keydown', e => {
+    if (e.target.closest && e.target.closest('input, textarea, select, [contenteditable]')) return;
+    const dir = { ArrowDown: 1, PageDown: 1, ' ': e.shiftKey ? -1 : 1, ArrowUp: -1, PageUp: -1 }[e.key];
+    if (dir && snapHome(dir)) e.preventDefault();
+});
+let touchY = null;
+window.addEventListener('touchstart', e => { touchY = e.touches[0].clientY; }, { passive: true });
+window.addEventListener('touchmove', e => {
+    if (touchY === null || !isHome()) return;
+    const dy = touchY - e.touches[0].clientY;   // (more than 0: the finger goes up, the page down)
+    const p = pathTop(), y = window.scrollY;
+    if (dy < 0 && y <= 0) return;   // (pulling down at the very top: the phone's own refresh)
+    if (!(gliding || y < p - 2 || (dy < 0 && y <= p + 2))) return;   // (inside the path: scroll as usual)
+    if (Math.abs(dy) < 10) { if (!byHand) e.preventDefault(); return; }
+    if (snapHome(Math.sign(dy))) { e.preventDefault(); touchY = e.touches[0].clientY; }   // (else: by hand)
+}, { passive: false });
+// Doing nothing while in between (after taking over a glide, or letting go of the scroll bar half way):
+// the page goes on by itself, the way it was last moved. Never while the scroll bar is still held.
+let settleTimer = 0, barHeld = false;
+function settleHome() {
+    if (!isHome() || gliding || barHeld) return;
+    const p = pathTop(), y = window.scrollY;
+    if (y <= 1 || y >= p - 1) { byHand = false; return; }
+    const down = lastDir > 0;
+    morphName(down);
+    glideTo(down ? p : 0);
+}
+const settleSoon = ms => { clearTimeout(settleTimer); settleTimer = setTimeout(settleHome, ms); };
+window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    if (!gliding && y !== lastY) lastDir = Math.sign(y - lastY);
+    lastY = y;
+    if (!gliding) settleSoon(450);   // (still scrolling: wait)
+}, { passive: true });
+window.addEventListener('mousedown', e => {
+    // (a press beside the page itself: on the scroll bar)
+    if (e.clientX >= document.documentElement.clientWidth || e.clientX < 0) barHeld = true;
+});
+const letGoOfBar = () => {
+    if (!barHeld) return;
+    barHeld = false;
+    settleSoon(150);
+};
+window.addEventListener('mouseup', letGoOfBar);
+window.addEventListener('mousemove', e => { if (!e.buttons) letGoOfBar(); });   // (in case the let-go was missed)
+homeCopy.querySelector('.home-arrow').addEventListener('click', () => { morphName(true); glideTo(pathTop()); });
+
 // ---- Sticky header: the big name on the home page dissolves softly into it while scrolling ----
 const topBar = document.getElementById('top-bar');
 const bigName = document.querySelector('.fit-name');
@@ -1149,7 +1340,7 @@ function renderDetail(project) {
             a.href = value;
             a.target = '_blank';
             a.rel = 'noopener';
-            a.textContent = value.replace(/^https?:\/\/(www\.)?/i, '') + ' ↗';
+            a.textContent = value.replace(/^https?:\/\/(www\.)?/i, '');
             dd.append(a);
         } else {
             dd.textContent = value;
@@ -1289,7 +1480,11 @@ async function loadMaterials() {
     let list = [];
     try {
         const response = await fetch('Projects/materials.json', { cache: 'no-cache' });
-        if (response.ok) list = (await response.json()).materials || [];
+        if (response.ok) {
+            const data = await response.json();
+            list = data.materials || [];
+            setBackgroundMode(data.background);
+        }
     } catch (e) { /* no file: the colours above */ }
     list.forEach(m => {
         const category = categoryById[m.id];
@@ -1324,6 +1519,7 @@ async function loadProjects() {
     renderHome();
     renderEvents();
     renderGrid();
+    buildBalls();
     route();
 }
 
@@ -1348,7 +1544,7 @@ async function loadProfile() {
     if (data['email']) {
         document.querySelectorAll('.profile-email').forEach(a => {
             a.href = 'mailto:' + data['email'];
-            a.textContent = data['email'] + ' ↗';
+            a.textContent = data['email'];
         });
     }
 
@@ -1358,10 +1554,10 @@ async function loadProfile() {
             a.href = `https://www.instagram.com/${encodeURIComponent(handle)}/`;
         });
         document.querySelectorAll('.profile-instagram').forEach(a => {
-            a.textContent = `Instagram @${handle} ↗`;
+            a.textContent = `Instagram @${handle}`;
         });
         document.querySelectorAll('.profile-instagram-handle').forEach(a => {
-            a.textContent = `@${handle} ↗`;
+            a.textContent = `@${handle}`;
         });
     }
 }
@@ -1403,6 +1599,7 @@ function anchorOf(b) {
     return homeSpot(b);
 }
 function arrangeBlobs(materialId) {
+    if (BG_MODE === 'projects') { revealing = false; revealName(); arrangeBalls(); return; }
     homes.clear();                               // (the window may have changed size)
     BLOBS.forEach(b => b.el.classList.remove('is-feature'));
     featured = featureSpot = giveWay = null;
@@ -1468,6 +1665,7 @@ if (reduceMotion) placeBlobs();
 else {
     let last = performance.now();
     const step = now => {
+        if (BG_MODE === 'projects') { last = now; requestAnimationFrame(step); return; }   // (the other background)
         // In small steps, so a slow screen (few frames) still moves them at the same pace.
         let left = Math.min(0.5, (now - last) / 1000);
         BLOBS.forEach(measureBlob);
@@ -1548,6 +1746,174 @@ else {
     };
     requestAnimationFrame(step);
 }
+
+// ---- The other background, "Ball behind": a ball behind every project (Site Editor, Materials tab → Background) ----
+// On the home page every project has a soft ball in its material's colour behind it (one per material), as
+// big as its picture. On a material page only that material's balls gather behind its big name and melt into
+// one big ball; the rest of the page stays white. Clicking a project: its ball grows a little, the balls of the
+// same material around it join in, and together they float behind the project's title.
+let BG_MODE = 'free';
+function setBackgroundMode(mode) {
+    BG_MODE = mode === 'projects' ? 'projects' : 'free';
+    document.querySelector('.bg-blobs').classList.toggle('mode-projects', BG_MODE === 'projects');
+}
+const balls = [];
+let lastClick = null;          // the project link just clicked: { folder }
+document.addEventListener('click', e => {
+    const link = e.target.closest && e.target.closest('a[href^="#project/"]');
+    if (link) lastClick = decodeURIComponent(link.getAttribute('href').slice(9));
+}, true);
+
+function buildBalls() {
+    balls.forEach(b => b.el.remove());
+    balls.length = 0;
+    if (BG_MODE !== 'projects') return;
+    const layer = document.querySelector('.bg-blobs');
+    homeItems.forEach((item, i) => {
+        const cats = item.project.categories;
+        cats.forEach((cat, k) => {
+            const el = document.createElement('span');
+            el.className = 'pball';
+            const blob = blobEls[cat];
+            el.style.setProperty('--c', blob ? getComputedStyle(blob).getPropertyValue('--c') : (categoryById[cat] || {}).color);
+            el.style.setProperty('--delay', (-((i * 7 + k * 3) % 40)) + 's');
+            el.style.setProperty('--speed', (44 + (i * 5) % 14) + 's');
+            layer.append(el);
+            balls.push({ el, cat, k, n: cats.length, item, folder: item.project.folder, seed: i * 1.7 + k,
+                         x: NaN, y: NaN, ox: 0, oy: 0, vx: 0, vy: 0, shown: false, goal: null });
+        });
+    });
+}
+
+// Where each picture is on the page: measured now and then (not every frame), the scrolling is added each frame.
+let cardRectsAt = 0;
+function cardRect(item) {
+    if (!item.rect || item.rectAt !== cardRectsAt) {
+        const r = item.card.querySelector('.project-image').getBoundingClientRect();
+        item.rect = r.width ? { x: r.left + window.scrollX, y: r.top + window.scrollY, w: r.width, h: r.height } : null;
+        item.rectAt = cardRectsAt;
+    }
+    return item.rect;
+}
+// Where a ball wants to be now, on the screen (scrolling moves it along at once).
+function ballTarget(b, t) {
+    if (b.goal === 'card') {
+        const r = cardRect(b.item);
+        if (!r) return null;
+        // One ball: a bit bigger than the picture. More materials: smaller balls side by side along the
+        // picture's long side, each in its own part, so they hardly overlap.
+        const span = 1.25, across = r.w >= r.h;
+        const w = across ? r.w * span / b.n : r.w * span * (b.n > 1 ? 0.85 : 1);
+        const h = across ? r.h * span * (b.n > 1 ? 0.85 : 1) : r.h * span / b.n;
+        const step = (b.k - (b.n - 1) / 2);
+        const dx = across ? step * w : 0, dy = across ? 0 : step * h;
+        const sway = reduceMotion ? 0 : Math.min(w, h) * 0.05;
+        return { x: r.x - window.scrollX + r.w / 2 + dx + Math.sin(t / 7 + b.seed) * sway,
+                 y: r.y - window.scrollY + r.h / 2 + dy + Math.cos(t / 9 + b.seed) * sway, w, h };
+    }
+    if (b.goal === 'spot') {
+        const sway = reduceMotion ? 0 : vmax() * 0.8;
+        return { x: b.spot.x + Math.sin(t * 0.25 + b.seed) * sway,
+                 y: b.spot.y - window.scrollY + Math.cos(t * 0.2 + b.seed) * sway, w: b.spot.w, h: b.spot.h };
+    }
+    return null;
+}
+// The middle of a heading's letters, on the page.
+function spotOf(el, w, h) {
+    const r = el.getBoundingClientRect(), cs = getComputedStyle(el);
+    const top = r.top + parseFloat(cs.paddingTop), bottom = r.bottom - parseFloat(cs.paddingBottom);
+    return { x: r.left + r.width / 2, y: (top + bottom) / 2 + window.scrollY, w, h };
+}
+
+function arrangeBalls() {
+    if (!balls.length) return;
+    cardRectsAt++;                  // (measure the pictures again)
+    const active = document.querySelector('[data-page-section].active');
+    const page = active ? active.dataset.pageSection : '';
+    const hash = decodeURIComponent(window.location.hash.replace('#', ''));
+    const v = vmax(), t = performance.now() / 1000;
+    const plan = new Map();         // ball -> { goal, spot, o }
+    if (page === 'home') {
+        balls.forEach(b => plan.set(b, { goal: 'card', o: 0.5 }));
+    } else if (page === 'category' && categoryById[hash]) {
+        // That material's balls melt into one big ball behind its name (together as strong as one).
+        const mine = balls.filter(b => b.cat === hash);
+        const o = 1 - Math.pow(1 - 0.6, 1 / Math.max(1, mine.length));
+        const spot = spotOf(document.getElementById('category-title'), 57 * v, 50 * v);
+        mine.forEach(b => plan.set(b, { goal: 'spot', spot, o }));
+    } else if (page === 'project') {
+        const folder = hash.slice(8);
+        const own = balls.filter(b => b.folder === folder);
+        const title = document.getElementById('detail-title');
+        own.forEach(b => {
+            // It grows a little; the balls of the same material around it (where it was clicked) join it.
+            // (the same page again, e.g. the window changed size: the ones that joined stay)
+            const near = b.shown && lastClick === folder
+                ? balls.filter(o => o !== b && o.shown && o.cat === b.cat && o.folder !== folder &&
+                      Math.hypot(o.x - b.x, o.y - b.y) < Math.max(window.innerWidth, window.innerHeight) * 0.35)
+                : balls.filter(o => o.joined === b);
+            balls.forEach(o => { if (o.joined === b) o.joined = null; });
+            near.forEach(o => { o.joined = b; });
+            const w = Math.min(45 * v, Math.max(18 * v, (b.w || 0) * 1.5)), h = Math.min(40 * v, Math.max(15 * v, (b.h || 0) * 1.5));
+            const spot = spotOf(title, w, h);
+            spot.x += (b.k - (b.n - 1) / 2) * w * 0.4;
+            const group = [b, ...near.filter(o => !plan.has(o))];
+            const o = 1 - Math.pow(1 - 0.55, 1 / group.length);
+            group.forEach(m => plan.set(m, { goal: 'spot', spot, o }));
+        });
+    }
+    lastClick = null;
+    balls.forEach(b => {
+        const p = plan.get(b);
+        b.goal = p ? p.goal : null;
+        b.spot = p && p.spot;
+        if (page !== 'project') b.joined = null;
+        if (!p) { b.shown = false; b.el.classList.remove('is-shown'); return; }
+        const target = ballTarget(b, t);
+        if (!target) { b.shown = false; b.el.classList.remove('is-shown'); return; }
+        if (b.shown && !Number.isNaN(b.x) && !reduceMotion) {
+            b.ox = b.x - target.x; b.oy = b.y - target.y;          // it floats over from where it is
+        } else if (b.goal === 'spot' && !reduceMotion) {
+            const a = b.seed * 2.4;                                 // (it wasn't there: it comes in from around)
+            b.ox = Math.cos(a) * 45 * v; b.oy = Math.sin(a) * 30 * v; b.vx = b.vy = 0;
+        } else {
+            b.ox = b.oy = b.vx = b.vy = 0;                          // (straight to its place)
+        }
+        b.el.style.setProperty('--o', p.o.toFixed(3));
+        b.shown = true;
+        b.el.classList.add('is-shown');
+    });
+}
+
+(() => {
+    let last = performance.now(), measuredAt = 0;
+    const step = now => {
+        requestAnimationFrame(step);
+        if (BG_MODE !== 'projects' || !balls.length) { last = now; return; }
+        if (now - measuredAt > 1000) { cardRectsAt++; measuredAt = now; }   // (the pictures may have moved: once a second)
+        const dt = Math.min(0.1, (now - last) / 1000), t = now / 1000;
+        last = now;
+        balls.forEach(b => {
+            if (!b.goal) return;
+            const target = ballTarget(b, t);
+            if (!target) return;
+            // Springy, so it travels in a soft curve; the scrolling moves the target, and so the ball, at once.
+            for (let left = dt; left > 0; left -= 1 / 60) {
+                const s = Math.min(1 / 60, left);
+                b.vx += (-2.0 * b.ox - 2.6 * b.vx) * s; b.vy += (-2.0 * b.oy - 2.6 * b.vy) * s;
+                b.ox += b.vx * s; b.oy += b.vy * s;
+            }
+            b.x = target.x + b.ox; b.y = target.y + b.oy;
+            if (Math.abs((b.w || 0) - target.w) > 0.5 || Math.abs((b.h || 0) - target.h) > 0.5) {
+                b.w = target.w; b.h = target.h;
+                b.el.style.width = b.w.toFixed(1) + 'px';
+                b.el.style.height = b.h.toFixed(1) + 'px';
+            }
+            b.el.style.translate = `calc(${b.x.toFixed(1)}px - 50%) calc(${b.y.toFixed(1)}px - 50%)`;
+        });
+    };
+    requestAnimationFrame(step);
+})();
 
 route();
 loadProfile();
