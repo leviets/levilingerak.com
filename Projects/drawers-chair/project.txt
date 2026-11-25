@@ -22,52 +22,55 @@ Categories: Wood, Textile
 Date: 10-02-2026
 # DD-MM-YYYY. Shown right under the picture. Newest projects come first.
 
-Short description:
+Short description: A chair made to complete the Drawers Desk. Inspired by midcentury pieces of furniture. The blocks are connected by door hinges bounded by rubber blocks which give all blocks the ability to shape around the body.
 # One sentence, shown at the top of the project page.
+
+Story title:
+# Optional: a title above the story on the project page.
 
 Detailed description:
 # The story of the project: idea, process, what you learned.
 
-Materials:
+Materials: Teak Wood, Leather, Door Hinges, Foam
 # e.g. Walnut, beech, brass
 
-Wood part: Teak Pieces
+Wood part: Teak Wood
 Textile part: Leather Blocks
 # Per material: what that part is, e.g. "Plastic part: the 3D-printed handle".
 # Shown across from the name on that material's page (in its colour), and in the facts.
 
-Techniques:
+Techniques: Routing, Sewing
 # e.g. Hand-cut joinery, machine stitching, 3D printing
 
 Dimensions:
 # e.g. 40 x 30 x 25 cm
 
-Location:
+Location: Design Academy Eindhoven
 # Where it was made, e.g. Eindhoven / name of school or workshop
 
 Made for:
 # e.g. School assignment, client, exhibition, personal project
 
-Collaborators:
+Collaborators: -
 # People who helped, e.g. Model: Name, Styling: Name
 
-Supervised by:
+Supervised by: -
 # Teacher, tutor or mentor who guided it
 
-Duration:
+Duration: 5 Days
 # How long it took, e.g. 3 weeks or 40 hours
 
-Learnt:
+Learnt: Leather Sewing Techniques
 # What you learnt from it
 
-Exhibited:
+Exhibited: -
 # Where it was shown or what it won, e.g. Dutch Design Week 2025
 
-For sale:
+For sale: -
 # e.g. Yes, 180 euros / On request.
 # Every fact is always shown on the page; one you leave empty shows a stripe (—).
 
-Photography:
+Photography: Levi Lingerak
 # Who took the pictures
 
 Link:

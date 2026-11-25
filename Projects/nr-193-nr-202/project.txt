@@ -22,13 +22,16 @@ Categories: Wood, Metal
 Date: 22-04-2026
 # DD-MM-YYYY. Shown right under the picture. Newest projects come first.
 
-Short description:
+Short description: After I found a second Brabantia ladder in forgotten state in the thrift store I decided to restore them to more than former glory. I removed multiple layers of paint and added custom shaped wooden planks. I gathered the wood I could get and came one plank short for the top and thus replaced it with a stainless steel circle. The finish is angle grinded in a random pattern.
 # One sentence, shown at the top of the project page.
+
+Story title:
+# Optional: a title above the story on the project page.
 
 Detailed description:
 # The story of the project: idea, process, what you learned.
 
-Materials:
+Materials: Steel, Stainless Steel, Oak Wood
 # e.g. Walnut, beech, brass
 
 Wood part: Oak Steps
@@ -36,38 +39,38 @@ Metal part: Framework
 # Per material: what that part is, e.g. "Plastic part: the 3D-printed handle".
 # Shown across from the name on that material's page (in its colour), and in the facts.
 
-Techniques:
+Techniques: Angle Grinding, Routing
 # e.g. Hand-cut joinery, machine stitching, 3D printing
 
 Dimensions:
 # e.g. 40 x 30 x 25 cm
 
-Location:
+Location: Helmond
 # Where it was made, e.g. Eindhoven / name of school or workshop
 
-Made for:
+Made for: Presentation
 # e.g. School assignment, client, exhibition, personal project
 
-Collaborators:
+Collaborators: Brabantia?
 # People who helped, e.g. Model: Name, Styling: Name
 
-Supervised by:
+Supervised by: -
 # Teacher, tutor or mentor who guided it
 
-Duration:
+Duration: 2 Weeks
 # How long it took, e.g. 3 weeks or 40 hours
 
-Learnt:
+Learnt: Restoring Metal, Paint Removal
 # What you learnt from it
 
-Exhibited:
+Exhibited: -
 # Where it was shown or what it won, e.g. Dutch Design Week 2025
 
-For sale:
+For sale: No
 # e.g. Yes, 180 euros / On request.
 # Every fact is always shown on the page; one you leave empty shows a stripe (—).
 
-Photography:
+Photography: Levi Lingerak
 # Who took the pictures
 
 Link:
@@ -81,4 +84,14 @@ Size: 70%
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
+Picture nr-193-nr-202-6.jpg:
+Picture nr-193-nr-202-7.jpg:
+Picture nr-193-nr-202-8.jpg:
+Picture nr-193-nr-202-9.jpg:
+Picture nr-193-nr-202-10.jpg:
+Picture nr-193-nr-202-11.jpg:
+Picture nr-193-nr-202-12.jpg:
+Picture nr-193-nr-202-13.jpg:
 Picture nr-193-nr-202-1.jpg:
+Picture nr-193-nr-202-14.jpg:
+Picture nr-193-nr-202-15.jpg:

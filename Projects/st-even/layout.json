@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "bands": [
+    {
+      "type": "split",
+      "left": [
+        {
+          "kind": "story",
+          "col": 1,
+          "row": 1,
+          "w": 6,
+          "h": 16,
+          "size": "m"
+        }
+      ],
+      "right": [
+        {
+          "kind": "picture",
+          "col": 1,
+          "row": 1,
+          "w": 6,
+          "h": 13,
+          "ratio": 1.3333333333333333,
+          "photo": "st-even4.jpg"
+        }
+      ]
+    },
+    {
+      "type": "split",
+      "left": [],
+      "right": [
+        {
+          "kind": "title",
+          "h": 4,
+          "size": "m",
+          "text": "",
+          "entry": "e6knav3v",
+          "col": 1,
+          "row": 1,
+          "w": 6
+        },
+        {
+          "kind": "text",
+          "h": 8,
+          "size": "m",
+          "text": "",
+          "entry": "e6knav3v",
+          "col": 1,
+          "row": 5,
+          "w": 6
+        }
+      ]
+    },
+    {
+      "type": "split",
+      "left": [],
+      "right": [
+        {
+          "kind": "picture",
+          "col": 1,
+          "row": 1,
+          "w": 6,
+          "h": 17,
+          "ratio": 1,
+          "photo": "st-even7.jpg"
+        }
+      ]
+    }
+  ]
+}

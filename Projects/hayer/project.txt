@@ -25,6 +25,9 @@ Date: 18-02-2023
 Short description: A six-sided record-player cabinet with built-in speakers, a dust cover and a drawer for records.
 # One sentence, shown at the top of the project page.
 
+Story title:
+# Optional: a title above the story on the project page.
+
 Detailed description: Hayer is a hexagonal cabinet with the record player on top, protected by a hexagonal dust cover. Below it sit the speakers, and a drawer swings out of the side to store records. The top opens up so the electronics inside can be reached.
 
 I drew the dust cover as six side panels with 45-degree mitres and one top plate, glued together into one hexagon.
@@ -82,11 +85,11 @@ Size: 100%
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
+Picture hayer10.jpg:
 Picture hayer1.jpg:
 Picture hayer9.jpg:
 Picture hayer7.jpg:
 Picture hayer8.jpg:
-Picture hayer10.jpg:
 Picture hayer11.jpg:
 Picture hayer12.jpg:
 Picture hayer13.jpg:

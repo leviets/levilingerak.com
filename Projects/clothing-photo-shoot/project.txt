@@ -5,7 +5,7 @@
 #  - A long text may continue on the next lines (no colon needed).
 # ================================================================
 
-Project name: Clothing Photo Shoot
+Project name: Clothing Shoot
 # Leave empty to use the folder name.
 
 What it is:
@@ -24,6 +24,9 @@ Date: 15-11-2023
 
 Short description:
 # One sentence, shown at the top of the project page.
+
+Story title:
+# Optional: a title above the story on the project page.
 
 Detailed description:
 # The story of the project: idea, process, what you learned.

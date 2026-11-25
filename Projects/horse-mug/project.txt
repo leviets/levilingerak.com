@@ -25,6 +25,9 @@ Date: 15-06-2025
 Short description: A round, slip-cast mug with a horse as its handle, standing on a horseshoe.
 # One sentence, shown at the top of the project page.
 
+Story title:
+# Optional: a title above the story on the project page.
+
 Detailed description: We started with a prototype: a round mug with a horse as the handle, with a horseshoe of clay as a fitting bottom. In the 3D model I changed the tube into a globe to make the hideous but fun theme even stronger. The model was 3D printed and used to make a three-part mould.
 
 Casting took a lot of testing: I wrote down how long the slip stayed in the mould and how long it dried to get the right thickness. In the end we cast around eight mugs. A failed one did not survive the one-metre drop test. I love the joy the result shares; it made me enthusiastic to work with ceramics again.

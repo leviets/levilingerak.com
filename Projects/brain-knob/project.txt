@@ -25,6 +25,9 @@ Date: 16-06-2025
 Short description: A door knob in the shape of a brain, made from dried noodles set in silicone.
 # One sentence, shown at the top of the project page.
 
+Story title:
+# Optional: a title above the story on the project page.
+
 Detailed description: I experimented with many materials in plastic: noodles, paint, Barbie hair, origami, popcorn, beads, plastic shards and more. The noodles looked like a brain, so the knob became one, designed for a science lab.
 
 The noodles were cooked in painted water, dried in the oven, poured into a two-part brain mould and dried for about two days at 50 degrees. The result is set in two layers of silicone; a second version became a mould for a solid plastic knob, painted red. One of them is now the door knob of my room.

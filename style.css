@@ -71,8 +71,10 @@ a {
   display: none !important;
 }
 
-/* ---- Background: soft, blurred blobs in the material colours that drift and change shape
-   (and sway along when scrolling: see script.js) ---- */
+/* ---- Background: soft, blurred blobs in the material colours that slowly turn and change shape.
+   Where they float is worked out by script.js (a small simulation: they drift, move up slower than the page
+   when scrolling, as if further back, and keep their distance from each other). --x / --y below are their places
+   on the home page. ---- */
 .bg-blobs {
   position: fixed;
   inset: 0;
@@ -87,15 +89,22 @@ a {
   height: var(--h, 32vmax);
   left: var(--x);
   top: var(--y);
-  background: var(--c);
+  background-color: var(--c);
   opacity: var(--o, 0.3);
   border-radius: 42% 58% 63% 37% / 45% 40% 60% 55%;
   filter: blur(70px);
   will-change: transform, translate;
-  transition: translate 900ms cubic-bezier(0.22, 1, 0.36, 1);  /* glides after the scroll */
+  transition: opacity 1.8s ease, background-color 1.8s ease,
+    width 2s ease, height 2s ease, scale 2.4s cubic-bezier(0.34, 1.2, 0.5, 1);
   animation:
-    blob-drift var(--speed, 46s) ease-in-out var(--delay, 0s) infinite alternate,
+    blob-turn var(--speed, 46s) ease-in-out var(--delay, 0s) infinite alternate,
     blob-morph 17s ease-in-out var(--delay, 0s) infinite alternate;
+}
+
+/* Placed by script.js (its translate is the blob's place). */
+.bg-blobs.is-live .blob {
+  left: 0;
+  top: 0;
 }
 
 /* Brighter, lighter versions of the material colours, so the mix stays colourful, not muddy. */
@@ -106,11 +115,28 @@ a {
 .blob-plastic { --c: #f7c935; --x: 34%;    --y: 30%;     --w: 34vmax; --h: 28vmax; --o: 0.34; --speed: 50s; --delay: -6s; }
 .blob-other   { --c: #ee5a48; --x: 40%;    --y: 78%;     --w: 32vmax; --h: 26vmax; --o: 0.26; --speed: 55s; --delay: -38s; }
 
-@keyframes blob-drift {
-  0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
-  33%  { transform: translate(9vmax, 6vmax) rotate(40deg) scale(1.12); }
-  66%  { transform: translate(-6vmax, 11vmax) rotate(-25deg) scale(0.92); }
-  100% { transform: translate(5vmax, -7vmax) rotate(15deg) scale(1.06); }
+/* On a material page that material's blob floats behind its big name: every material the same as Textile (the
+   size and strength of the Textile blob, grown a little), in the material's own colour (--fc, its menu colour),
+   a bit lighter. */
+.blob.is-feature {
+  width: 46vmax;
+  height: 40vmax;
+  scale: 1.25;
+  opacity: 0.42;
+  background-color: color-mix(in srgb, var(--fc, var(--c)) 72%, #fff);
+}
+
+/* … and on a material page the other blobs step back: a whiter page around the material's own colour. */
+.bg-blobs.on-material .blob:not(.is-feature) {
+  opacity: calc(var(--o, 0.3) * 0.5);
+}
+
+/* A slow turn and swell (where they float is up to script.js). */
+@keyframes blob-turn {
+  0%   { transform: rotate(0deg) scale(1); }
+  33%  { transform: rotate(40deg) scale(1.12); }
+  66%  { transform: rotate(-25deg) scale(0.92); }
+  100% { transform: rotate(15deg) scale(1.06); }
 }
 
 @keyframes blob-morph {
@@ -179,11 +205,18 @@ a {
   transform: scale(1.08);   /* grows slightly */
 }
 
-/* The logo and the Instagram patch a little lower, away from the top edge of the page. */
+/* The logo and the Instagram patch a little lower, away from the top edge of the page (on a computer a bit more). */
 .brand img,
 .instagram-button {
   position: relative;
   top: 8px;
+}
+
+@media (min-width: 761px) {
+  .brand img,
+  .instagram-button {
+    top: 18px;
+  }
 }
 
 .main-nav {
@@ -216,7 +249,6 @@ a {
 /* A copy of the logo patch (Profile/Pictures/instagram-patch.png: the logo without its mark), same size and shadow,
    with the Instagram icon in white on it. */
 .instagram-button {
-  position: relative;
   display: grid;
   place-items: center;
   align-self: center;
@@ -336,7 +368,7 @@ h2 {
 .home-copy {
   position: relative;
   z-index: 2;
-  padding: calc(4vh + 34px) 0 7vh;   /* 34px: clears the soft fade under the header */
+  padding: calc(4vh + 34px) 0 2vh;   /* 34px: clears the soft fade under the header; the pictures close under the text */
 }
 
 /* The name always fills the page width (fitName in script.js). */
@@ -359,17 +391,31 @@ h1 {
   top: 0.023em;
 }
 
-/* "Designer & maker · Eindhoven, NL", right under the name. */
-.home-subtitle {
-  margin: 0 0 clamp(26px, 4vw, 48px);
-  font-size: 0.74rem;            /* same as the Home / Shop / Info / Contact menu */
-  letter-spacing: 0.03em;
-}
-
 .intro {
-  max-width: 390px;
+  max-width: none;              /* across the page, as wide as the big name above it (script.js fitName) */
+  padding: 0 var(--name-right, 0px) 0 var(--name-left, 0px);
   font-size: clamp(1.15rem, 2vw, 1.55rem);
   line-height: 1.35;
+  margin-top: -4.85vw;          /* close under the name, up beside the tail of the g (vw: grows with the name) */
+  white-space: pre-line;        /* the line breaks you type in the editor */
+  font-weight: 260;             /* a touch thinner than the rest of the site */
+}
+
+/* The introduction's first sentence: on its own line, a little apart from the rest. */
+.intro-lead {
+  display: block;
+  margin-bottom: calc(0.45em + 2.25vw);   /* (vw: halfway between the name and the rest) */
+}
+
+/* Phone: the first line is as wide as the name, so the text stays under the tail of the g. */
+@media (max-width: 760px) {
+  .intro {
+    margin-top: 0.3em;
+  }
+
+  .intro-lead {
+    margin-bottom: 0.45em;
+  }
 }
 
 /* The timeline: positions and the path are calculated in script.js (layoutHome). */
@@ -392,13 +438,14 @@ h1 {
 .home-path-line {
   fill: none;
   stroke: #ffffff;
+  stroke-opacity: 0.6;
   stroke-width: 34;
   stroke-linecap: round;
   stroke-linejoin: round;
   filter: blur(12px);
 }
 
-/* Today's date and "Born · 2002": a soft white splash right behind the text, on the ends of the path. */
+/* "Born · 2002": a soft white splash right behind the text, at the start of the path. */
 .path-label {
   position: absolute;
   margin: 0;
@@ -525,6 +572,13 @@ h1 {
   font-size: clamp(0.5rem, 5cqi, 0.68rem);
 }
 
+/* On a computer the names never get smaller than this, so even the smallest card stays readable. */
+@media (min-width: 761px) {
+  .home-project .project-meta h3 {
+    font-size: clamp(1rem, 9cqi, 1.35rem);
+  }
+}
+
 /* Soft edges (home, material and Info pages): a mask made per picture by the script (softEdges),
    a softly blurred rounded rectangle at the picture's exact size. On hover the mask grows until
    its soft edge and round corners lie outside the picture: sharp and square. */
@@ -600,6 +654,7 @@ h1 {
 .project-image .project-media > img.hover-swap.is-shown {
   opacity: 1;
 }
+
 /* Without a page of their own (the Dutch Design Week visits, work in progress): not clickable,
    so no reaction to the mouse. */
 .no-page {
@@ -671,7 +726,7 @@ h1 {
 /* ---- Material pages ---- */
 .portfolio-heading {
   display: flex;
-  align-items: end;
+  align-items: last baseline;
   justify-content: space-between;
   padding: 64px 0 38px;
 }
@@ -682,16 +737,43 @@ h1 {
   margin-top: 0.42em;   /* the title font reaches above its line, so the gap grows with the size */
 }
 
-/* The material's own text, beside its big name and reaching the right edge of the page (from Projects/materials.json). */
+/* The material's name is revealed by its blob (script.js revealName, a mask). A mask only covers the element's
+   own box and the letters reach out of it (above all), so the box is made bigger on every side and the same
+   amount is taken off again with negative margins: the name stays exactly where it was. */
+#category-title {
+  padding: 0.45em 0.15em 0.25em;
+  margin-right: -0.15em;
+  margin-bottom: -0.25em;
+  margin-left: -0.15em;     /* (its top margin: #category .portfolio-heading h2, below) */
+}
+
+/* The material's own text (from Projects/materials.json): on the left of the page, the big name on the right of it,
+   centred on the name's letters (script.js fitDescLine). A thin line in the material's colour (like the one under it
+   in the menu) stands along its left side, exactly as tall as those letters. */
 .category-desc {
+  order: -1;
   flex: 1;
-  align-self: flex-start;      /* starts level with the top of the big name's letters */
-  margin: calc(clamp(4.2rem, 9vw, 8.5rem) * 0.2 - 10px) 0 0 clamp(24px, 4vw, 60px);
-  text-align: right;
-  font-size: 0.95rem;
+  align-self: last baseline;    /* (its resting place; fitDescLine moves it to the middle of the letters) */
+  position: relative;
+  margin: 0 10vw 0 0;           /* (room before the name: the text runs over 4 lines) */
+  padding-left: 18px;
+  text-align: justify;          /* straight on both sides */
+  font-size: clamp(1rem, 1.55vw, 1.6rem);   /* (grows with the name: a text like Textile's fills the line beside it) */
+  font-weight: 350;             /* (a little heavier than the rest of the text: easier to read on the background) */
   line-height: 1.3;
-  color: rgba(31, 24, 19, 0.75);
+  color: rgba(31, 24, 19, 0.92);
   white-space: pre-line;
+}
+
+.category-desc::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: var(--line-top, 2px);         /* as tall as the material's name beside it (script.js fitDescLine) */
+  bottom: var(--line-bottom, 2px);
+  width: 3px;
+  border-radius: 3px;
+  background: var(--project-color);
 }
 
 /* The material page and the project page take on the material's colour. */
@@ -707,9 +789,8 @@ h1 {
   padding-bottom: 14px;   /* the projects start close under the material's name */
 }
 
-
 #category .portfolio-heading h2 {
-  margin-top: calc(0.42em - 14px);
+  margin-top: calc(0.42em - 14px - 0.45em);   /* (- 0.45em: the room above it for the reveal, #category-title) */
 }
 
 .category-empty {
@@ -717,14 +798,11 @@ h1 {
   opacity: 0.6;
 }
 
-.project-grid {
-  gap: 48px 30px;
-  padding: 16px 0 100px;
-}
-
 /* A photo wall: every picture in a row the same height, each in its own proportion (the widths
    are set by the script: layoutWall). */
 .project-grid {
+  gap: 48px 30px;
+  padding: 16px 0 100px;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
@@ -795,6 +873,7 @@ h1 {
 .project-name-block .project-kind {
   margin: 4px 0 0;   /* the same distance under every name */
 }
+
 .project.hidden {
   display: none;
 }
@@ -824,7 +903,7 @@ h1 {
 }
 
 .detail-intro {
-  margin: 28px 0 0;
+  margin: 18px 0 0;
   font-size: clamp(1.1rem, 1.8vw, 1.45rem);
   line-height: 1.4;
 }
@@ -833,17 +912,10 @@ h1 {
   display: none;
 }
 
-/* What it is (e.g. Chair, Video), right under the title. */
+/* What it is (e.g. Chair, Video): not shown on the project page (the description usually says it already);
+   it stays under the name on the cards (.project-kind). */
 .detail-kind {
-  margin: 22px 0 0;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--project-ink, inherit);
-}
-
-.detail-kind:empty {
-  display: none;
+  display: none !important;
 }
 
 /* Its top lines up with the top of the title's capital (PageLayout.alignFacts). */
@@ -883,7 +955,7 @@ h1 {
   display: contents;
 }
 
-/* A project: its picture at the top in the left half, the title and short description beside it. */
+/* A project: its picture at the top in the right half, the title and short description beside it. */
 .detail-top-picture {
   margin: 0;
 }
@@ -916,12 +988,17 @@ h1 {
   .detail-top.has-picture .detail-top-picture {
     order: 2;
   }
-}
 
-/* A thin black line under the picture, title and description, across the page. */
-.detail-top.has-picture {
-  padding-bottom: 36px;
-  border-bottom: 1px solid #1f1813;
+  /* The same gap as between the halves of the page below (layout.css .lp-split), so the picture is
+     exactly as wide as a picture in a half. */
+  .detail-top.has-picture {
+    column-gap: 1.2%;
+  }
+
+  /* The text keeps as much room from the picture as the page has from the left edge (.page margin). */
+  .detail-top.has-picture .detail-top-text {
+    padding-right: calc(4vw - 0.012 * 92vw);   /* 4vw, less the gap between the halves (1.2% of the 92vw page) */
+  }
 }
 
 /* A project's facts: at the bottom of the page, in columns. */
@@ -962,6 +1039,16 @@ h1 {
 .detail-body {
   max-width: 50%;
   padding-bottom: 44px;
+}
+
+/* The story's own title (optional), on a page without a design: like a medium title in a half. */
+.detail-story-title {
+  margin: 0 0 0.45em;
+  font-family: "Levilingerak", "Arial Black", sans-serif;
+  font-weight: normal;
+  font-size: clamp(2.2rem, 3.7vw, 3.6rem);
+  letter-spacing: -0.04em;
+  line-height: 0.9;
 }
 
 .detail-text p {
@@ -1117,11 +1204,33 @@ h1 {
   margin-top: 0.42em;
 }
 
+/* The shop (coming soon): its two lines in the middle of the page. */
+#shop .contact-page {
+  max-width: none;
+  min-height: calc(100vh - 164px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 0 80px;
+}
+
+#shop .contact-page h2 {
+  margin-top: 0.2em;
+}
+
 .contact-intro {
   max-width: 560px;
   margin: 34px 0 44px;
   font-size: clamp(1.1rem, 1.6vw, 1.35rem);
   line-height: 1.45;
+}
+
+/* The line breaks typed in the Site Editor (Info & Contact tab) show on the site. */
+.info-bio p,
+.contact-intro {
+  white-space: pre-line;
 }
 
 .contact-list {
@@ -1269,7 +1378,7 @@ footer {
     padding: 14px 0 12px;
   }
 
-  /* The project count goes under the material name. */
+  /* The material's text goes under its name. */
   .portfolio-heading {
     flex-wrap: wrap;
     gap: 14px;
@@ -1334,10 +1443,6 @@ footer {
   .category-link {
     font-size: 1.05rem;
     gap: 7px;
-  }
-
-  .home-subtitle {
-    font-size: 0.65rem;
   }
 
   .project-meta {
@@ -1430,3 +1535,4 @@ footer {
     margin-bottom: 12px;
   }
 }
+

@@ -3,16 +3,37 @@
   "bands": [
     {
       "type": "split",
-      "left": [],
+      "left": [
+        {
+          "kind": "title",
+          "h": 1,
+          "size": "m",
+          "text": "Preservation",
+          "entry": "em8l8fvc",
+          "col": 1,
+          "row": 1,
+          "w": 6
+        },
+        {
+          "kind": "text",
+          "h": 8,
+          "size": "m",
+          "text": "The first part of preservation was to dry it properly. I tried this in a few ways; \n-Displacing the water water with Isopropanol and letting this evaporate after bathing it a few times.\n-Kiln drying in between custom flatteners.\n-putting it in between plaster slabs.\n-Air drying in a controlled environment.\n\nThe kiln dried samples turned out the best. After being fully dry the slices were drowned in a bath of bio-resin and put under vacuum to replace all the air inside with the resin to forever protect the slice. ",
+          "entry": "em8l8fvc",
+          "col": 1,
+          "row": 2,
+          "w": 6
+        }
+      ],
       "right": [
         {
           "kind": "picture",
           "col": 1,
           "row": 1,
           "w": 6,
-          "h": 17,
-          "ratio": 1,
-          "photo": "beet-projector2-8.jpg"
+          "h": 13,
+          "ratio": 1.3333333333333333,
+          "photo": "beet-projector2-18.jpg"
         }
       ]
     },
@@ -108,88 +129,20 @@
         {
           "kind": "picture",
           "col": 1,
-          "row": 1,
+          "row": 14,
           "w": 6,
           "h": 10,
           "ratio": 1.7777777777777777,
           "photo": "beet-projector2-17.jpg"
         },
         {
-          "kind": "picture",
-          "col": 3,
-          "row": 34,
-          "w": 4,
-          "h": 12,
-          "ratio": 1,
-          "photo": "beet-projector2-18.jpg"
-        }
-      ],
-      "right": [
-        {
-          "kind": "picture",
-          "col": 1,
-          "row": 1,
-          "w": 6,
-          "h": 10,
-          "ratio": 1.7777777777777777,
-          "photo": "beet-projector2-19.jpg"
-        }
-      ]
-    },
-    {
-      "type": "split",
-      "left": [],
-      "right": [
-        {
-          "kind": "picture",
-          "col": 1,
-          "row": 1,
-          "w": 6,
-          "h": 23,
-          "ratio": 0.75,
-          "photo": "beet-projector2-7.jpg"
-        }
-      ]
-    },
-    {
-      "type": "split",
-      "rows": 12,
-      "left": [],
-      "right": [
-        {
           "kind": "title",
-          "h": 1,
-          "size": "m",
-          "text": "Preservation",
-          "entry": "em8l8fvc",
-          "col": 1,
-          "row": 1,
-          "w": 6
-        },
-        {
-          "kind": "text",
-          "h": 8,
-          "size": "m",
-          "text": "The first part of preservation was to dry it properly. I tried this in a few ways; \n-Displacing the water water with Isopropanol and letting this evaporate after bathing it a few times.\n-Kiln drying in between custom flatteners.\n-putting it in between plaster slabs.\n-Air drying in a controlled environment.\n\nThe kiln dried samples turned out the best. After being fully dry the slices were drowned in a bath of bio-resin and put under vacuum to replace all the air inside with the resin to forever protect the slice. ",
-          "entry": "em8l8fvc",
-          "col": 1,
-          "row": 5,
-          "w": 6
-        }
-      ]
-    },
-    {
-      "type": "split",
-      "rows": 12,
-      "left": [
-        {
-          "kind": "title",
-          "h": 1,
+          "h": 2,
           "size": "m",
           "text": "The projector",
           "entry": "e4dcxkrv",
           "col": 1,
-          "row": 1,
+          "row": 2,
           "w": 6
         },
         {
@@ -199,11 +152,30 @@
           "text": "For the body of the projector I used ceramics because of the organic nature of this project. I molded 3d printed sphere in to plaster and used the cut off as the stand for the projector. The glazes are inspired by the failed experiments which came before, and the color that the beet faded in to if not preserved.\nThe electronics are a Cob Led, Heat sync and a power supply which are amplified by a distance adjustable convex-lens. Which al together creates the \"Slice Of Beet\" beet projector.",
           "entry": "e4dcxkrv",
           "col": 1,
-          "row": 5,
+          "row": 4,
           "w": 6
         }
       ],
-      "right": []
+      "right": [
+        {
+          "kind": "picture",
+          "col": 1,
+          "row": 14,
+          "w": 6,
+          "h": 10,
+          "ratio": 1.7777777777777777,
+          "photo": "beet-projector2-19.jpg"
+        },
+        {
+          "kind": "picture",
+          "col": 1,
+          "row": 1,
+          "w": 6,
+          "h": 13,
+          "ratio": 1.3333333333333333,
+          "photo": "beet-projector2-1.jpg"
+        }
+      ]
     }
   ]
 }

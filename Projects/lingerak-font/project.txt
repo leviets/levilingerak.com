@@ -25,6 +25,9 @@ Date: 19-12-2025
 Short description:
 # One sentence, shown at the top of the project page.
 
+Story title:
+# Optional: a title above the story on the project page.
+
 Detailed description:
 # The story of the project: idea, process, what you learned.
 
@@ -51,6 +54,9 @@ Supervised by:
 
 Duration:
 # How long it took, e.g. 3 weeks or 40 hours
+
+Learnt:
+# What you learnt from it
 
 Exhibited:
 # Where it was shown or what it won, e.g. Dutch Design Week 2025

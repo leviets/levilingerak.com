@@ -25,6 +25,9 @@ Date: 17-06-2025
 Short description: A 3D-printed chandelier, modelled in Fusion 360 and printed in transparent filament.
 # One sentence, shown at the top of the project page.
 
+Story title:
+# Optional: a title above the story on the project page.
+
 Detailed description: I chose a chandelier because its look is its main purpose and it is made of smaller parts that fit on the build plate. It consists of 12 different parts and 58 parts in total, all screwed together, so it is easy to assemble and to repair. With the gems around it, it would be around 500 parts.
 
 I spent most of the time experimenting with the slicer and transparent filament: nozzle sizes of 0.8 and 1 mm, hollow prints without infill or support, and prints made of infill only, which look a bit like fuzzy skin but customisable. Learning Fusion 360 was the main goal of the project.

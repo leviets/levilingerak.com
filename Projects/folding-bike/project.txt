@@ -25,6 +25,9 @@ Date: 21-12-2023
 Short description: A vintage blue folding bike with chrome details, photographed in the studio.
 # One sentence, shown at the top of the project page.
 
+Story title:
+# Optional: a title above the story on the project page.
+
 Detailed description:
 # The story of the project: idea, process, what you learned.
 

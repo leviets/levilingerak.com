@@ -4,38 +4,38 @@
     {
       "id": "wood",
       "name": "Wood",
-      "color": "#a66407",
-      "description": "I learned to work with wood at HMC Amsterdam"
+      "color": "#d08925",
+      "description": "I learned to work with wood at HMC Amsterdam and quickly got comfortable with it."
     },
     {
       "id": "plastic",
       "name": "Plastic",
-      "color": "#e0a606",
-      "description": ""
+      "color": "#f3bf30",
+      "description": "I bought my first 3D printer years ago as hobby which quickly led to 3D modelling become a sketch tool for me. This led me to currently print comfortably with different materials to create molds, jigs, mechanical parts or prototypes."
     },
     {
       "id": "metal",
       "name": "Metal",
       "color": "#737c82",
-      "description": ""
+      "description": "I learned translating my previous Origami interest in to metal in the metal workshop at the Design Academy Eindhoven. It quickly became one of my more used material; from bending to grinding to currently learning how to weld."
     },
     {
       "id": "stone",
       "name": "Stone",
       "color": "#519541",
-      "description": ""
+      "description": "I bought a small kiln for my SO to experiment with. Which in the end came to be a gift for myself too.\nConcrete is everywhere and thus sparked my interest to learn and someday master."
     },
     {
       "id": "textile",
       "name": "Textile",
       "color": "#3d6fa9",
-      "description": ""
+      "description": "My grandma's gave me their sewing machines. But two wasn't enough. \nI quickly learned that next to woven sheets and fashion the machines themselves also interest me and thus led me to own 6 different ones with a preference to old work horses."
     },
     {
       "id": "other",
       "name": "Other",
-      "color": "#c53526",
-      "description": ""
+      "color": "#ea3e3e",
+      "description": "Why limit yourself?"
     }
   ]
 }

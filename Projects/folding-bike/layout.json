@@ -9,8 +9,8 @@
           "col": 1,
           "row": 1,
           "w": 6,
-          "h": 10,
-          "ratio": 1.7777777777777777,
+          "h": 13,
+          "ratio": 1.3333333333333333,
           "photo": "folding-bike6.jpg"
         }
       ],
@@ -70,7 +70,8 @@
           "w": 6,
           "h": 8,
           "size": "m",
-          "text": ""
+          "text": "",
+          "entry": "ej8wmisv"
         },
         {
           "kind": "text",
@@ -79,7 +80,8 @@
           "w": 6,
           "h": 8,
           "size": "m",
-          "text": ""
+          "text": "",
+          "entry": "enjs74se"
         },
         {
           "kind": "text",
@@ -88,7 +90,8 @@
           "w": 6,
           "h": 8,
           "size": "m",
-          "text": ""
+          "text": "",
+          "entry": "eiq948fv"
         }
       ],
       "right": [

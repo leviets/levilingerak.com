@@ -108,3 +108,8 @@
     row-gap: 2.4cqi;
   }
 }
+
+/* The story's own title (optional, "Story title" in project.txt): as big as a medium title, above the story. */
+.lp-story .lp-story-title {
+  margin-bottom: 0.45em;
+}

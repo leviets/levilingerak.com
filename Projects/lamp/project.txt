@@ -5,7 +5,7 @@
 #  - A long text may continue on the next lines (no colon needed).
 # ================================================================
 
-Project name: Lamp
+Project name: Omni
 # Leave empty to use the folder name.
 
 What it is: Lamp
@@ -25,10 +25,13 @@ Date: 14-01-2026
 Short description:
 # One sentence, shown at the top of the project page.
 
+Story title:
+# Optional: a title above the story on the project page.
+
 Detailed description:
 # The story of the project: idea, process, what you learned.
 
-Materials:
+Materials: Pla Aluminium
 # e.g. Walnut, beech, brass
 
 Plastic part: E
@@ -36,38 +39,38 @@ Metal part: t
 # Per material: what that part is, e.g. "Plastic part: the 3D-printed handle".
 # Shown across from the name on that material's page (in its colour), and in the facts.
 
-Techniques:
+Techniques: 3d Printing
 # e.g. Hand-cut joinery, machine stitching, 3D printing
 
 Dimensions:
 # e.g. 40 x 30 x 25 cm
 
-Location:
+Location: Design Academy Eindhoven
 # Where it was made, e.g. Eindhoven / name of school or workshop
 
-Made for:
+Made for: Assingment DAE
 # e.g. School assignment, client, exhibition, personal project
 
-Collaborators:
+Collaborators: -
 # People who helped, e.g. Model: Name, Styling: Name
 
-Supervised by:
+Supervised by: -
 # Teacher, tutor or mentor who guided it
 
 Duration:
 # How long it took, e.g. 3 weeks or 40 hours
 
-Learnt:
+Learnt: Electronics, Mechanism, 3D Modelling
 # What you learnt from it
 
-Exhibited:
+Exhibited: -
 # Where it was shown or what it won, e.g. Dutch Design Week 2025
 
-For sale:
+For sale: -
 # e.g. Yes, 180 euros / On request.
 # Every fact is always shown on the page; one you leave empty shows a stripe (—).
 
-Photography:
+Photography: Levi Lingerak
 # Who took the pictures
 
 Link:

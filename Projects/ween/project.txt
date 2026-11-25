@@ -25,6 +25,9 @@ Date: 10-01-2024
 Short description:
 # One sentence, shown at the top of the project page.
 
+Story title:
+# Optional: a title above the story on the project page.
+
 Detailed description:
 # The story of the project: idea, process, what you learned.
 

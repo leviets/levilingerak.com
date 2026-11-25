@@ -25,6 +25,9 @@ Date: 13-11-2026
 Short description: For a client project at the Design Academy Eindhoven we were invited to create a "thing" with Beet at its core. I looked in to preservation; and used this preserved "Slice Of Beet" in a custom made projector.
 # One sentence, shown at the top of the project page.
 
+Story title:
+# Optional: a title above the story on the project page.
+
 Detailed description: I tried a few ways of creating a stable material out of a beet itself by adding the juice in a concrete mix, compressing it in to block and drying it in different shapes. Most experiments somewhat worked but either the color or the aesthetics of the beet were lost. The nicest looking sample of these test was still a simple horizontally sliced slice of beet, with the downside that time took a toll on them.
 # The story of the project: idea, process, what you learned.
 
@@ -94,3 +97,4 @@ Picture beet-projector2-17.jpg:
 Picture beet-projector2-19.jpg:
 Picture beet-projector2-18.jpg:
 Picture beet-projector2-7.jpg:
+Picture beet-projector2-1.jpg:

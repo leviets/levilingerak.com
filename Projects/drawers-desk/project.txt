@@ -25,6 +25,9 @@ Date: 18-09-2025
 Short description:
 # One sentence, shown at the top of the project page.
 
+Story title:
+# Optional: a title above the story on the project page.
+
 Detailed description:
 # The story of the project: idea, process, what you learned.
 
@@ -74,11 +77,24 @@ Link:
 # Optional web address, e.g. a shop page or article (start with https://)
 
 # ---------------- HOME PAGE ----------------
-Size: 60%
+Size: 100%
 # Size of the picture on the home page, from 20% to 100%.
 # 100% = half the page width on a computer, 20% = a twentieth (very small).
 
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
+Picture drawers-desk3.jpg:
+Picture drawers-desk2.jpg:
+Picture drawers-desk5.jpg:
+Picture drawers-desk4.jpg:
+Picture drawers-desk6.jpg:
+Picture drawers-desk7.jpg:
+Picture drawers-desk8.jpg:
+Picture drawers-desk9.jpg:
+Picture drawers-desk10.jpg:
+Picture drawers-desk11.jpg:
+Picture drawers-desk12.jpg:
+Picture drawers-desk13.jpg:
+Picture drawers-desk14.jpg:
 Picture drawers-desk1.jpg:

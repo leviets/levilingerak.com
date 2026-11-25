@@ -8,6 +8,9 @@
 Project name: Denim Tee
 # Leave empty to use the folder name.
 
+What it is:
+# e.g. Chair, Lamp, Bag, Video. Shown under the name on the site.
+
 Categories: Textile
 # Choose from: Wood, Plastic, Metal, Stone, Textile, Other
 # Several are allowed, separated by commas, e.g. "Textile, Wood".
@@ -22,11 +25,18 @@ Date: 05-01-2023
 Short description: A denim T-shirt, photographed in the studio.
 # One sentence, shown at the top of the project page.
 
+Story title:
+# Optional: a title above the story on the project page.
+
 Detailed description:
 # The story of the project: idea, process, what you learned.
 
 Materials: Denim
 # e.g. Walnut, beech, brass
+
+Textile part: Denim Jean
+# Per material: what that part is, e.g. "Plastic part: the 3D-printed handle".
+# Shown across from the name on that material's page (in its colour), and in the facts.
 
 Techniques:
 # e.g. Hand-cut joinery, machine stitching, 3D printing
@@ -49,6 +59,9 @@ Supervised by:
 Duration:
 # How long it took, e.g. 3 weeks or 40 hours
 
+Learnt:
+# What you learnt from it
+
 Exhibited:
 # Where it was shown or what it won, e.g. Dutch Design Week 2025
 
@@ -70,11 +83,11 @@ Size: 50%
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
+Picture denim-tee9.jpg:
 Picture denim-tee5.jpg:
 Picture denim-tee6.jpg:
 Picture denim-tee7.jpg:
 Picture denim-tee8.jpg:
-Picture denim-tee9.jpg:
 Picture denim-tee10.jpg:
 Picture denim-tee11.jpg:
 Picture denim-tee12.jpg:

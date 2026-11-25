@@ -25,6 +25,9 @@ Date: 24-05-2024
 Short description: A coffee machine redesigned as a faceted object of folded metal triangles on a flared stand.
 # One sentence, shown at the top of the project page.
 
+Story title:
+# Optional: a title above the story on the project page.
+
 Detailed description: Made for the Turn Around assignment. The machine is built from folded metal triangles on a flared, curved stand, worked out in 3D models, renders and a technical sheet before it was made.
 # The story of the project: idea, process, what you learned.
 

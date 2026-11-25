@@ -91,6 +91,7 @@ function route() {
         else link.removeAttribute('aria-current');
     });
     window.scrollTo({ top: 0 });
+    requestAnimationFrame(() => arrangeBlobs(categoryById[pageName === 'category' ? hash : ''] ? hash : null));   // the background follows
 }
 
 function go(pageName) {
@@ -126,11 +127,36 @@ function renderCategory(id) {
     });
     layoutWall();
     document.getElementById('category-empty').hidden = visible > 0 || !projectsLoaded;
+    requestAnimationFrame(fitDescLine);
 }
+
+// The coloured line beside the material's text: exactly as tall as the letters of the big name next to it
+// (from the top of its letters down to the line they stand on); the text is centred on those letters.
+const descMeasure = document.createElement('canvas').getContext('2d');
+function fitDescLine() {
+    const title = document.getElementById('category-title'), desc = document.getElementById('category-desc');
+    if (!title || !desc || desc.hidden || !desc.offsetWidth || !title.textContent) return;
+    desc.style.translate = '';
+    const mark = document.createElement('span');                 // (sits on the name's baseline)
+    mark.style.cssText = 'display:inline-block;width:0;height:0';
+    title.append(mark);
+    const baseline = mark.getBoundingClientRect().bottom;
+    mark.remove();
+    const cs = getComputedStyle(title);
+    descMeasure.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+    const top = baseline - descMeasure.measureText(title.textContent).actualBoundingBoxAscent;
+    const r = desc.getBoundingClientRect();
+    // The text is centred on the name's letters (whatever its length); the line, as tall as the letters, on the text.
+    if (r.right < title.getBoundingClientRect().left) desc.style.translate = `0 ${((top + baseline) / 2 - (r.top + r.bottom) / 2).toFixed(1)}px`;
+    const room = (r.height - (baseline - top)) / 2;              // centred on the text
+    desc.style.setProperty('--line-top', room.toFixed(1) + 'px');
+    desc.style.setProperty('--line-bottom', room.toFixed(1) + 'px');
+}
+window.addEventListener('resize', () => requestAnimationFrame(fitDescLine));
+if (document.fonts) document.fonts.ready.then(fitDescLine);
 
 // Material pages as a photo wall: every picture in a row the same height, each in its own
 // proportion, the rows filling the page width. (On a phone: one picture per row.)
-const WALL_DATE = 0;           // room beside each picture (none: the material pages show no date)
 function layoutWall() {
     const grid = document.getElementById('project-grid');
     const width = grid.clientWidth;
@@ -143,10 +169,10 @@ function layoutWall() {
     // Height of a row of these cards when it fills the width exactly.
     const fit = list => {
         const ratios = list.reduce((sum, c) => sum + ratioOf(c), 0);
-        const room = width - list.length * WALL_DATE - (list.length - 1) * gap - 1;   // (1px spare against rounding)
+        const room = width - (list.length - 1) * gap - 1;   // (1px spare against rounding)
         return Math.floor(room / ratios * 100) / 100;
     };
-    const place = (list, height) => list.forEach(card => { card.style.width = (ratioOf(card) * height + WALL_DATE) + 'px'; });
+    const place = (list, height) => list.forEach(card => { card.style.width = (ratioOf(card) * height) + 'px'; });
     let row = [];
     cards.forEach(card => {
         const without = row.length ? fit(row) : Infinity;
@@ -173,11 +199,12 @@ new ResizeObserver(layoutWall).observe(document.getElementById('project-grid'));
 const SHOW_PICTURE_TEXTS = false;
 
 // ---- Reading project.txt / profile.txt ----
-const PROJECT_KEYS = ['project name', 'what it is', 'categories', 'category', 'date', 'year', 'short description', 'detailed description',
+const PROJECT_KEYS = ['project name', 'what it is', 'categories', 'category', 'date', 'year', 'short description', 'story title', 'detailed description',
     'materials', 'techniques', 'dimensions', 'location', 'made for', 'supervised by', 'duration', 'exhibited',
     'for sale', 'collaborators', 'photography', 'link', 'size', 'learnt',
     ...CATEGORIES.map(c => c.id + ' part')];      // e.g. "Plastic part: the 3D-printed handle"
-const PROFILE_KEYS = ['name', 'tagline', 'location', 'short introduction', 'biography', 'email',
+const PROFILE_KEYS = ['name', 'tagline', 'location', 'short introduction', 'biography', 'email', 'info label', 'info title',
+    'contact label', 'contact title', 'contact intro',
     'instagram', 'education', 'available for'];
 
 // "Key: value" lines for known keys. Lines starting with # are notes.
@@ -199,12 +226,26 @@ function parseInfoFile(text, keys) {
             current = m[1].trim().toLowerCase();
             data[current] = m[2].trim();
         } else if (current) {
-            const sep = !data[current] ? '' : paragraphBreak ? '\n\n' : ' ';
+            // A blank line starts a new paragraph. In the profile (written by the editor) a single line break is
+            // kept too (an Enter you typed); in project files the lines are simply joined.
+            const sep = !data[current] ? '' : paragraphBreak ? '\n\n' : keys === PROFILE_KEYS ? '\n' : ' ';
             data[current] += sep + line;
         }
         paragraphBreak = false;
     });
     return data;
+}
+
+// The home introduction: its opening a little apart from the rest. The opening is everything up to the first
+// empty line you typed; without one, the first line; without line breaks, the first sentence.
+function introParts(text) {
+    const m = text.match(/^([\s\S]*?)\n\s*\n([\s\S]*)$/) || text.match(/^([^\n]*)\n([\s\S]*)$/)
+        || text.match(/^([^\n]*?[.!?])\s+([\s\S]*)$/);
+    if (!m) return [text];
+    const lead = document.createElement('span');
+    lead.className = 'intro-lead';
+    lead.textContent = m[1].trim();
+    return [lead, m[2]];
 }
 
 function toParagraphs(text) {
@@ -295,6 +336,7 @@ async function loadProject(entry, index) {
         // What each material is used for ("Plastic part: ..."), shown on the material pages and in the facts.
         parts: Object.fromEntries(categories.map(id => [id, (data[id + ' part'] || '').trim()])),
         short: data['short description'] || '',
+        storyTitle: (data['story title'] || '').trim(),   // a title above the story (optional)
         detail: data['detailed description'] || '',
         // Every fact is always listed, in the same order; one that isn't filled in shows a stripe.
         // (Events only have the facts that fit an event. A link is only shown when there is one.)
@@ -585,26 +627,6 @@ function softEdges(img, target) {
 const SVG_NS = 'http://www.w3.org/2000/svg';
 let homeItems = [];
 
-// Top of the path: today's date, e.g. "19 Nov 2026".
-function todayText() {
-    return new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-}
-
-// Keeps the date right: changes it at midnight, and when someone comes back to a tab
-// that was left open overnight.
-function updateToday() {
-    const label = document.querySelector('.path-end');
-    if (label) label.textContent = todayText();
-}
-(function scheduleMidnight() {
-    const now = new Date();
-    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5);
-    setTimeout(() => { updateToday(); scheduleMidnight(); }, midnight - now);
-})();
-document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) updateToday();
-});
-
 function renderHome() {
     const container = document.getElementById('home-projects');
     container.innerHTML = '';
@@ -617,10 +639,7 @@ function renderHome() {
     const startLabel = document.createElement('p');
     startLabel.className = 'path-label path-start';
     startLabel.textContent = 'Born · 2002';   // the line starts at birth
-    const endLabel = document.createElement('p');
-    endLabel.className = 'path-label path-end';
-    endLabel.textContent = todayText();     // today's date, kept up to date by updateToday()
-    container.append(startLabel, endLabel);
+    container.append(startLabel);
 
     // Events (e.g. Dutch Design Week) are not on the home timeline: they have their own path on the Info page.
     homeItems = projects.filter(project => !project.isEvent).map(project => {
@@ -791,7 +810,7 @@ function layoutHome() {
     const [minPct, maxPct] = W < 440 ? [16, 80] : W < 760 ? [10, 50] : [5, 50];
     const SCALE = 0.8;                       // everything a bit smaller: the page looks zoomed out
     const small = W < 760;
-    const top = 100;                         // room for today's date (on its white splash) at the top
+    const top = 0;                           // the first pictures start right under the intro
     const pad = small ? W * 0.03 : W * 0.07; // pictures stay this far from the sides
     const U = W - 2 * pad;                   // the width the pictures use
     const gapX = Math.max(70, W * 0.06);     // room between neighbours (for the path)
@@ -837,8 +856,8 @@ function layoutHome() {
         const ltr = r % 2 === 0;
         let x = ltr ? pad : W - pad;
         rowBoxes.forEach(box => {
-            // A little up/down variation inside the row keeps it organic.
-            const drop = (rowHeight - box.h) * box.item.swing * 0.85 + box.item.spacing * 14;
+            // A little up/down variation inside the row keeps it organic (the first row less, so it starts close under the text).
+            const drop = ((rowHeight - box.h) * box.item.swing * 0.85 + box.item.spacing * 14) * (r === 0 ? 0.35 : 1);
             box.x = ltr ? x : x - box.w;
             box.y = y + drop;
             box.row = r;
@@ -854,7 +873,7 @@ function layoutHome() {
     container.style.height = height + 'px';
 
     // 4. One continuous path: from "Born" through the middle of every picture (behind them) up to
-    //    today's date. Across a row it curves sideways, between rows it swings down.
+    //    the top, where it runs off the screen. Across a row it curves sideways, between rows it swings down.
     const centre = b => ({ x: b.x + b.w / 2, y: b.y + b.ph / 2 });
     const vertical = (a, b) => {
         const k = (a.y - b.y) * 0.95;
@@ -868,21 +887,23 @@ function layoutHome() {
 
     const oldest = boxes[boxes.length - 1];
     const start = { x: centre(oldest).x, y: oldest.y + oldest.h + 70 };   // the middle of the "Born" splash
-    const end = { x: centre(boxes[0]).x, y: 40 };                         // the middle of today's date splash
+    // The newest end: the path carries on past the newest picture and runs off the side of the screen, high up
+    // (towards today, without a label).
+    const newest = centre(boxes[0]);
+    const pageLeft = container.getBoundingClientRect().left;
+    const offLeft = newest.x < W / 2;
+    const end = { x: offLeft ? -pageLeft - 80 : W + (document.documentElement.clientWidth - pageLeft - W) + 80, y: 20 };
     let d = `M ${start.x} ${start.y} L ${centre(oldest).x} ${centre(oldest).y} `;
     for (let i = boxes.length - 1; i > 0; i--) {
         const A = centre(boxes[i]), B = centre(boxes[i - 1]);   // older -> newer
         d += (boxes[i].row === boxes[i - 1].row ? sideways(A, B) : vertical(A, B)) + ' ';
     }
-    d += `L ${end.x} ${end.y}`;
+    d += sideways(newest, end);
     drawPath(container.querySelector('.home-path'), W, height, d, boxes, centre);
 
     const startLabel = container.querySelector('.path-start');
     startLabel.style.left = start.x + 'px';
     startLabel.style.top = start.y + 'px';
-    const endLabel = container.querySelector('.path-end');
-    endLabel.style.left = end.x + 'px';
-    endLabel.style.top = end.y + 'px';
 }
 
 // Draws a path (as if by hand) into an svg of the given size.
@@ -1025,6 +1046,11 @@ const fitName = () => {
     h1.style.fontSize = (100 * scale).toFixed(2) + 'px';
     const indent = start + width * (1 - NAME_SIZE) * 0.35;   // between the logo and Instagram, a touch to the left (looks centred)
     text.style.marginLeft = (indent - (inkWidth > 0 ? ink.left * scale : 0)).toFixed(2) + 'px';   // minus the L's empty space
+    // Where the name's letters start and end: the text under it keeps to the same width.
+    const copy = h1.closest('.home-copy') || h1.parentElement;
+    const inkRight = h1.clientWidth - (indent + (inkWidth > 0 ? inkWidth : measured) * scale);
+    copy.style.setProperty('--name-left', Math.max(0, indent).toFixed(1) + 'px');
+    copy.style.setProperty('--name-right', Math.max(0, inkRight).toFixed(1) + 'px');
 };
 new ResizeObserver(fitName).observe(document.querySelector('.fit-name'));
 if (document.fonts) document.fonts.ready.then(fitName);
@@ -1084,6 +1110,12 @@ function renderDetail(project) {
 
     const text = document.getElementById('detail-text');
     text.innerHTML = '';
+    if (project.storyTitle) {                     // the story's own title (optional)
+        const h = document.createElement('h2');
+        h.className = 'detail-story-title';
+        h.textContent = project.storyTitle;
+        text.append(h);
+    }
     if (project.detail) text.append(...toParagraphs(project.detail));
 
     // A project: its picture at the top, right of the title, and the facts at the bottom of the page.
@@ -1208,7 +1240,7 @@ function showFilm(project) {
 // The title stays inside the left half: a long name gets smaller instead of running on.
 function fitDetailTitle() {
     const title = document.getElementById('detail-title');
-    const room = title.parentElement.clientWidth;
+    const room = title.clientWidth;      // (its column, without the room kept free beside the picture)
     title.style.fontSize = '';
     if (!room || !title.textContent) return;
     const wide = title.scrollWidth;
@@ -1244,6 +1276,7 @@ async function showDesignedPage(project) {
     PageLayout.render(document.getElementById('detail-custom'), project.layout, {
         name: project.name,
         story: project.detail,
+        storyTitle: project.storyTitle,
         photoUrl: file => project.mediaFiles.includes(file) ? mediaUrl(project.folder, file) : '',
         caption: file => captions[file] || ''
     });
@@ -1307,6 +1340,7 @@ async function loadProfile() {
         const value = data[el.dataset.profile];
         if (!value) return;
         if (el.dataset.profile === 'biography') el.replaceChildren(...toParagraphs(value));
+        else if (el.dataset.profile === 'short introduction') el.replaceChildren(...introParts(value));
         else el.textContent = value;
         el.hidden = false;
     });
@@ -1332,36 +1366,187 @@ async function loadProfile() {
     }
 }
 
-// ---- Background blobs float along while you scroll ----
-// Each blob sways in its own direction and at its own pace, so they move past each
-// other. They swing back and forth instead of sliding away, so even on a long page
-// they stay in view.
-if (!reduceMotion) {
-    const blobs = [...document.querySelectorAll('.blob')].map((el, i) => ({
-        el,
-        speed: 0.0005 + i * 0.0001,         // how fast it sways per pixel scrolled (slow)
-        phase: i * 1.7,                     // where in its swing it starts
-        rangeY: 18 + (i % 3) * 6,           // up/down reach, in % of the screen height
-        rangeX: 8 + ((i + 1) % 3) * 4       // sideways reach, in % of the screen width
-    }));
-    let scrollQueued = false;
-    const moveBlobs = () => {
-        scrollQueued = false;
-        const y = window.scrollY;
-        blobs.forEach(b => {
-            const a = y * b.speed + b.phase;
-            const dy = (Math.sin(a) - Math.sin(b.phase)) * b.rangeY;
-            const dx = (Math.cos(a * 0.8) - Math.cos(b.phase * 0.8)) * b.rangeX;
-            b.el.style.translate = `${dx.toFixed(2)}vw ${dy.toFixed(2)}vh`;
+// ---- Background blobs: a small live simulation ----
+// Every blob floats towards its own spot (the home set in style.css, --x / --y) with a slow drift of its own,
+// and moves up slower than the page when scrolling, by its own depth. Blobs keep their distance from each other:
+// they may overlap a little when they pass, never fully. On a material page that material's blob floats behind its
+// big name (in the material's own colour, a bit lighter) and the blob that was there moves to where it came from.
+const blobEls = Object.fromEntries([...document.querySelectorAll('.blob')]
+    .map(el => [(el.className.match(/blob-(\w+)/) || [])[1], el]).filter(([id]) => id));
+const BLOBS = Object.entries(blobEls).map(([id, el], i) => ({
+    id, el, i, x: NaN, y: NaN, vx: 0, vy: 0,
+    seed: i * 1.7 + 0.4,
+    period: parseFloat(getComputedStyle(el).getPropertyValue('--speed')) || 46     // seconds for one slow drift
+}));
+let featured = null;          // the blob behind the material's name
+let featureSpot = null;       // { x, y }: the middle of that name, on the screen (as at the top of the page)
+let giveWay = null;           // { blob, x, y }: the blob that was there, and where it goes instead
+const vmax = () => Math.max(window.innerWidth, window.innerHeight) / 100;
+// A blob's place in the home set: the middle of it, in pixels. (Read from style.css once, until the window
+// changes size: arrangeBlobs.)
+const homes = new Map();
+function homeSpot(b) {
+    if (homes.has(b)) return homes.get(b);
+    const cs = getComputedStyle(b.el);
+    const px = (value, full) => {
+        const v = value.trim(), n = parseFloat(v) || 0;
+        return v.endsWith('%') ? n * full / 100 : v.endsWith('vmax') ? n * vmax() : n;
+    };
+    const spot = { x: px(cs.getPropertyValue('--x'), window.innerWidth) + px(cs.getPropertyValue('--w'), 0) / 2,
+                   y: px(cs.getPropertyValue('--y'), window.innerHeight) + px(cs.getPropertyValue('--h'), 0) / 2 };
+    homes.set(b, spot);
+    return spot;
+}
+function anchorOf(b) {
+    if (b === featured && featureSpot) return featureSpot;
+    if (giveWay && b === giveWay.blob) return giveWay;
+    return homeSpot(b);
+}
+function arrangeBlobs(materialId) {
+    homes.clear();                               // (the window may have changed size)
+    BLOBS.forEach(b => b.el.classList.remove('is-feature'));
+    featured = featureSpot = giveWay = null;
+    const b = BLOBS.find(x => x.id === materialId);
+    document.querySelector('.bg-blobs').classList.toggle('on-material', !!b);   // (the other blobs step back)
+    const r = b ? document.getElementById('category-title').getBoundingClientRect() : null;
+    if (b && r.width) {
+        featured = b;
+        // (the middle of the word itself, without the room around it that the reveal needs: style.css #category-title)
+        const pad = getComputedStyle(document.getElementById('category-title'));
+        const top = r.top + parseFloat(pad.paddingTop), bottom = r.bottom - parseFloat(pad.paddingBottom);
+        featureSpot = { x: r.left + r.width / 2, y: (top + bottom) / 2 + window.scrollY };
+        b.el.style.setProperty('--fc', (categoryById[b.id] || {}).color || '');   // the material's own colour
+        b.el.classList.add('is-feature');
+        // The blob whose home is nearest to the name (if it is close) takes this one's home instead.
+        const from = homeSpot(b);
+        let near = null, best = Infinity;
+        BLOBS.forEach(o => {
+            if (o === b) return;
+            const s = homeSpot(o), d = Math.hypot(s.x - featureSpot.x, s.y - featureSpot.y);
+            if (d < best) { best = d; near = o; }
+        });
+        if (near && best < Math.max(window.innerWidth, window.innerHeight) * 0.4) giveWay = { blob: near, x: from.x, y: from.y };
+    }
+    // The name appears as its blob glides in behind it (hidden where the blob isn't yet).
+    revealing = !!featured && !reduceMotion;
+    revealName();
+    if (reduceMotion) placeBlobs();
+}
+// The material's name shows only where its blob is: a soft round window that follows the blob, so the word
+// appears while the blob moves in behind it. Once the blob has settled, the name is simply there.
+let revealing = false;
+function revealName() {
+    const title = document.getElementById('category-title');
+    const b = featured;
+    const clear = () => { title.style.maskImage = title.style.webkitMaskImage = ''; };
+    if (!revealing || !b) { clear(); return; }
+    if (Number.isNaN(b.x)) { const h = homeSpot(b); b.x = h.x; b.y = h.y; }      // (not placed yet: from its home)
+    const r = title.getBoundingClientRect();
+    if (!r.width) return;
+    const settled = Math.hypot(b.x - featureSpot.x, b.y - featureSpot.y) < 40 && Math.hypot(b.vx, b.vy) < 25;   // (it keeps a tiny drift)
+    if (settled) { revealing = false; clear(); return; }
+    const radius = ((b.w || b.el.offsetWidth) + (b.h || b.el.offsetHeight)) / 4;   // about the blob's size
+    const mask = `radial-gradient(circle ${radius.toFixed(0)}px at ${(b.x - r.left).toFixed(0)}px ${(b.y - r.top).toFixed(0)}px, #000 45%, transparent 100%)`;
+    title.style.maskImage = title.style.webkitMaskImage = mask;
+}
+// Its size: measured once per frame (it changes when it grows behind a material's name).
+const measureBlob = b => { b.w = b.el.offsetWidth; b.h = b.el.offsetHeight; };
+const placeBlob = b => {
+    b.el.style.translate = `${(b.x - b.w / 2).toFixed(1)}px ${(b.y - b.h / 2).toFixed(1)}px`;
+};
+function placeBlobs() {           // (no motion: straight to their spots)
+    BLOBS.forEach(b => { const a = anchorOf(b); b.x = a.x; b.y = a.y; measureBlob(b); placeBlob(b); });
+}
+const currentMaterial = () => {
+    const hash = decodeURIComponent(window.location.hash.replace('#', ''));
+    return categoryById[hash] ? hash : null;
+};
+window.addEventListener('resize', () => requestAnimationFrame(() => arrangeBlobs(currentMaterial())));
+if (document.fonts) document.fonts.ready.then(() => arrangeBlobs(currentMaterial()));   // (the name's size is known)
+document.querySelector('.bg-blobs').classList.add('is-live');   // (placed by this script from now on)
+if (reduceMotion) placeBlobs();
+else {
+    let last = performance.now();
+    const step = now => {
+        // In small steps, so a slow screen (few frames) still moves them at the same pace.
+        let left = Math.min(0.5, (now - last) / 1000);
+        BLOBS.forEach(measureBlob);
+        const sizes = BLOBS.map(b => (b.w + b.h) / 4);
+        while (left > 0) {
+            const dt = Math.min(1 / 30, left);
+            left -= dt;
+            simulate(dt, (now - left * 1000) / 1000, sizes);
+        }
+        last = now;
+        BLOBS.forEach(placeBlob);
+        if (revealing) revealName();
+        requestAnimationFrame(step);
+    };
+    // How near each blob is: the part of the scrolling it moves along with (far ones slow, nearer ones faster).
+    const DEPTHS = [0.45, 0.3, 0.6, 0.38, 0.53, 0.34];
+    const simulate = (dt, t, sizes) => {
+        const v = vmax(), scroll = window.scrollY, W = window.innerWidth, H = window.innerHeight;
+        BLOBS.forEach(b => {
+            const a = anchorOf(b);
+            let tx = a.x, ty = a.y;
+            if (b !== featured) {
+                // Its own slow drift …
+                tx += Math.sin(t * 2 * Math.PI / b.period + b.seed) * 7 * v;
+                ty += Math.sin(t * 2 * Math.PI / (b.period * 1.3) + b.seed * 2) * 6 * v;
+                // … and depth: it moves up with the scrolling, slower than the page (far ones slowest), like a layer
+                // further back. Once it has floated out at the top it comes back in at the bottom (and the other
+                // way round), out of sight, so the screen never runs empty.
+                const size = b.h * 0.7, span = H + 2 * size;   // (half of it, plus its swell and turn)
+                const depth = DEPTHS[b.i % DEPTHS.length];
+                ty -= scroll * depth;
+                // (the scrolling moves it straight away; the springiness is only for its drift and the spacing)
+                if (b.seen !== undefined && !Number.isNaN(b.y)) b.y -= (scroll - b.seen) * depth;
+                if (b.wrap === undefined) b.wrap = Math.round((H / 2 - ty) / span);   // (start on the screen)
+                if (!Number.isNaN(b.y)) {
+                    const back = b.y < -size ? 1 : b.y > H + size ? -1 : 0;
+                    if (back) {
+                        b.wrap += back; b.y += back * span;
+                        // Comes back in where there is most room across the width (away from the others near there).
+                        let best = b.x, bestRoom = -1;
+                        for (let k = 0; k <= 8; k++) {
+                            const x = W * (0.05 + 0.9 * k / 8);
+                            const room = Math.min(...BLOBS.filter(o => o !== b).map(o => Math.hypot(o.x - x, (o.y - b.y) * 1.4)));
+                            if (room > bestRoom) { bestRoom = room; best = x; }
+                        }
+                        b.lane = best; b.x = best; b.vx = 0;
+                    }
+                }
+                ty += b.wrap * span;
+                if (b.lane !== undefined && !(giveWay && giveWay.blob === b)) tx += b.lane - a.x;
+            } else {
+                tx += Math.sin(t * 0.25 + b.seed) * 0.8 * v;       // (hardly moves: it stays behind the name)
+                ty += Math.cos(t * 0.2 + b.seed) * 0.6 * v;
+            }
+            if (Number.isNaN(b.x)) { b.x = tx; b.y = ty; }
+            b.seen = scroll;
+            // Floats towards that spot, a little springy, so it travels in a soft curve.
+            b.ax = 2.0 * (tx - b.x) - 2.4 * b.vx;
+            b.ay = 2.0 * (ty - b.y) - 2.4 * b.vy;
+        });
+        // Too close: they push each other apart (the blob behind the name stays where it is).
+        for (let i = 0; i < BLOBS.length; i++) for (let j = i + 1; j < BLOBS.length; j++) {
+            const p = BLOBS[i], q = BLOBS[j];
+            const rp = sizes[i], rq = sizes[j];
+            const dx = q.x - p.x, dy = q.y - p.y, d = Math.hypot(dx, dy) || 1;
+            const room = (rp + rq) * 0.62;                          // closer than this: pushed apart hard
+            const reach = (rp + rq) * 1.1;                          // closer than this: a gentle push (keeps them spread out)
+            if (d >= reach) continue;
+            const push = (30 * (reach - d) / reach + (d < room ? 60 * (room - d) / room : 0)) * v, ux = dx / d, uy = dy / d;
+            const pw = p === featured ? 0 : q === featured ? 2 : 1, qw = q === featured ? 0 : p === featured ? 2 : 1;
+            p.ax -= ux * push * pw; p.ay -= uy * push * pw;
+            q.ax += ux * push * qw; q.ay += uy * push * qw;
+        }
+        BLOBS.forEach(b => {
+            b.vx += b.ax * dt; b.vy += b.ay * dt;
+            b.x += b.vx * dt; b.y += b.vy * dt;
         });
     };
-    window.addEventListener('scroll', () => {
-        if (!scrollQueued) {
-            scrollQueued = true;
-            requestAnimationFrame(moveBlobs);
-        }
-    }, { passive: true });
-    moveBlobs();
+    requestAnimationFrame(step);
 }
 
 route();

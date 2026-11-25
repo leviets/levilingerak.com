@@ -25,11 +25,18 @@ Date: 29-11-2023
 Short description:
 # One sentence, shown at the top of the project page.
 
+Story title:
+# Optional: a title above the story on the project page.
+
 Detailed description:
 # The story of the project: idea, process, what you learned.
 
 Materials:
 # e.g. Walnut, beech, brass
+
+Wood part: Beech Wood
+# Per material: what that part is, e.g. "Plastic part: the 3D-printed handle".
+# Shown across from the name on that material's page (in its colour), and in the facts.
 
 Techniques:
 # e.g. Hand-cut joinery, machine stitching, 3D printing
@@ -52,6 +59,9 @@ Supervised by:
 Duration:
 # How long it took, e.g. 3 weeks or 40 hours
 
+Learnt:
+# What you learnt from it
+
 Exhibited:
 # Where it was shown or what it won, e.g. Dutch Design Week 2025
 
@@ -73,9 +83,9 @@ Size: 45%
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
+Picture monde6.jpg:
 Picture monde1.jpg:
 Picture monde2.jpg:
 Picture monde3.jpg:
 Picture monde4.jpg:
 Picture monde5.jpg:
-Picture monde6.jpg:

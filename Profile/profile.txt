@@ -1,31 +1,56 @@
 # ================================================================
-#  PROFILE INFO for the website
+#  PROFILE INFO for the website (made by the Site Editor: Info & Contact tab)
 #  - Write after the colon. Empty fields keep the text that is
 #    currently on the site.
 #  - Lines starting with # are notes for you; the site ignores them.
 #  - A long text may continue on the next lines (no colon needed).
 # ================================================================
 
-Name: Levi Lingerak
+# ---- Home page ----
 
-Location: Eindhoven, NL
+Name: Levi Lingerak
 # Shown on the home page and in the footer.
 
-Short introduction: Walnut, beech, denim and rope - made by hand, with the joints, seams and stitches left on show.
+Short introduction: On my very first day of school, I ran away. Not my jam.
+Luckily, creativity was! I create to learn. Which to this day sparks an interest in materials, shapes and the how's behind the making. Sometimes this all gets channelled into an object, which I'd love to present to you on this page. Welcome!
 # One or two sentences on the home page, under your name.
 
-Biography:
-# A longer text about you for the Info page.
-# Tip: who you are, what you make, how you work.
+# ---- Info page ----
 
-Email: hello@levilingerak.nl
+Info label: About
+# e.g. About
+
+Info title: Making useful things with a point of view.
+# The big title of the Info page.
+
+Biography: I’m Levi Lingerak, an Eindhoven-based designer and maker exploring the relationship between material, function and form.
+
+My work moves across wood, metal, textiles, plastics and stoneware, with an emphasis on clear ideas and hands-on experimentation.
+# The text about you on the Info page: who you are, what you make, how you work.
+# An empty line starts a new paragraph.
+
+Education: 
+# e.g. Design Academy Eindhoven, 2022 - now
+
+Available for: commissions and collaborations
+# e.g. Commissions, collaborations, internships (Info and Contact page).
+
+# ---- Contact page ----
+
+Contact label: Get in touch
+# e.g. Get in touch
+
+Contact title: Contact
+# The big title of the Contact page.
+
+Contact intro: For commissions, collaborations or just a question about a project: send me a message.
+# The sentence under the title of the Contact page.
+
+Email: Levilingerak@gmail.com
 # Check this address - the website domain is levilingerak.com.
 
 Instagram: levilingerak
 # Just the account name, without @.
 
-Education:
-# e.g. Design Academy Eindhoven, 2022 - now
-
-Available for:
-# e.g. Commissions, collaborations, internships
+Location: Eindhoven, Strijp-S, Netherlands
+# Shown on the Contact page and in the footer.

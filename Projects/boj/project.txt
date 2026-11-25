@@ -5,7 +5,7 @@
 #  - A long text may continue on the next lines (no colon needed).
 # ================================================================
 
-Project name: Salon
+Project name: Lason
 # Leave empty to use the folder name.
 
 What it is: Lamp
@@ -24,6 +24,9 @@ Date: 17-06-2026
 
 Short description: A flat-pack standing lamp of laser-cut wood veneer, lock-stitched together and lit by an LED filament.
 # One sentence, shown at the top of the project page.
+
+Story title:
+# Optional: a title above the story on the project page.
 
 Detailed description: BÖJ (Swedish for bend or curve) is a lamp in the spirit of IKEA: affordable, compact and flat-pack, to put together yourself. Strips of wood veneer are laser-cut and lock-stitched; the folded sheet supports itself and is held in shape with clips, and an LED filament runs along the stitching as the light.
 
@@ -75,7 +78,7 @@ Link:
 # Optional web address, e.g. a shop page or article (start with https://)
 
 # ---------------- HOME PAGE ----------------
-Size: 80%
+Size: 40%
 # Size of the picture on the home page, from 20% to 100%.
 # 100% = half the page width on a computer, 20% = a twentieth (very small).
 

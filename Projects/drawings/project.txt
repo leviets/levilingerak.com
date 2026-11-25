@@ -25,6 +25,9 @@ Date: 16-06-2025
 Short description: Drawings from the drawing course: portraits, faces and studies.
 # One sentence, shown at the top of the project page.
 
+Story title:
+# Optional: a title above the story on the project page.
+
 Detailed description:
 # The story of the project: idea, process, what you learned.
 
@@ -80,7 +83,5 @@ Size: 35%
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
-Picture drawings1.jpg:
-Picture drawings2.jpg:
-Picture drawings3.jpg:
-Picture drawings4.jpg:
+Picture drawings6.jpg:
+Picture drawings5.jpg:

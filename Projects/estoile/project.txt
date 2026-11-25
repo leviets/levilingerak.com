@@ -8,6 +8,9 @@
 Project name: Estoile
 # Leave empty to use the folder name.
 
+What it is:
+# e.g. Chair, Lamp, Bag, Video. Shown under the name on the site.
+
 Categories: Wood
 # Choose from: Wood, Plastic, Metal, Stone, Textile, Other
 # Several are allowed, separated by commas, e.g. "Textile, Wood".
@@ -21,6 +24,9 @@ Date: 20-01-2025
 
 Short description: A complex, friendly abstract structure: a stool that became an art piece, or a table.
 # One sentence, shown at the top of the project page.
+
+Story title:
+# Optional: a title above the story on the project page.
 
 Detailed description: The assignment was a stool, but it became something else: a wonderful art piece or table. It lacks some key stool features, like sturdiness, and its shape leans more towards a table, but I think it became an intriguing result. Six triangular parts rest on a crossed base and come together in a star.
 
@@ -50,6 +56,9 @@ Supervised by:
 
 Duration:
 # How long it took, e.g. 3 weeks or 40 hours
+
+Learnt:
+# What you learnt from it
 
 Exhibited:
 # Where it was shown or what it won, e.g. Dutch Design Week 2025

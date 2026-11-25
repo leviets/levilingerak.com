@@ -25,6 +25,9 @@ Date: 08-06-2022
 Short description: A side table that seems to float: the top hangs on thin cables and is held up by tension.
 # One sentence, shown at the top of the project page.
 
+Story title:
+# Optional: a title above the story on the project page.
+
 Detailed description: Two Z-shaped wooden frames hook into each other without touching. Thin cables between them carry the load, so the upper frame and its glass top look as if they float above the base.
 # The story of the project: idea, process, what you learned.
 

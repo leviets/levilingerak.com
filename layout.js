@@ -23,7 +23,7 @@ window.PageLayout = (() => {
         return Math.max(band.rows || 1, ...blocks.map(b => b.row + b.h - 1));
     }
 
-    // ctx: { name, story, photoUrl(photo), caption(photo) }
+    // ctx: { name, story, storyTitle, photoUrl(photo), caption(photo) }
     function blockElement(block, ctx) {
         const el = document.createElement('div');
         el.className = `lp-block lp-${block.kind}`;
@@ -36,6 +36,12 @@ window.PageLayout = (() => {
             el.append(h);
         } else if (TEXT_KINDS.includes(block.kind)) {
             el.classList.add('lp-size-' + (block.size || 'm'));
+            if (block.kind === 'story' && ctx.storyTitle) {      // the story's own title (optional), above it
+                const h = document.createElement('h2');
+                h.className = 'lp-story-title';
+                h.textContent = ctx.storyTitle;
+                el.append(h);
+            }
             const body = document.createElement('div');
             body.className = 'lp-text-body';
             const text = block.kind === 'story' ? ctx.story : (block.text || '');

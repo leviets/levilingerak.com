@@ -5,7 +5,7 @@
 #  - A long text may continue on the next lines (no colon needed).
 # ================================================================
 
-Project name: Melle L
+Project name: Melle's Outfit
 # Leave empty to use the folder name.
 
 What it is: Costume
@@ -24,6 +24,9 @@ Date: 23-06-2023
 
 Short description:
 # One sentence, shown at the top of the project page.
+
+Story title:
+# Optional: a title above the story on the project page.
 
 Detailed description:
 # The story of the project: idea, process, what you learned.
@@ -80,4 +83,5 @@ Size: 50%
 # ---------------- PICTURE TEXTS ----------------
 # A short text per picture: what it shows. Used as the picture's description
 # on the site (and, if turned on, shown under the picture).
-Picture melle-l1.jpg:
+Picture melle-l2.jpg:
+Picture melle-l3.jpg:
